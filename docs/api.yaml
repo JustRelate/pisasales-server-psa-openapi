@@ -62,6 +62,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/user_query'
         - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/continuation_query'
       requestBody:
         description: query
         required: true
@@ -283,6 +284,13 @@ components:
       in: query
       name: language
       description: language identifier (e.g. GER or ENG). Used for the getter and setter on data objects.
+      schema:
+        type: string
+
+    continuation_query:
+      in: query
+      name: continuation
+      description: continuation key that was returned with the last result list
       schema:
         type: string
 
