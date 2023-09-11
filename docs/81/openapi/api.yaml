@@ -85,7 +85,7 @@ paths:
          $ref: '#/components/responses/error_500'
   /api/companies:
     post:
-      summary: Update a company
+      summary: Create a company
       description: ''
       parameters:
         - $ref: '#/components/parameters/user_query'
@@ -235,7 +235,7 @@ paths:
 
   /api/messages:
     post:
-      summary: Send a internal message
+      summary: Send an internal message
       description: Sends a message to multiple recipients
       parameters:
         - $ref: '#/components/parameters/user_query'
