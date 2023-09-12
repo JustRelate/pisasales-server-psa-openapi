@@ -10,6 +10,8 @@ paths:
     get:
       summary: Fetch a single company
       description: Searches the PSC_GID of a company
+      tags:
+        - companies
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/user_query'
@@ -30,6 +32,8 @@ paths:
     put:
       summary: Update a company
       description: Searches the PSC_GID of a company and updates it
+      tags:
+        - companies
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/user_query'
@@ -59,6 +63,8 @@ paths:
     post:
       summary: Search companies
       description: Searches multiple companies and returns them as an ordered list
+      tags:
+        - companies
       parameters:
         - $ref: '#/components/parameters/user_query'
         - $ref: '#/components/parameters/language_query'
@@ -87,6 +93,8 @@ paths:
     post:
       summary: Create a company
       description: ''
+      tags:
+        - companies
       parameters:
         - $ref: '#/components/parameters/user_query'
         - $ref: '#/components/parameters/language_query'
@@ -115,6 +123,8 @@ paths:
     put:
       summary: Update an address
       description: Searches an address record and then updates it
+      tags:
+        - addresses
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/user_query'
@@ -144,6 +154,8 @@ paths:
     get:
       summary: Fetch a single document
       description: Searches the PSC_GID of a document
+      tags:
+        - documents
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/user_query'
@@ -166,6 +178,8 @@ paths:
     post:
       summary: Create a new document
       description: ''
+      tags:
+        - documents
       parameters:
         - $ref: '#/components/parameters/user_query'
         - $ref: '#/components/parameters/language_query'
@@ -194,6 +208,8 @@ paths:
     get:
       summary: Get the BLOB of a document
       description: Returns the BLOB that is associated with a document
+      tags:
+        - documents
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/user_query'
@@ -217,6 +233,8 @@ paths:
     get:
       summary: Get my data
       description: Returns the data of the user that is authorized with IAM
+      tags:
+        - my
       parameters:
         - $ref: '#/components/parameters/language_query'
       responses:
@@ -237,6 +255,8 @@ paths:
     post:
       summary: Send an internal message
       description: Sends a message to multiple recipients
+      tags:
+        - messages
       parameters:
         - $ref: '#/components/parameters/user_query'
         - $ref: '#/components/parameters/language_query'
