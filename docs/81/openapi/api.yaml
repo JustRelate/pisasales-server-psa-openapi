@@ -89,6 +89,37 @@ paths:
           $ref: '#/components/responses/error_404'
         '500':
          $ref: '#/components/responses/error_500'
+
+  /api/eureka-companies:
+    post:
+      summary: Search companies using EUREKA
+      description: Searches multiple companies
+      tags:
+        - companies
+      parameters:
+        - $ref: '#/components/parameters/user_query'
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: query
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/eureka_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/eureka'
+        '400':
+          $ref: '#/components/responses/error_400'
+        '401':
+          $ref: '#/components/responses/error_401'
+        '403':
+          $ref: '#/components/responses/error_403'
+        '404':
+          $ref: '#/components/responses/error_404'
+        '500':
+         $ref: '#/components/responses/error_500'
+
   /api/companies:
     post:
       summary: Create a company
@@ -173,7 +204,38 @@ paths:
           $ref: '#/components/responses/error_404'
         '500':
          $ref: '#/components/responses/error_500'
-  
+
+  /api/search-documents:
+    post:
+      summary: Search documents
+      description: Searches multiple documents and returns them as an ordered list
+      tags:
+        - documents
+      parameters:
+        - $ref: '#/components/parameters/user_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/continuation_query'
+      requestBody:
+        description: query
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/query'
+      responses:
+        '200':
+          $ref: '#/components/responses/documents'
+        '400':
+          $ref: '#/components/responses/error_400'
+        '401':
+          $ref: '#/components/responses/error_401'
+        '403':
+          $ref: '#/components/responses/error_403'
+        '404':
+          $ref: '#/components/responses/error_404'
+        '500':
+         $ref: '#/components/responses/error_500'
+
   /api/documents:
     post:
       summary: Create a new document
@@ -352,6 +414,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/document_select'
+            
+    documents:
+      description: a list of documents
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/documents'
+
+    eureka:
+      description: a list of EUREKA results
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/eurekas'
 
     error_400:
       description: BAD_REQUEST
@@ -400,9 +476,61 @@ components:
     ########################################################################
     # objects
     ########################################################################
+    eureka_query:
+      type: object
+      description: 'EUREKA query'
+      properties:
+        eureka:
+          type: string
+          description: query
+          example: test
+        maximum:
+          type: number
+          description: maximum number of records to return with a single request
+          example: 20
+
+    eurekas:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/eureka'
+
+    eureka:
+      type: object
+      properties:
+        id:
+          type: string
+          description: identifier of the record
+        updated_at:
+          type: string
+          description: last update date
+        dataobject:
+          type: string
+          description: data object 
+        title:
+          type: string
+          description: title
+        preview:
+          type: string
+          description: preview
+        icon:
+          type: string
+          description: icon 
+        key_001:
+          type: string
+          description: key 1 
+        key_002:
+          type: string
+          description: key 2
+        key_003:
+          type: string
+          description: key 3
+
     query:
       type: object
-      description: xxx
+      description: ''
       properties:
         query:
           type: object
@@ -410,7 +538,7 @@ components:
           additionalProperties:
             type: string
           example: {
-            'group_id': 'PSA_ORG_LEA', 
+            'name': 'xyz', 
             'PSC_CRE': '>=$TIME-1W'
           }
         sort:
@@ -420,6 +548,10 @@ components:
             additionalProperties:
               type: boolean
             example: {'PSC_CRE': false}
+        eureka:
+          type: string
+          description: optional EUREKA query that will be executed before the actual query
+          example: Berlin
         maximum:
           type: number
           description: maximum number of records to return with a single request
@@ -701,6 +833,17 @@ components:
         blob_data:
           type: string
           description: Base64 encoded BLOB data.
+
+    documents:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/document_select'
 
     message:
       type: object
