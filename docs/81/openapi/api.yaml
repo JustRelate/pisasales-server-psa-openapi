@@ -342,6 +342,17 @@ paths:
           $ref: '#/components/responses/error_404'
         '500':
          $ref: '#/components/responses/error_500'
+
+  /api/version:
+    get:
+      summary: Get the version
+      description: Get the version of the server and the REST API
+      tags:
+        - debug
+      responses:
+        '200':
+          $ref: '#/components/responses/version'
+
 components:
   ########################################################################
   # parameters
@@ -429,6 +440,13 @@ components:
           schema:
             $ref: '#/components/schemas/eurekas'
 
+    version:
+      description: Server version
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/version'
+
     error_400:
       description: BAD_REQUEST
       content:
@@ -472,6 +490,7 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/error.unexpected_error'
+
   schemas:
     ########################################################################
     # objects
@@ -874,6 +893,26 @@ components:
           type: string
           description: data object of the associated record
           example: 'PSA_ORG_EXT'
+
+    version:
+      type: object
+      properties:
+        server_version:
+          type: string
+          description: version of the PisaSales server
+          example: 08.01-20220624
+        server_patch:
+          type: string
+          description: patch number of the PisaSales server
+          example: 21
+        rest_api_version:
+          type: string
+          description: version of the REST API
+          example: 1.0.0
+        rest_api_patch:
+          type: string
+          description: patch number of the REST API
+          example: 2
 
     ########################################################################
     # errors
