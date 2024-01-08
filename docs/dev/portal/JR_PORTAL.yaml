@@ -1,0 +1,836 @@
+openapi: 3.0.3
+
+info:
+  version: '1.0'
+  title: Portal API
+  description: Endpoints to be used by the Scrivito portal. All endpoints require an IAM authorization.
+
+servers: 
+  - url: '###server###'
+
+paths:
+  /portal/quote:
+    get:
+      summary: Fetch all quotes
+      description: Searches all quotes that are related to the logged in user. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - quote
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/quotes'
+        '403':
+          $ref: '#/components/responses/error_user_unknown'
+
+  /portal/quote/{id}:
+    get:
+      summary: Fetch a single quote
+      description: Searches the _id of a quote
+      tags:
+        - quote
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/quote'
+        '403':
+          $ref: '#/components/responses/error_user_unknown'
+          
+  /portal/quote-item:
+    get:
+      summary: Fetch the scope of delivery for a quote
+      description: Searches all products that are assigned to a quote. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - quote
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - name: quote_id
+          in: query
+          description: id of the quote. If this parameter is missing, the items of a random quote will be returned.
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/quote-items'
+        '403':
+          $ref: '#/components/responses/error_user_unknown'
+
+  /portal/quote-item/{id}:
+    get:
+      summary: Fetch a single product from the scope of delivery of a quote
+      description: Searches the _id of a product from the scope of delivery
+      tags:
+        - quote
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/quote-item'
+        '403':
+          $ref: '#/components/responses/error_user_unknown'
+          
+  /portal/order:
+    get:
+      summary: Fetch all orders
+      description: Searches all orders that are related to the logged in user. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - order
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/orders'
+        '403':
+          $ref: '#/components/responses/error_user_unknown'
+
+  /portal/order/{id}:
+    get:
+      summary: Fetch a single order
+      description: Searches the _id of an order
+      tags:
+        - order
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/order'
+        '403':
+          $ref: '#/components/responses/error_user_unknown'
+
+  /portal/order-item:
+    get:
+      summary: Fetch the scope of delivery for an ordern
+      description: Searches all products that are assigned to an order. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - order
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - name: order_id
+          in: query
+          description: id of the order. If this parameter is missing, the items of a random order will be returned.
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/order-items'
+        '403':
+          $ref: '#/components/responses/error_user_unknown'
+
+  /portal/order-item/{id}:
+    get:
+      summary: Fetch a single product from the scope of delivery of an order
+      description: Searches the _id of a product from the scope of delivery
+      tags:
+        - order
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/order-item'
+        '403':
+          $ref: '#/components/responses/error_user_unknown'
+
+  /portal/ticket:
+    get:
+      summary: Fetch all tickets
+      description: Searches all tickets that are related to the logged in user and were created in the portal. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - ticket
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/tickets'
+        '403':
+          $ref: '#/components/responses/error_user_unknown'
+    post:
+      summary: Create a new ticket
+      description: Creates new ticket
+      tags:
+        - ticket
+      requestBody:
+        description: The ticket data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ticket_base'
+      responses:
+        '200':
+          $ref: '#/components/responses/ticket'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_user_unknown'
+
+  /portal/ticket/{id}:
+    get:
+      summary: Fetch a single ticket
+      description: Searches the _id of a ticket
+      tags:
+        - ticket
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/ticket'
+        '403':
+          $ref: '#/components/responses/error_user_unknown'
+
+  /portal/ticket-message:
+    get:
+      summary: Fetch the messages of a ticket
+      description: The messages are ordered from oldest to newest
+      tags:
+        - ticket
+      parameters:
+        - name: ticket_id
+          in: query
+          description: id of the ticket. If this parameter is missing, the messages of a random ticket will be returned.
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/ticket-messages'
+        '403':
+          $ref: '#/components/responses/error_user_unknown'
+    post:
+      summary: Post a message
+      description: Post a new message to a ticket
+      tags:
+        - ticket
+      requestBody:
+        description: The message data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ticket-message_base'
+      responses:
+        '200':
+          $ref: '#/components/responses/ticket'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_user_unknown'
+
+  /portal/ticket-message/{id}:
+    get:
+      summary: Fetch the message of a ticket
+      description: Returns a single ticket message
+      tags:
+        - ticket
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/ticket-message'
+        '403':
+          $ref: '#/components/responses/error_user_unknown'
+
+  /portal/user/{id}:
+    get:
+      summary: Get information about a single contact
+      description: Returns contact data. Only the dat aof internal contacts and the contacts that belong to the users organization are returned.
+      tags:
+        - user
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/user'
+        '400':
+          $ref: '#/components/responses/error_invalid_id'
+        '403':
+          $ref: '#/components/responses/error_user_unknown'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
+  /portal/whoami:
+    get:
+      summary: Get information about the authenticated user
+      description: Returns contact data of the user
+      tags:
+        - user
+      responses:
+        '200':
+          $ref: '#/components/responses/whoami'
+        '403':
+          $ref: '#/components/responses/error_user_unknown'
+  
+components:
+  ########################################################################
+  # parameters
+  ########################################################################
+  parameters:
+    id_path:
+      in: path
+      name: id
+      description: if of the record
+      required: true
+      schema:
+        type: string
+
+    continuation_query:
+      in: query
+      name: _continuation
+      description: continuation key that was returned with the last result list
+      schema:
+        type: string
+
+    search_query:
+      in: query
+      name: _search
+      description: Full text (EUREKA) search term
+      schema:
+        type: string
+        
+    order_query:
+      in: query
+      name: _order
+      description: list of fields that should be used for ordering
+      example: createdAt.desc,name.asc
+      schema:
+        type: string
+        
+    limit_query:
+      in: query
+      name: _limit
+      description: maximum number of records to return. if the maximum is reached a continuation key will be in the response. the default value is 100
+      example: 10
+      schema:
+        type: number
+
+  ########################################################################
+  # responses
+  ########################################################################
+  responses:
+    quote:
+      description: quote data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/quote'
+
+    quotes:
+      description: a list of quotes
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/quotes'
+            
+    quote-item:
+      description: quote item data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/quote-item'
+
+    quote-items:
+      description: a list of quote items
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/quote-items'
+                
+    order:
+      description: order data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/order'
+
+    orders:
+      description: a list of orders
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/orders'
+            
+    order-item:
+      description: quoteorder item data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/order-item'
+
+    order-items:
+      description: a list of order items
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/order-items'
+          
+    ticket:
+      description: ticket data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ticket'
+
+    tickets:
+      description: a list of tickets
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/tickets'
+            
+    ticket-message:
+      description: ticket message
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ticket-message'
+
+    ticket-messages:
+      description: a list of ticket messages
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ticket-messages'
+
+    user:
+      description: user data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/user'
+            
+    whoami:
+      description: current user
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/whoami'
+            
+    error_user_unknown:
+      description: The authenticated IAM user was not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+                example: 'user.unknown'
+              error:
+                type: string
+                example: 'The user was not found'
+              details:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    example: 'john.doe@acme.org'
+                    
+    error_invalid_id:
+      description: The authenticated IAM user was not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+                example: 'invalid.id'
+              error:
+                type: string
+                example: 'The ID is invalid'
+              details:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 'XXX'
+
+    error_record_not_found:
+      description: The record was not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+                example: 'record.not_found'
+              error:
+                type: string
+                example: 'The record was not found'
+              details:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 'XXX'
+
+    error_missing_data:
+      description: Not all necessary data was submitted by the client
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+                example: 'missing.data'
+              error:
+                type: string
+                example: 'Some data is missing'
+              details:
+                type: object
+                properties:
+                  field:
+                    type: string
+                    description: name of the missing field
+                    example: 'title'
+
+  schemas:
+    ########################################################################
+    # objects
+    ########################################################################
+    object:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: identifier of the record
+          example: F9BB0AAA22C947BAE030A8C00C015B91
+
+    project:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        keyword:
+          type: string
+          description: keyword of the project
+          example: New filling line
+        number:
+          type: string
+          description: number of the project
+          example: P-23-055168
+        type:
+          type: string
+          description: sub type of the project
+          example: Standard
+        customer:
+          type: string
+          description: the name of customer of the project
+          example: Tynacoon (Berlin)
+        commercialAgent:
+          type: string
+          description: the name of the commercial agent
+          example: Mustermann, Max (Sales department)
+        technicalAgent:
+          type: string
+          description: the name of the technical agent
+          example: Doe, Jane (Support))
+        salesPartner:
+          type: string
+          description: the name of the sales partner
+        status:
+          type: string
+          description: name of the current status
+          example: order entry
+        quoteAt:
+          type: string
+          description: ISO formatted date string of the quote date
+          example: 2023-12-15T14:00:00Z
+        orderAt:
+          type: string
+          description: ISO formatted date string of the order date
+          example: 2024-01-10T10:00:00Z
+        deliveryAt:
+          type: string
+          description: ISO formatted date string of the quoteorderdelivery date
+          example: 2024-02-01T17:00:00Z
+        termsOfDelivery:
+          type: string
+          description: the agreed terms of delivery
+          example: delivered duty paid
+        termsOfPayment:
+          type: string
+          description: the agreedterms of payment
+          example: cash payable within 14 days
+        totalPrice:
+          type: number
+          description: totel price of the project
+          example: 73429.50
+        description:
+          type: string
+          description: description of the project
+          example: First offer
+          
+    quote:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project'
+      properties:
+        validUntil:
+          type: string
+          description: date until when the quote is valid
+          example: 2024-01-05T10:00:00Z
+  
+    quotes:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/quote'
+            
+    order:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project'
+
+    orders:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/order'
+            
+    project-item:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        position:
+          type: string
+          description: position number of th eitem
+          example: 10
+        selected:
+          type: boolean
+          description: is the item selected?
+          example: true
+        optional:
+          type: boolean
+          description: if the item optional?
+          example: false
+        quantiy:
+          type: number
+          description: the number of sold items
+          example: 1.5
+        quantityUnit:
+          type: string
+          description: the name of the item unit
+          example: kg
+        name:
+          type: string
+          description: name of the product
+          example: "Lubrication unit MAX10"
+        number:
+          type: string
+          description: number of the product
+          example: A-14-234575
+        category:
+          type: string
+          description: product category
+          example: Service
+        unitPrice:
+          type: number
+          description: price per unit
+          example: 450.99
+        totalPrice:
+          type: string
+          description: total price (quantity * unitPrice)
+          example: 38293.23
+          
+    quote-item:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project-item'
+      properties:
+        quoteId:
+          type: string
+          description: identifier of the quote
+          example: 8EB814C3FE71C302E040007F01004285
+        quoteKeyword:
+          type: string
+          description: keyword of the quote
+          example: 1C76FE9771A1FE15E040A8C00F011E5D
+          
+    quote-items:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/quote-item'
+            
+    order-item:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project-item'
+      properties:
+        orderId:
+          type: string
+          description: identifier of the order
+          example: 26F9BFD88897B260E040A8C00F01662F
+        orderKeyword:
+          type: string
+          description: keyword of the order
+          example: Ventilation
+          
+    order-items:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/order-item'
+
+    ticket_base:
+      type: object
+      properties:
+        title:
+          type: string
+          description: title of the ticket
+          example: Maschine not working
+        description:
+          type: string
+          description: A text descripting the issue
+          example: It is not working
+        type:
+          type: string
+          description: Type of the ticket
+          enum: [Fault, Claim, Question]
+        
+    ticket:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ticket_base'
+      properties:
+        number:
+          type: string
+          example: TT-24-000346
+        referenceNumber:
+          type: string
+          description: Number that is used by the customer to reference this ticket
+          example: T-4711
+        status:
+          type: string
+          description: Current status of the ticket
+          example: In progress
+        updatedAt:
+          type: string
+          description: date of the last update
+          example: 2023-12-13T14:10:55
+        responsibleAgent:
+          type: string
+          description: The person who is responsible for this ticket
+          example: Doe, John (Service)
+        createdBy:
+          type: string
+          description: The contact who has submitted this ticket
+          example: Singer, Marla
+        createdAt:
+          type: string
+          description: The date when the ticket was created
+          example: 2023-11-29T18:00:00
+
+    tickets:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ticket'
+
+    ticket-message_base:
+      type: object
+      properties:
+        ticketId:
+          type: string
+          description: id of the associated ticket
+          example: E6F2DE085CE74697BE786438A3445993
+        text:
+          type: string
+          description: the message text
+          example: The red light is on
+
+    ticket-message:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ticket-message_base'
+      properties:
+        _id:
+          type: string
+          description: identifier of the message
+          example: E6F2DE085CE74697BE786438A3445993_1
+        createdBy:
+          type: string
+          description: The name of the person who has posted this message
+          example: John Doe
+        createdAt:
+          type: string
+          description: Timestamp when the message was posted
+          example: 2023-12-06T10:30:00
+
+    ticket-messages:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ticket-message'
+
+    user:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        composedName:
+          type: string
+          description: name including salutation, first and last name
+          example: Mr. John Doe
+        firstName:
+          type: string
+          description: first name
+          example: John
+        lastName:
+          type: string
+          description: last name
+          example: Doe
+
+    whoami:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/user'
+
+    ########################################################################
+    # errors
+    ########################################################################
