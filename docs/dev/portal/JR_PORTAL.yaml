@@ -44,15 +44,15 @@ paths:
       tags:
         - quote
       parameters:
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/search_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - name: quote_id
+        - name: quoteId
           in: query
           description: id of the quote. If this parameter is missing, the items of a random quote will be returned.
           schema:
             type: string
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
       responses:
         '200':
           $ref: '#/components/responses/quote-items'
@@ -111,15 +111,15 @@ paths:
       tags:
         - order
       parameters:
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/search_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - name: order_id
+        - name: orderId
           in: query
           description: id of the order. If this parameter is missing, the items of a random order will be returned.
           schema:
             type: string
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
       responses:
         '200':
           $ref: '#/components/responses/order-items'
@@ -197,7 +197,7 @@ paths:
       tags:
         - ticket
       parameters:
-        - name: ticket_id
+        - name: ticketId
           in: query
           description: id of the ticket. If this parameter is missing, the messages of a random ticket will be returned.
           schema:
@@ -238,6 +238,37 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ticket-message'
+        '403':
+          $ref: '#/components/responses/error_user_unknown'
+
+  /portal/marketing-event:
+    get:
+      summary: Fetch all marketing events
+      description: Searches all events which are open for registration
+      tags:
+        - marketing-event
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/marketing-events'
+        '403':
+          $ref: '#/components/responses/error_user_unknown'
+
+  /portal/marketing-event/{id}:
+    get:
+      summary: Fetch a single marketing event
+      description: Searches the _id of an event which is open for registration
+      tags:
+        - marketing-event
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/marketing-event'
         '403':
           $ref: '#/components/responses/error_user_unknown'
 
@@ -401,6 +432,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ticket-messages'
+
+    marketing-event:
+      description: event data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/marketing-event'
+
+    marketing-events:
+      description: a list of events
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/marketing-events'
 
     user:
       description: user data
@@ -726,6 +771,7 @@ components:
     ticket:
       type: object
       allOf:
+        - $ref: '#/components/schemas/object'
         - $ref: '#/components/schemas/ticket_base'
       properties:
         number:
@@ -749,8 +795,8 @@ components:
           example: Doe, John (Service)
         createdBy:
           type: string
-          description: The contact who has submitted this ticket
-          example: Singer, Marla
+          description: The ID of the contact who has submitted this ticket
+          example: C30CF665CA354E7D869F7A195D5C1754
         createdAt:
           type: string
           description: The date when the ticket was created
@@ -787,11 +833,11 @@ components:
         _id:
           type: string
           description: identifier of the message
-          example: E6F2DE085CE74697BE786438A3445993_1
+          example: E6F2DE085CE74697BE786438A34459931
         createdBy:
           type: string
-          description: The name of the person who has posted this message
-          example: John Doe
+          description: The ID of the contact who has posted this message
+          example: C30CF665CA354E7D869F7A195D5C1754
         createdAt:
           type: string
           description: Timestamp when the message was posted
@@ -805,20 +851,93 @@ components:
           items:
             $ref: '#/components/schemas/ticket-message'
 
+    marketing-event:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        keyword:
+          type: string
+          description: Title of the event
+          example: User group meeting
+        number:
+          type: string
+          description: Number for identifying the event
+          example: P-24-055493
+        begin:
+          type: string
+          description: start date
+          example: 2024-01-30T08:00:00
+        end:
+          type: string
+          description: start date
+          example: 2024-01-30T16:00:00
+        location:
+          type: string
+          description: Were will the event take place?
+          example: Head quarter
+        organizer:
+          type: string
+          description: Name of the contact that is organizing the event
+          example: Event company (Berlin)
+        responsibleAgent:
+          type: string
+          description: The ID of the person who is responsible for this event
+          example: 6BB7A0BBFE5040138E82C10FFE746C61
+        status:
+          type: string
+          description: Current status of the event
+          example: registration open
+        url:
+          type: string
+          description: URL with more information about the event
+          example: https://www.justrelate.com
+        language:
+          type: string
+          description: The language of the event
+          example: English
+        freeSeats:
+          type: number
+          description: How many registrations are still possible. null of the number ir unknown.
+          example: 12
+        attendanceFee:
+          type: number
+          description: The costs for a registration/attendance
+          example: 99.90
+        description:
+          type: string
+          description: Additional text that describes the event
+          example: News from out products
+
+    marketing-events:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/marketing-event'
+
     user:
       type: object
       allOf:
         - $ref: '#/components/schemas/object'
       properties:
-        composedName:
+        name:
           type: string
-          description: name including salutation, first and last name
-          example: Mr. John Doe
-        firstName:
+          description: name consisting of given and family name
+          example: John Doe
+        salutation:
+          type: string
+          description: salutation of the person
+          example: Mr.
+        givenName:
           type: string
           description: first name
           example: John
-        lastName:
+        familyName:
           type: string
           description: last name
           example: Doe
