@@ -1,7 +1,7 @@
 openapi: 3.0.3
 
 info:
-  version: '1.0'
+  version: '8.2'
   title: Portal API
   description: Endpoints to be used by the Scrivito portal. All endpoints require an IAM authorization.
 
@@ -241,12 +241,12 @@ paths:
         '403':
           $ref: '#/components/responses/error_user_unknown'
 
-  /portal/marketing-event:
+  /portal/event:
     get:
       summary: Fetch all marketing events
       description: Searches all events which are open for registration
       tags:
-        - marketing-event
+        - event
       parameters:
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
@@ -254,30 +254,30 @@ paths:
         - $ref: '#/components/parameters/limit_query'
       responses:
         '200':
-          $ref: '#/components/responses/marketing-events'
+          $ref: '#/components/responses/events'
         '403':
           $ref: '#/components/responses/error_user_unknown'
 
-  /portal/marketing-event/{id}:
+  /portal/event/{id}:
     get:
       summary: Fetch a single marketing event
       description: Searches the _id of an event which is open for registration
       tags:
-        - marketing-event
+        - event
       parameters:
         - $ref: '#/components/parameters/id_path'
       responses:
         '200':
-          $ref: '#/components/responses/marketing-event'
+          $ref: '#/components/responses/event'
         '403':
           $ref: '#/components/responses/error_user_unknown'
 
-  /portal/marketing-event-registration:
+  /portal/event-registration:
     get:
       summary: Fetch all marketing events registrations
       description: Searches all relations of the user to events
       tags:
-        - marketing-event
+        - event
       parameters:
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
@@ -285,54 +285,54 @@ paths:
         - $ref: '#/components/parameters/limit_query'
       responses:
         '200':
-          $ref: '#/components/responses/marketing-event-registrations'
+          $ref: '#/components/responses/event-registrations'
         '403':
           $ref: '#/components/responses/error_user_unknown'
     post:
       summary: Register for an event
       description: adds a relation to an event for the user and sets the status to registered
       tags:
-        - marketing-event
+        - event
       requestBody:
         description: The registration data
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/marketing-event-registration_base'
+              $ref: '#/components/schemas/event-registration_base'
       responses:
         '200':
-          $ref: '#/components/responses/marketing-event-registration'
+          $ref: '#/components/responses/event-registration'
         '201':
-          $ref: '#/components/responses/marketing-event-registration'
+          $ref: '#/components/responses/event-registration'
         '400':
           $ref: '#/components/responses/error_missing_data'
         '403':
           $ref: '#/components/responses/error_user_unknown'
 
-  /portal/marketing-event-registration/{id}:
+  /portal/event-registration/{id}:
     get:
       summary: Fetch a single marketing event registration
       description: Searches the _id of an event registration
       tags:
-        - marketing-event
+        - event
       parameters:
         - $ref: '#/components/parameters/id_path'
       responses:
         '200':
-          $ref: '#/components/responses/marketing-event-registration'
+          $ref: '#/components/responses/event-registration'
         '403':
           $ref: '#/components/responses/error_user_unknown'
     delete:
       summary: Unregister from an event
       description: Sets the status to unregistered
       tags:
-        - marketing-event
+        - event
       parameters:
         - $ref: '#/components/parameters/id_path'
       responses:
         '200':
-          $ref: '#/components/responses/marketing-event-registration'
+          $ref: '#/components/responses/event-registration'
         '403':
           $ref: '#/components/responses/error_user_unknown'
 
@@ -497,33 +497,33 @@ components:
           schema:
             $ref: '#/components/schemas/ticket-messages'
 
-    marketing-event:
+    event:
       description: event data
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/marketing-event'
+            $ref: '#/components/schemas/event'
 
-    marketing-events:
+    events:
       description: a list of events
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/marketing-events'
+            $ref: '#/components/schemas/events'
 
-    marketing-event-registration:
+    event-registration:
       description: event registration data
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/marketing-event-registration'
+            $ref: '#/components/schemas/event-registration'
   
-    marketing-event-registrations:
+    event-registrations:
       description: a list of event registrations
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/marketing-event-registrations'
+            $ref: '#/components/schemas/event-registrations'
 
     user:
       description: user data
@@ -700,6 +700,10 @@ components:
           type: number
           description: totel price of the project
           example: 73429.50
+        totalPriceCurrency:
+          type: string
+          description: ISO 4217 code of the currency
+          example: EUR
         description:
           type: string
           description: description of the project
@@ -941,7 +945,7 @@ components:
           items:
             $ref: '#/components/schemas/ticket-message'
 
-    marketing-event:
+    event:
       type: object
       allOf:
         - $ref: '#/components/schemas/object'
@@ -954,11 +958,11 @@ components:
           type: string
           description: Number for identifying the event
           example: P-24-055493
-        begin:
+        beginsAt:
           type: string
           description: start date
           example: 2024-01-30T08:00:00
-        end:
+        endsAt:
           type: string
           description: start date
           example: 2024-01-30T16:00:00
@@ -999,7 +1003,7 @@ components:
           description: Additional text that describes the event
           example: News from out products
 
-    marketing-events:
+    events:
       type: object
       properties:
         continuation:
@@ -1008,9 +1012,9 @@ components:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/marketing-event'
+            $ref: '#/components/schemas/event'
 
-    marketing-event-registration_base:
+    event-registration_base:
       type: object
       properties:
         eventId:
@@ -1018,18 +1022,18 @@ components:
           description: id of the event
           example: 350D39F5380B4DF092A5E23F400D655A
         
-    marketing-event-registration:
+    event-registration:
       type: object
       allOf:
         - $ref: '#/components/schemas/object'
-        - $ref: '#/components/schemas/marketing-event-registration_base'
+        - $ref: '#/components/schemas/event-registration_base'
       properties:
         registered:
           type: boolean
           description: is the user registered for this event
           example: true
 
-    marketing-event-registrations:
+    event-registrations:
       type: object
       properties:
         continuation:
@@ -1038,7 +1042,7 @@ components:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/marketing-event-registration'
+            $ref: '#/components/schemas/event-registration'
   
     user:
       type: object
