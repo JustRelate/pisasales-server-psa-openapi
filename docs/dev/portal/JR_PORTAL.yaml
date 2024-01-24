@@ -167,7 +167,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ticket_base'
+              $ref: '#/components/schemas/ticket-upload'
       responses:
         '201':
           $ref: '#/components/responses/ticket'
@@ -218,7 +218,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ticket-message_base'
+              $ref: '#/components/schemas/ticket-message-upload'
       responses:
         '201':
           $ref: '#/components/responses/ticket'
@@ -365,7 +365,65 @@ paths:
           $ref: '#/components/responses/whoami'
         '403':
           $ref: '#/components/responses/error_user_unknown'
-  
+
+  /portal/binary-access-token:
+    get:
+      summary: Request a token for accessing binary data
+      description: Returns an URL containing a token that is valid for a limited time and grants access to a single record
+      tags:
+        - binary-access
+      parameters:
+        - name: id
+          in: path
+          description: binary ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/binary-access-token'
+        '403':
+          $ref: '#/components/responses/error_user_unknown'
+
+  /portal/binary-access:
+    get:
+      summary: Get the binary data for an access token
+      description: No IAM is needed for this endpoint
+      tags:
+        - binary-access
+      parameters:
+        - name: token
+          in: path
+          description: binary access token
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: binary data
+          content:
+            application/octet-stream: 
+              schema:
+                type: string
+                format: binary
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                description: MIME type
+                example: image/jpg
+            Content-Length:
+              schema:
+                type: integer
+                description: Length in bytes
+                example: 22192
+            Content-Disposition:
+              schema:
+                type: string
+                example: attachment; filename="screenshot.jpg"
+        '401':
+          description: the token is invalid or expired
+
 components:
   ########################################################################
   # parameters
@@ -538,6 +596,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/whoami'
+    
+    binary-access-token:
+      description: token for accessing binary data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/binary-access-token'
             
     error_user_unknown:
       description: The authenticated IAM user was not found
@@ -842,6 +907,38 @@ components:
           items:
             $ref: '#/components/schemas/order-item'
 
+    binary:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Identifier that is used to request a binary access token
+          example: c231fa48df3ee393c92dccac4dba5e7dE308ED22299D449C97DB6B7642FA2CA9
+        filename:
+          type: string
+          description: filename
+          example: screenshot1.jpg
+        contentType:
+          type: string
+          description: MIME type
+          example: image/jpg
+        contentLength:
+          type: integer
+          description: estimated size of the binary data in bytes
+          example: 245120
+
+    binary-upload:
+      type: object
+      properties:
+        filename:
+          type: string
+          description: file name of the uploaded binary data
+          example: text.txt
+        dataBase64:
+          type: string
+          description: Base64 encoded data
+          example: SGVsbG8gd29ybGQ=
+
     ticket_base:
       type: object
       properties:
@@ -895,6 +992,20 @@ components:
           type: string
           description: The date when the ticket was created
           example: 2023-11-29T18:00:00
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/binary'
+
+    ticket-upload:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ticket_base'
+      properties:
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/binary-upload'
 
     tickets:
       type: object
@@ -936,6 +1047,20 @@ components:
           type: string
           description: Timestamp when the message was posted
           example: 2023-12-06T10:30:00
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/binary'
+
+    ticket-message-upload:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ticket-message_base'
+      properties:
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/binary-upload'
 
     ticket-messages:
       type: object
@@ -1065,11 +1190,27 @@ components:
           type: string
           description: last name
           example: Doe
+        staff:
+          type: boolean
+          description: is the person an internal employee?
+          example: false
+        binaryImage:
+          type: string
+          description: token for the binary access to the user image
+          example: 1649cff06611a6025da3dd511a97fb4328ABC5BC362145C0A6F308F116C6A7A5
 
     whoami:
       type: object
       allOf:
         - $ref: '#/components/schemas/user'
+
+    binary-access-token:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: URL for accessing the binary data
+          example: /binary-access/1649cff06611a6025da3dd511a97fb4328ABC5BC362145C0A6F308F116C6A7A5
 
     ########################################################################
     # errors
