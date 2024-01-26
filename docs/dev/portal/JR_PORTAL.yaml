@@ -336,6 +336,54 @@ paths:
         '403':
           $ref: '#/components/responses/error_user_unknown'
 
+  /portal/global-document:
+    get:
+      summary: Fetch all documents that are globally available
+      description: Searches all documents with a "web flag"
+      tags:
+        - document
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/documents'
+        '403':
+          $ref: '#/components/responses/error_user_unknown'
+
+  /portal/document:
+    get:
+      summary: Fetch all documents
+      description: Searches all documents that are related to the logged in user
+      tags:
+        - document
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/documents'
+        '403':
+          $ref: '#/components/responses/error_user_unknown'
+
+  /portal/document/{id}:
+    get:
+      summary: Fetch a single document
+      description: Searches the document with the given id
+      tags:
+        - document
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/document'
+        '403':
+          $ref: '#/components/responses/error_user_unknown'
+
   /portal/user/{id}:
     get:
       summary: Get information about a single contact
@@ -582,6 +630,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/event-registrations'
+
+    document:
+      description: document data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/document'
+
+    documents:
+      description: a list of documents
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/documents'
 
     user:
       description: user data
@@ -994,6 +1056,7 @@ components:
           example: 2023-11-29T18:00:00
         attachments:
           type: array
+          description: Files that were attached when the ticket was created
           items:
             $ref: '#/components/schemas/binary'
 
@@ -1004,6 +1067,7 @@ components:
       properties:
         attachments:
           type: array
+          description: Files to attach to the new ticket
           items:
             $ref: '#/components/schemas/binary-upload'
 
@@ -1049,6 +1113,7 @@ components:
           example: 2023-12-06T10:30:00
         attachments:
           type: array
+          description: Files that were attached to this message
           items:
             $ref: '#/components/schemas/binary'
 
@@ -1059,6 +1124,7 @@ components:
       properties:
         attachments:
           type: array
+          description: Files to attach to this message
           items:
             $ref: '#/components/schemas/binary-upload'
 
@@ -1194,10 +1260,9 @@ components:
           type: boolean
           description: is the person an internal employee?
           example: false
-        binaryImage:
-          type: string
-          description: token for the binary access to the user image
-          example: 1649cff06611a6025da3dd511a97fb4328ABC5BC362145C0A6F308F116C6A7A5
+        image:
+          description: Image of the user
+          $ref: '#/components/schemas/binary'
 
     whoami:
       type: object
@@ -1211,6 +1276,61 @@ components:
           type: string
           description: URL for accessing the binary data
           example: /binary-access/1649cff06611a6025da3dd511a97fb4328ABC5BC362145C0A6F308F116C6A7A5
+        maxAge:
+          type: integer
+          description: time in seconds how long the token is valid
+          example: 3600
+    
+    documents:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/document'
+
+    document:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        title:
+          type: string
+          description: title of the document
+          example: Quote 2024-01-01
+        number:
+          type: string
+          description: document number
+          example: D-24-005632
+        type:
+          type: string
+          description: type of the document
+          example: Quote
+        format:
+          type: string
+          description: file format
+          example: pdf
+        createdAt:
+          type: string
+          description: Time when the document was created
+          example: 2024-01-01T15:06:00Z
+        language:
+          type: string
+          description: language of the document
+          example: German
+        size:
+          type: number
+          description: size in MB
+          example: 0.52
+        version:
+          type: string
+          description: version and revision
+          example: 1.0
+        body:
+            $ref: '#/components/schemas/binary'
 
     ########################################################################
     # errors
