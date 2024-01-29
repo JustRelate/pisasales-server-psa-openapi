@@ -5,6 +5,9 @@ info:
   title: Portal API
   description: Endpoints to be used by the Scrivito portal. All endpoints require an IAM authorization.
 
+servers: 
+  - url: '###server###'
+
 paths:
   /portal/quote:
     get:
@@ -21,7 +24,7 @@ paths:
         '200':
           $ref: '#/components/responses/quotes'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
+          $ref: '#/components/responses/error_403'
 
   /portal/quote/{id}:
     get:
@@ -35,7 +38,7 @@ paths:
         '200':
           $ref: '#/components/responses/quote'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
+          $ref: '#/components/responses/error_403'
           
   /portal/quote-item:
     get:
@@ -57,7 +60,7 @@ paths:
         '200':
           $ref: '#/components/responses/quote-items'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
+          $ref: '#/components/responses/error_403'
 
   /portal/quote-item/{id}:
     get:
@@ -71,8 +74,30 @@ paths:
         '200':
           $ref: '#/components/responses/quote-item'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
-          
+          $ref: '#/components/responses/error_403'
+
+  /portal/quote-document:
+    get:
+      summary: Fetch all quote document relations
+      description: Searches all documents that are related to a quote
+      tags:
+        - quote
+      parameters:
+        - name: quoteId
+          in: query
+          description: id of the quote. If this parameter is missing, the items of a random quote will be returned.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/quote-documents'
+        '403':
+          $ref: '#/components/responses/error_403'
+
   /portal/order:
     get:
       summary: Fetch all orders
@@ -88,7 +113,7 @@ paths:
         '200':
           $ref: '#/components/responses/orders'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
+          $ref: '#/components/responses/error_403'
 
   /portal/order/{id}:
     get:
@@ -102,7 +127,7 @@ paths:
         '200':
           $ref: '#/components/responses/order'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
+          $ref: '#/components/responses/error_403'
 
   /portal/order-item:
     get:
@@ -124,7 +149,7 @@ paths:
         '200':
           $ref: '#/components/responses/order-items'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
+          $ref: '#/components/responses/error_403'
 
   /portal/order-item/{id}:
     get:
@@ -138,7 +163,29 @@ paths:
         '200':
           $ref: '#/components/responses/order-item'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
+          $ref: '#/components/responses/error_403'
+
+  /portal/order-document:
+    get:
+      summary: Fetch all order document relations
+      description: Searches all documents that are related to a order
+      tags:
+        - order
+      parameters:
+        - name: orderId
+          in: query
+          description: id of the order. If this parameter is missing, the documents of a random order will be returned.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/order-documents'
+        '403':
+          $ref: '#/components/responses/error_403'
 
   /portal/ticket:
     get:
@@ -155,7 +202,7 @@ paths:
         '200':
           $ref: '#/components/responses/tickets'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
+          $ref: '#/components/responses/error_403'
     post:
       summary: Create a new ticket
       description: Creates new ticket
@@ -174,7 +221,7 @@ paths:
         '400':
           $ref: '#/components/responses/error_missing_data'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
+          $ref: '#/components/responses/error_403'
 
   /portal/ticket/{id}:
     get:
@@ -188,7 +235,7 @@ paths:
         '200':
           $ref: '#/components/responses/ticket'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
+          $ref: '#/components/responses/error_403'
 
   /portal/ticket-message:
     get:
@@ -206,7 +253,7 @@ paths:
         '200':
           $ref: '#/components/responses/ticket-messages'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
+          $ref: '#/components/responses/error_403'
     post:
       summary: Post a message
       description: Post a new message to a ticket
@@ -225,7 +272,7 @@ paths:
         '400':
           $ref: '#/components/responses/error_missing_data'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
+          $ref: '#/components/responses/error_403'
 
   /portal/ticket-message/{id}:
     get:
@@ -239,7 +286,7 @@ paths:
         '200':
           $ref: '#/components/responses/ticket-message'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
+          $ref: '#/components/responses/error_403'
 
   /portal/event:
     get:
@@ -256,7 +303,7 @@ paths:
         '200':
           $ref: '#/components/responses/events'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
+          $ref: '#/components/responses/error_403'
 
   /portal/event/{id}:
     get:
@@ -270,7 +317,7 @@ paths:
         '200':
           $ref: '#/components/responses/event'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
+          $ref: '#/components/responses/error_403'
 
   /portal/event-registration:
     get:
@@ -287,7 +334,7 @@ paths:
         '200':
           $ref: '#/components/responses/event-registrations'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
+          $ref: '#/components/responses/error_403'
     post:
       summary: Register for an event
       description: adds a relation to an event for the user and sets the status to registered
@@ -308,7 +355,7 @@ paths:
         '400':
           $ref: '#/components/responses/error_missing_data'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
+          $ref: '#/components/responses/error_403'
 
   /portal/event-registration/{id}:
     get:
@@ -322,7 +369,7 @@ paths:
         '200':
           $ref: '#/components/responses/event-registration'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
+          $ref: '#/components/responses/error_403'
     delete:
       summary: Unregister from an event
       description: Sets the status to unregistered
@@ -334,7 +381,7 @@ paths:
         '200':
           $ref: '#/components/responses/event-registration'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
+          $ref: '#/components/responses/error_403'
 
   /portal/global-document:
     get:
@@ -351,7 +398,7 @@ paths:
         '200':
           $ref: '#/components/responses/documents'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
+          $ref: '#/components/responses/error_403'
 
   /portal/document:
     get:
@@ -368,7 +415,7 @@ paths:
         '200':
           $ref: '#/components/responses/documents'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
+          $ref: '#/components/responses/error_403'
 
   /portal/document/{id}:
     get:
@@ -382,7 +429,7 @@ paths:
         '200':
           $ref: '#/components/responses/document'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
+          $ref: '#/components/responses/error_403'
 
   /portal/user/{id}:
     get:
@@ -398,7 +445,7 @@ paths:
         '400':
           $ref: '#/components/responses/error_invalid_id'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
+          $ref: '#/components/responses/error_403'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -412,7 +459,7 @@ paths:
         '200':
           $ref: '#/components/responses/whoami'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
+          $ref: '#/components/responses/error_403'
 
   /portal/binary-access-token:
     get:
@@ -431,7 +478,7 @@ paths:
         '200':
           $ref: '#/components/responses/binary-access-token'
         '403':
-          $ref: '#/components/responses/error_user_unknown'
+          $ref: '#/components/responses/error_403'
 
   /portal/binary-access:
     get:
@@ -645,6 +692,34 @@ components:
           schema:
             $ref: '#/components/schemas/documents'
 
+    quote-document:
+      description: quote document relation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/quote-document'
+
+    quote-documents:
+      description: a list of quote document relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/quote-documents'
+
+    order-document:
+      description: order document relation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/order-document'
+
+    order-documents:
+      description: a list of order document relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/order-documents'
+
     user:
       description: user data
       content:
@@ -665,27 +740,16 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/binary-access-token'
-            
-    error_user_unknown:
-      description: The authenticated IAM user was not found
+
+    error_403:
+      description: The authentication has failed
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              code:
-                type: string
-                example: 'user.unknown'
-              error:
-                type: string
-                example: 'The user was not found'
-              details:
-                type: object
-                properties:
-                  email:
-                    type: string
-                    example: 'john.doe@acme.org'
-                    
+            oneOf:
+              - $ref: '#/components/schemas/error_user_unknown'
+              - $ref: '#/components/schemas/error_user_locked'
+
     error_invalid_id:
       description: The authenticated IAM user was not found
       content:
@@ -1236,6 +1300,7 @@ components:
             $ref: '#/components/schemas/event-registration'
   
     user:
+      description: user object
       type: object
       allOf:
         - $ref: '#/components/schemas/object'
@@ -1256,6 +1321,14 @@ components:
           type: string
           description: last name
           example: Doe
+        email:
+          type: string
+          description: email address
+          example: john.doe@acme.com
+        position:
+          type: string
+          description: position inside of the organization
+          example: Sales manager
         staff:
           type: boolean
           description: is the person an internal employee?
@@ -1268,6 +1341,15 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/user'
+      properties:
+        salesUserId:
+          type: string
+          description: sales agent
+          example: A1CDE5E153264129BED9A1F8D64F74C7
+        serviceUserId:
+          type: string
+          description: service agent
+          example: 9BFC4D9331B84D2E8DB6C0BCAA851007
 
     binary-access-token:
       type: object
@@ -1332,6 +1414,96 @@ components:
         body:
             $ref: '#/components/schemas/binary'
 
+    project-document:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        documentId:
+          type: string
+          description: ''
+          example: B5BE88F61D8E4070875BCB263E48210F
+
+    quote-document:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project-document'
+      properties:
+        quoteId:
+          type: string
+          description: Quote Id
+          example: FC4D24E70FEF4CE2B2C68C9262F69C4C
+
+    quote-documents:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/quote-document'
+
+    order-document:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project-document'
+      properties:
+        orderId:
+          type: string
+          description: Order Id
+          example: DB5D9A088ED144509160EDFF573C8BE9
+
+    order-documents:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/order-document'
+
     ########################################################################
     # errors
     ########################################################################
+
+    error_user_unknown:
+      description: The authenticated IAM user was not found
+      type: object
+      properties:
+        code:
+          type: string
+          example: 'user.unknown'
+        error:
+          type: string
+          example: 'The user was not found'
+        details:
+          type: object
+          properties:
+            email:
+              type: string
+              example: 'john.doe@acme.org'
+
+    error_user_locked:
+      description: The authenticated IAM user is not allowed to login because the contact is locked
+      type: object
+      properties:
+        code:
+          type: string
+          example: 'user.locked'
+        error:
+          type: string
+          example: 'The user is locked'
+        details:
+          type: object
+          properties:
+            email:
+              type: string
+              example: 'john.doe@acme.org'
+            status:
+              type: string
+              description: identifier of the current status
+              example: PSA_PRS_LEA_BLC
