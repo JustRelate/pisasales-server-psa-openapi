@@ -5,9 +5,6 @@ info:
   title: Portal API
   description: Endpoints to be used by the Scrivito portal. All endpoints require an IAM authorization.
 
-servers: 
-  - url: '###server###'
-
 paths:
   /portal/quote:
     get:
@@ -288,6 +285,28 @@ paths:
         '403':
           $ref: '#/components/responses/error_403'
 
+  /portal/ticket-document:
+    get:
+      summary: Fetch all ticket document relations
+      description: Searches all documents that are related to a ticket
+      tags:
+        - ticket
+      parameters:
+        - name: ticketId
+          in: query
+          description: id of the ticket. If this parameter is missing, the documents of a random ticket will be returned.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/ticket-documents'
+        '403':
+          $ref: '#/components/responses/error_403'
+
   /portal/event:
     get:
       summary: Fetch all marketing events
@@ -383,6 +402,28 @@ paths:
         '403':
           $ref: '#/components/responses/error_403'
 
+  /portal/event-document:
+    get:
+      summary: Fetch all event document relations
+      description: Searches all documents that are related to a event
+      tags:
+        - event
+      parameters:
+        - name: eventId
+          in: query
+          description: id of the event. If this parameter is missing, the documents of a random event will be returned.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/event-documents'
+        '403':
+          $ref: '#/components/responses/error_403'
+
   /portal/global-document:
     get:
       summary: Fetch all documents that are globally available
@@ -431,10 +472,41 @@ paths:
         '403':
           $ref: '#/components/responses/error_403'
 
+  /portal/service-object:
+    get:
+      summary: Fetch all service objects
+      description: Searches all service objects where the logged in user is customer, carrier or supplier
+      tags:
+        - service-object
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/service-objects'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/service-object/{id}:
+    get:
+      summary: Fetch a single service object
+      description: Searches the service object with the given id
+      tags:
+        - service-object
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/service-object'
+        '403':
+          $ref: '#/components/responses/error_403'
+
   /portal/user/{id}:
     get:
       summary: Get information about a single contact
-      description: Returns contact data. Only the dat aof internal contacts and the contacts that belong to the users organization are returned.
+      description: Returns contact data. Only the data of internal contacts and the contacts that belong to the users organization are returned.
       tags:
         - user
       parameters:
@@ -650,6 +722,20 @@ components:
           schema:
             $ref: '#/components/schemas/ticket-messages'
 
+    ticket-document:
+      description: ticket document relation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ticket-document'
+
+    ticket-documents:
+      description: a list of ticket document relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ticket-documents'
+
     event:
       description: event data
       content:
@@ -677,6 +763,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/event-registrations'
+
+    event-document:
+      description: event document relation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/event-document'
+
+    event-documents:
+      description: a list of event document relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/event-documents'
 
     document:
       description: document data
@@ -719,6 +819,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/order-documents'
+
+    service-object:
+      description: service object data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/service-object'
+
+    service-objects:
+      description: a list of service objects
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/service-objects'
 
     user:
       description: user data
@@ -1412,6 +1526,7 @@ components:
           description: version and revision
           example: 1.0
         body:
+            description: Binary data of the document
             $ref: '#/components/schemas/binary'
 
     project-document:
@@ -1465,6 +1580,148 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/order-document'
+
+    event-document:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project-document'
+      properties:
+        eventId:
+          type: string
+          description: Event Id
+          example: DB5D9A088ED144509160EDFF573C8BE9
+
+    event-documents:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/event-document'
+
+    ticket-document:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project-document'
+      properties:
+        ticketId:
+          type: string
+          description: Ticket  Id
+          example: DB5D9A088ED144509160EDFF573C8BE9
+
+    ticket-documents:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ticket-document'
+
+    service-object:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        keyword:
+          type: string
+          description: Name of the service object
+          example: Wind turbine 6 MW
+        number:
+          type: string
+          description: Unique number
+          example: Wind turbine 6 MW
+        serialNumber:
+          type: string
+          description: Serial number
+          example: 492648238736292
+        modelNumber:
+          type: string
+          description: Model number
+          example: t.6.123
+        status:
+          type: string
+          description: Status name
+          example: active
+        responsibleAgent:
+          type: string
+          description: Id of the user that is responsible for this object
+          example: 95156F23F9A347C79AE3B28008EA15FF
+        customer:
+          type: string
+          description: Name of the customer
+          example: Big customer
+        isCustomer:
+          type: boolean
+          description: Is the current user the customer of this object?
+          example: true
+        carrier:
+          type: string
+          description: Name of the carrier
+          example: ACME Ltd.
+        isCarrier:
+          type: boolean
+          description: Is the current user the carrier of this object?
+          example: false
+        supplier:
+          type: string
+          description: Name of the supplier
+          example: Deliverou
+        isSupplier:
+          type: boolean
+          description: Is the current user the supplier of this object?
+          example: false
+        product:
+          type: string
+          description: Name of the product that this object represents
+          example: Turbine 6 MW
+        installedAt:
+          type: string
+          description: ISO date time when the object was installed
+          example: 2024-01-31T11:42:58Z
+        warrentyEndsAt:
+          type: string
+          description: ISO date time when the warranty ends
+          example: 2024-01-31T11:42:58Z
+        information:
+          type: string
+          description: Description
+          example: Large land bases power plant
+        locationStreet:
+          type: string
+          description: Street where the object is installed
+          example: 28 Mill Road
+        locationPostalCode:
+          type: string
+          description: Postal code where the object is installed
+          example: IP12 4NP
+        locationCity:
+          type: string
+          description: City where the object is installed
+          example: Woodbridge
+        locationCountry:
+          type: string
+          description: Country where the object is installed
+          example: United kingdom
+        picture:
+          description: Picture of the service object
+          $ref: '#/components/schemas/binary'
+
+    service-objects:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/service-object'
 
     ########################################################################
     # errors
