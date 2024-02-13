@@ -234,57 +234,6 @@ paths:
         '403':
           $ref: '#/components/responses/error_403'
 
-  /portal/ticket-message:
-    get:
-      summary: Fetch the messages of a ticket
-      description: The messages are ordered from oldest to newest
-      tags:
-        - ticket
-      parameters:
-        - name: ticketId
-          in: query
-          description: id of the ticket. If this parameter is missing, the messages of a random ticket will be returned.
-          schema:
-            type: string
-      responses:
-        '200':
-          $ref: '#/components/responses/ticket-messages'
-        '403':
-          $ref: '#/components/responses/error_403'
-    post:
-      summary: Post a message
-      description: Post a new message to a ticket
-      tags:
-        - ticket
-      requestBody:
-        description: The message data
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ticket-message-upload'
-      responses:
-        '201':
-          $ref: '#/components/responses/ticket'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/ticket-message/{id}:
-    get:
-      summary: Fetch the message of a ticket
-      description: Returns a single ticket message
-      tags:
-        - ticket
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-      responses:
-        '200':
-          $ref: '#/components/responses/ticket-message'
-        '403':
-          $ref: '#/components/responses/error_403'
-
   /portal/ticket-document:
     get:
       summary: Fetch all ticket document relations
@@ -304,6 +253,57 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ticket-documents'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/message:
+    get:
+      summary: Fetch the messages of a project
+      description: The messages are ordered from oldest to newest
+      tags:
+        - message
+      parameters:
+        - name: subjectId
+          in: query
+          description: id of the project. If this parameter is missing, the messages of a random project will be returned.
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/messages'
+        '403':
+          $ref: '#/components/responses/error_403'
+    post:
+      summary: Post a new message
+      description: Post a new message to a project
+      tags:
+        - message
+      requestBody:
+        description: The message data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/message-upload'
+      responses:
+        '201':
+          $ref: '#/components/responses/message'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/message/{id}:
+    get:
+      summary: Fetch the message of a project
+      description: Returns a single project message
+      tags:
+        - message
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/message'
         '403':
           $ref: '#/components/responses/error_403'
 
@@ -708,19 +708,19 @@ components:
           schema:
             $ref: '#/components/schemas/tickets'
             
-    ticket-message:
-      description: ticket message
+    message:
+      description: message
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ticket-message'
+            $ref: '#/components/schemas/message'
 
-    ticket-messages:
-      description: a list of ticket messages
+    messages:
+      description: a list of messages
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ticket-messages'
+            $ref: '#/components/schemas/messages'
 
     ticket-document:
       description: ticket document relation
@@ -952,6 +952,10 @@ components:
           example: P-23-055168
         type:
           type: string
+          description: identifier of the sub type of the project
+          example: PSA_ORG_STY_STD
+        typeLocalized:
+          type: string
           description: sub type of the project
           example: Standard
         customer:
@@ -971,9 +975,17 @@ components:
           description: the name of the sales partner
         status:
           type: string
+          description: identifier of the current status
+          example: PSA_PRO_ORD_INC
+        statusLocalized:
+          type: string
           description: name of the current status
           example: order entry
         mainStatus:
+          type: string
+          description: The identifier of the main status
+          example: PSA_SAP_MAI_QUO_QUO_GEN
+        mainStatusLocalized:
           type: string
           description: The main status
           example: Quote generation
@@ -996,8 +1008,16 @@ components:
         termsOfDelivery:
           type: string
           description: the agreed terms of delivery
+          example: RFC_TOD_DDP
+        termsOfDeliveryLocalized:
+          type: string
+          description: the agreed terms of delivery
           example: delivered duty paid
         termsOfPayment:
+          type: string
+          description: the agreedterms of payment
+          example: PSA_TOP_10
+        termsOfPaymentLocalized:
           type: string
           description: the agreedterms of payment
           example: cash payable within 14 days
@@ -1074,6 +1094,10 @@ components:
           example: 1.5
         quantityUnit:
           type: string
+          description: the identifier of the item unit
+          example: KGR
+        quantityUnitLocalized:
+          type: string
           description: the name of the item unit
           example: kg
         name:
@@ -1087,7 +1111,11 @@ components:
         category:
           type: string
           description: product category
-          example: Service
+          example: PSA_ART_OPE
+        categoryLocalized:
+          type: string
+          description: product category
+          example: Operation
         unitPrice:
           type: number
           description: price per unit
@@ -1192,6 +1220,10 @@ components:
           example: It is not working
         type:
           type: string
+          description: Type identifier of the ticket
+          enum: [PSA_SVC_TRB, PSA_SVC_CPL, PSA_SVC_CAL]
+        typeLocalized:
+          type: string
           description: Type of the ticket
           enum: [Fault, Claim, Question]
         
@@ -1209,6 +1241,10 @@ components:
           description: Number that is used by the customer to reference this ticket
           example: T-4711
         status:
+          type: string
+          description: Current status identifier of the ticket
+          example: PSA_SVC_CAL_WRK
+        statusLocalized:
           type: string
           description: Current status of the ticket
           example: In progress
@@ -1260,22 +1296,22 @@ components:
           items:
             $ref: '#/components/schemas/ticket'
 
-    ticket-message_base:
+    message_base:
       type: object
       properties:
-        ticketId:
+        subjectId:
           type: string
-          description: id of the associated ticket
+          description: id of the associated project
           example: E6F2DE085CE74697BE786438A3445993
         text:
           type: string
           description: the message text
           example: The red light is on
 
-    ticket-message:
+    message:
       type: object
       allOf:
-        - $ref: '#/components/schemas/ticket-message_base'
+        - $ref: '#/components/schemas/message_base'
       properties:
         _id:
           type: string
@@ -1295,10 +1331,10 @@ components:
           items:
             $ref: '#/components/schemas/binary'
 
-    ticket-message-upload:
+    message-upload:
       type: object
       allOf:
-        - $ref: '#/components/schemas/ticket-message_base'
+        - $ref: '#/components/schemas/message_base'
       properties:
         attachments:
           type: array
@@ -1306,13 +1342,13 @@ components:
           items:
             $ref: '#/components/schemas/binary-upload'
 
-    ticket-messages:
+    messages:
       type: object
       properties:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/ticket-message'
+            $ref: '#/components/schemas/message'
 
     event:
       type: object
@@ -1349,6 +1385,10 @@ components:
           example: 6BB7A0BBFE5040138E82C10FFE746C61
         status:
           type: string
+          description: Identifier of the current status of the event
+          example: PSA_PRO_EVT_REG_OPN
+        statusLocalized:
+          type: string
           description: Current status of the event
           example: registration open
         url:
@@ -1356,6 +1396,10 @@ components:
           description: URL with more information about the event
           example: https://www.justrelate.com
         language:
+          type: string
+          description: Identifier of the language of the event
+          example: ENG
+        languageLocalized:
           type: string
           description: The language of the event
           example: English
@@ -1503,6 +1547,10 @@ components:
           example: D-24-005632
         type:
           type: string
+          description: identifier of the type of the document
+          example: PSA_OFF
+        typeLocalized:
+          type: string
           description: type of the document
           example: Quote
         format:
@@ -1514,6 +1562,10 @@ components:
           description: Time when the document was created
           example: 2024-01-01T15:06:00Z
         language:
+          type: string
+          description: identifier of the language of the document
+          example: GER
+        languageLocalized:
           type: string
           description: language of the document
           example: German
@@ -1646,6 +1698,10 @@ components:
           example: t.6.123
         status:
           type: string
+          description: Status identifier
+          example: PSA_ART_SVC_ACT
+        statusLocalized:
+          type: string
           description: Status name
           example: active
         responsibleAgent:
@@ -1706,7 +1762,11 @@ components:
           example: Woodbridge
         locationCountry:
           type: string
-          description: Country where the object is installed
+          description: Country identifier where the object is installed
+          example: GBR
+        locationCountryLocalized:
+          type: string
+          description: Country name where the object is installed
           example: United kingdom
         picture:
           description: Picture of the service object
