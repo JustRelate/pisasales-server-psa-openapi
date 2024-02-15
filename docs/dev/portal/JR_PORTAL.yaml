@@ -503,6 +503,41 @@ paths:
         '403':
           $ref: '#/components/responses/error_403'
 
+  /portal/gdpr:
+    get:
+      summary: Fetch all GDPR purpose of uses
+      description: Searches all purpose of use of the authenticated user.
+      tags:
+        - gdpr
+      responses:
+        '200':
+          $ref: '#/components/responses/gdprs'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/gdpr/{id}:
+    put:
+      summary: Update a GDPR purpose of use
+      description: Updates the active flag
+      tags:
+        - gdpr
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      requestBody:
+        description: The new data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/gdpr-update'
+      responses:
+        '201':
+          $ref: '#/components/responses/gdpr'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_403'
+
   /portal/user/{id}:
     get:
       summary: Get information about a single contact
@@ -833,6 +868,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/service-objects'
+
+    gdpr:
+      description: GDPR purpose of use data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/gdpr'
+
+    gdprs:
+      description: a list of GDPR purpose of uses
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/gdprs'
 
     user:
       description: user data
@@ -1782,6 +1831,43 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/service-object'
+
+    gdpr:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        name:
+          type: string
+          description: name of the purpose of use
+          example: Contact by telephone
+        description:
+          type: string
+          description: description of the purpose of use
+          example: I agree to be contacted by telephone.
+        active:
+          type: boolean
+          description: is the purpose of use active?
+          example: true
+
+    gdprs:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/gdpr'
+
+    gdpr-update:
+      type: object
+      properties:
+        active:
+          type: boolean
+          description: is the purpose of use active?
+          example: true
 
     ########################################################################
     # errors
