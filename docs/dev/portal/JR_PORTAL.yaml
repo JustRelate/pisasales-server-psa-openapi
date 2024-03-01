@@ -17,6 +17,7 @@ paths:
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/quotes'
@@ -31,6 +32,7 @@ paths:
         - quote
       parameters:
         - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/quote'
@@ -53,6 +55,7 @@ paths:
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/quote-items'
@@ -67,6 +70,7 @@ paths:
         - quote
       parameters:
         - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/quote-item'
@@ -89,6 +93,7 @@ paths:
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/quote-documents'
@@ -106,6 +111,7 @@ paths:
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/orders'
@@ -120,6 +126,7 @@ paths:
         - order
       parameters:
         - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/order'
@@ -142,6 +149,7 @@ paths:
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/order-items'
@@ -156,6 +164,7 @@ paths:
         - order
       parameters:
         - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/order-item'
@@ -178,6 +187,7 @@ paths:
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/order-documents'
@@ -195,6 +205,7 @@ paths:
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/tickets'
@@ -205,6 +216,8 @@ paths:
       description: Creates new ticket
       tags:
         - ticket
+      parameters:
+        - $ref: '#/components/parameters/language_query'
       requestBody:
         description: The ticket data
         required: true
@@ -228,6 +241,7 @@ paths:
         - ticket
       parameters:
         - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/ticket'
@@ -250,6 +264,7 @@ paths:
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/ticket-documents'
@@ -268,6 +283,7 @@ paths:
           description: id of the project. If this parameter is missing, the messages of a random project will be returned.
           schema:
             type: string
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/messages'
@@ -278,6 +294,8 @@ paths:
       description: Post a new message to a project
       tags:
         - message
+      parameters:
+        - $ref: '#/components/parameters/language_query'
       requestBody:
         description: The message data
         required: true
@@ -301,6 +319,7 @@ paths:
         - message
       parameters:
         - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/message'
@@ -318,6 +337,7 @@ paths:
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/events'
@@ -332,6 +352,7 @@ paths:
         - event
       parameters:
         - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/event'
@@ -349,6 +370,7 @@ paths:
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/event-registrations'
@@ -359,6 +381,8 @@ paths:
       description: adds a relation to an event for the user and sets the status to registered
       tags:
         - event
+      parameters:
+        - $ref: '#/components/parameters/language_query'
       requestBody:
         description: The registration data
         required: true
@@ -384,6 +408,7 @@ paths:
         - event
       parameters:
         - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/event-registration'
@@ -396,6 +421,7 @@ paths:
         - event
       parameters:
         - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/event-registration'
@@ -418,6 +444,7 @@ paths:
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/event-documents'
@@ -435,6 +462,7 @@ paths:
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/documents'
@@ -452,6 +480,7 @@ paths:
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/documents'
@@ -466,6 +495,7 @@ paths:
         - document
       parameters:
         - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/document'
@@ -483,6 +513,7 @@ paths:
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/service-objects'
@@ -497,6 +528,7 @@ paths:
         - service-object
       parameters:
         - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/service-object'
@@ -509,6 +541,8 @@ paths:
       description: Searches all purpose of use of the authenticated user.
       tags:
         - gdpr
+      parameters:
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/gdprs'
@@ -523,6 +557,7 @@ paths:
         - gdpr
       parameters:
         - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
       requestBody:
         description: The new data
         required: true
@@ -546,6 +581,7 @@ paths:
         - user
       parameters:
         - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/user'
@@ -562,6 +598,8 @@ paths:
       description: Returns contact data of the user
       tags:
         - user
+      parameters:
+        - $ref: '#/components/parameters/language_query'
       responses:
         '200':
           $ref: '#/components/responses/whoami'
@@ -668,6 +706,14 @@ components:
       example: 10
       schema:
         type: number
+    language_query:
+      in: query
+      name: _language
+      description: Language to be used for the localized data fields (e.g. GER or ENG). If no language is specified, English will always be returned.
+      example: GER
+      schema:
+        type: string
+
 
   ########################################################################
   # responses
