@@ -550,7 +550,7 @@ paths:
           $ref: '#/components/responses/error_403'
 
   /portal/gdpr/{id}:
-    put:
+    patch:
       summary: Update a GDPR purpose of use
       description: Updates the active flag
       tags:
@@ -1535,11 +1535,6 @@ components:
       allOf:
         - $ref: '#/components/schemas/object'
         - $ref: '#/components/schemas/event-registration_base'
-      properties:
-        registered:
-          type: boolean
-          description: is the user registered for this event
-          example: true
 
     event-registrations:
       type: object
