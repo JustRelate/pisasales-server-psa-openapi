@@ -18,6 +18,7 @@ paths:
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
       responses:
         '200':
           $ref: '#/components/responses/quotes'
@@ -56,6 +57,7 @@ paths:
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
       responses:
         '200':
           $ref: '#/components/responses/quote-items'
@@ -112,6 +114,7 @@ paths:
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
       responses:
         '200':
           $ref: '#/components/responses/orders'
@@ -150,6 +153,7 @@ paths:
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
       responses:
         '200':
           $ref: '#/components/responses/order-items'
@@ -206,6 +210,7 @@ paths:
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
       responses:
         '200':
           $ref: '#/components/responses/tickets'
@@ -265,6 +270,7 @@ paths:
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
       responses:
         '200':
           $ref: '#/components/responses/ticket-documents'
@@ -284,6 +290,7 @@ paths:
           schema:
             type: string
         - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
       responses:
         '200':
           $ref: '#/components/responses/messages'
@@ -338,6 +345,7 @@ paths:
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
       responses:
         '200':
           $ref: '#/components/responses/events'
@@ -371,6 +379,7 @@ paths:
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
       responses:
         '200':
           $ref: '#/components/responses/event-registrations'
@@ -445,6 +454,7 @@ paths:
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
       responses:
         '200':
           $ref: '#/components/responses/event-documents'
@@ -463,6 +473,7 @@ paths:
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
       responses:
         '200':
           $ref: '#/components/responses/documents'
@@ -481,6 +492,7 @@ paths:
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
       responses:
         '200':
           $ref: '#/components/responses/documents'
@@ -514,6 +526,7 @@ paths:
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
       responses:
         '200':
           $ref: '#/components/responses/service-objects'
@@ -543,6 +556,7 @@ paths:
         - gdpr
       parameters:
         - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
       responses:
         '200':
           $ref: '#/components/responses/gdprs'
@@ -550,7 +564,7 @@ paths:
           $ref: '#/components/responses/error_403'
 
   /portal/gdpr/{id}:
-    put:
+    patch:
       summary: Update a GDPR purpose of use
       description: Updates the active flag
       tags:
@@ -706,6 +720,7 @@ components:
       example: 10
       schema:
         type: number
+
     language_query:
       in: query
       name: _language
@@ -714,6 +729,13 @@ components:
       schema:
         type: string
 
+    count_query:
+      in: query
+      name: _count
+      description: count the total number of results available
+      example: false
+      schema:
+        type: boolean
 
   ########################################################################
   # responses
@@ -1363,6 +1385,10 @@ components:
           type: string
           description: The date when the ticket was created
           example: 2023-11-29T18:00:00
+        serviceObject:
+          type: string
+          description: the id of an associated service object
+          example: 42CF5C982C5240D29A1453040668D8DC
         attachments:
           type: array
           description: Files that were attached when the ticket was created
@@ -1535,11 +1561,6 @@ components:
       allOf:
         - $ref: '#/components/schemas/object'
         - $ref: '#/components/schemas/event-registration_base'
-      properties:
-        registered:
-          type: boolean
-          description: is the user registered for this event
-          example: true
 
     event-registrations:
       type: object
