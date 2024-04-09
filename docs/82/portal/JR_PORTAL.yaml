@@ -1071,10 +1071,6 @@ components:
           type: string
           description: identifier of the sub type of the project
           example: PSA_ORG_STY_STD
-        typeLocalized:
-          type: string
-          description: sub type of the project
-          example: Standard
         customer:
           type: string
           description: the name of customer of the project
@@ -1094,18 +1090,10 @@ components:
           type: string
           description: identifier of the current status
           example: PSA_PRO_ORD_INC
-        statusLocalized:
-          type: string
-          description: name of the current status
-          example: order entry
         mainStatus:
           type: string
           description: The identifier of the main status
           example: PSA_SAP_MAI_QUO_QUO_GEN
-        mainStatusLocalized:
-          type: string
-          description: The main status
-          example: Quote generation
         open:
           type: boolean
           description: is the project currently in an open status?
@@ -1126,18 +1114,10 @@ components:
           type: string
           description: the agreed terms of delivery
           example: RFC_TOD_DDP
-        termsOfDeliveryLocalized:
-          type: string
-          description: the agreed terms of delivery
-          example: delivered duty paid
         termsOfPayment:
           type: string
           description: the agreedterms of payment
           example: PSA_TOP_10
-        termsOfPaymentLocalized:
-          type: string
-          description: the agreedterms of payment
-          example: cash payable within 14 days
         totalPrice:
           type: number
           description: totel price of the project
@@ -1167,6 +1147,10 @@ components:
         continuation:
           type: string
           description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
         results:
           type: array
           items:
@@ -1183,6 +1167,10 @@ components:
         continuation:
           type: string
           description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
         results:
           type: array
           items:
@@ -1213,10 +1201,6 @@ components:
           type: string
           description: the identifier of the item unit
           example: KGR
-        quantityUnitLocalized:
-          type: string
-          description: the name of the item unit
-          example: kg
         name:
           type: string
           description: name of the product
@@ -1229,10 +1213,6 @@ components:
           type: string
           description: product category
           example: PSA_ART_OPE
-        categoryLocalized:
-          type: string
-          description: product category
-          example: Operation
         unitPrice:
           type: number
           description: price per unit
@@ -1262,6 +1242,10 @@ components:
         continuation:
           type: string
           description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
         results:
           type: array
           items:
@@ -1287,6 +1271,10 @@ components:
         continuation:
           type: string
           description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
         results:
           type: array
           items:
@@ -1339,10 +1327,6 @@ components:
           type: string
           description: Type identifier of the ticket
           enum: [PSA_SVC_TRB, PSA_SVC_CPL, PSA_SVC_CAL]
-        typeLocalized:
-          type: string
-          description: Type of the ticket
-          enum: [Fault, Claim, Question]
         
     ticket:
       type: object
@@ -1361,10 +1345,6 @@ components:
           type: string
           description: Current status identifier of the ticket
           example: PSA_SVC_CAL_WRK
-        statusLocalized:
-          type: string
-          description: Current status of the ticket
-          example: In progress
         open:
           type: boolean
           description: is the ticket currently in an open status?
@@ -1412,6 +1392,10 @@ components:
         continuation:
           type: string
           description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
         results:
           type: array
           items:
@@ -1508,10 +1492,6 @@ components:
           type: string
           description: Identifier of the current status of the event
           example: PSA_PRO_EVT_REG_OPN
-        statusLocalized:
-          type: string
-          description: Current status of the event
-          example: registration open
         url:
           type: string
           description: URL with more information about the event
@@ -1520,10 +1500,6 @@ components:
           type: string
           description: Identifier of the language of the event
           example: ENG
-        languageLocalized:
-          type: string
-          description: The language of the event
-          example: English
         freeSeats:
           type: number
           description: How many registrations are still possible. null of the number ir unknown.
@@ -1543,6 +1519,10 @@ components:
         continuation:
           type: string
           description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
         results:
           type: array
           items:
@@ -1568,6 +1548,10 @@ components:
         continuation:
           type: string
           description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
         results:
           type: array
           items:
@@ -1643,6 +1627,10 @@ components:
         continuation:
           type: string
           description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
         results:
           type: array
           items:
@@ -1665,10 +1653,6 @@ components:
           type: string
           description: identifier of the type of the document
           example: PSA_OFF
-        typeLocalized:
-          type: string
-          description: type of the document
-          example: Quote
         format:
           type: string
           description: file format
@@ -1681,10 +1665,6 @@ components:
           type: string
           description: identifier of the language of the document
           example: GER
-        languageLocalized:
-          type: string
-          description: language of the document
-          example: German
         size:
           type: number
           description: size in MB
@@ -1723,6 +1703,10 @@ components:
         continuation:
           type: string
           description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
         results:
           type: array
           items:
@@ -1744,6 +1728,10 @@ components:
         continuation:
           type: string
           description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
         results:
           type: array
           items:
@@ -1765,6 +1753,10 @@ components:
         continuation:
           type: string
           description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
         results:
           type: array
           items:
@@ -1786,6 +1778,10 @@ components:
         continuation:
           type: string
           description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
         results:
           type: array
           items:
@@ -1816,10 +1812,6 @@ components:
           type: string
           description: Status identifier
           example: PSA_ART_SVC_ACT
-        statusLocalized:
-          type: string
-          description: Status name
-          example: active
         responsibleAgent:
           type: string
           description: Id of the user that is responsible for this object
@@ -1880,10 +1872,6 @@ components:
           type: string
           description: Country identifier where the object is installed
           example: GBR
-        locationCountryLocalized:
-          type: string
-          description: Country name where the object is installed
-          example: United kingdom
         picture:
           description: Picture of the service object
           $ref: '#/components/schemas/binary'
@@ -1894,6 +1882,10 @@ components:
         continuation:
           type: string
           description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
         results:
           type: array
           items:
@@ -1923,6 +1915,10 @@ components:
         continuation:
           type: string
           description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
         results:
           type: array
           items:
