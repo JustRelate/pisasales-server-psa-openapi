@@ -53,7 +53,6 @@ paths:
           schema:
             type: string
         - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
@@ -92,7 +91,6 @@ paths:
           schema:
             type: string
         - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
@@ -149,7 +147,6 @@ paths:
           schema:
             type: string
         - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
@@ -188,7 +185,6 @@ paths:
           schema:
             type: string
         - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
@@ -266,7 +262,6 @@ paths:
           schema:
             type: string
         - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
@@ -375,7 +370,6 @@ paths:
         - event
       parameters:
         - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
@@ -440,7 +434,7 @@ paths:
   /portal/event-document:
     get:
       summary: Fetch all event document relations
-      description: Searches all documents that are related to a event
+      description: Searches all documents that are related to an event
       tags:
         - event
       parameters:
@@ -450,7 +444,6 @@ paths:
           schema:
             type: string
         - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
@@ -545,6 +538,29 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/service-object'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/service-object-document:
+    get:
+      summary: Fetch all service object document relations
+      description: Searches all documents that are related to a service object
+      tags:
+        - service-object
+      parameters:
+        - name: serviceObjectId
+          in: query
+          description: id of the service object. If this parameter is missing, the documents of a random service object will be returned.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/service-object-documents'
         '403':
           $ref: '#/components/responses/error_403'
 
@@ -936,6 +952,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/service-objects'
+
+    service-object-document:
+      description: service object document relation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/service-object-document'
+
+    service-object-documents:
+      description: a list of service object document relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/service-object-documents'
 
     gdpr:
       description: GDPR purpose of use data
@@ -1890,6 +1920,35 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/service-object'
+
+    service-object-document:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        documentId:
+          type: string
+          description: ''
+          example: B5BE88F61D8E4070875BCB263E48210F
+        serviceObjectId:
+          type: string
+          description: Service object Id
+          example: DB5D9A088ED144509160EDFF573C8BE9
+
+    service-object-documents:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/service-object-document'
 
     gdpr:
       type: object
