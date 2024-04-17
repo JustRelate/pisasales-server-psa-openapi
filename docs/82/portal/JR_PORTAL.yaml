@@ -564,6 +564,41 @@ paths:
         '403':
           $ref: '#/components/responses/error_403'
 
+  /portal/callback-request:
+    get:
+      summary: Get the last callback request
+      description: Returns the most recent open request. If no open request is found, the last closed request is returned.
+      tags:
+        - callback-request
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/callback-request'
+        '403':
+          $ref: '#/components/responses/error_403'
+    post:
+      summary: Create a new callback request.
+      description: This will create a new task with your message.
+      tags:
+        - callback-request
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The message
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/callback-request_upload'
+      responses:
+        '201':
+          $ref: '#/components/responses/callback-request'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_403'
+
   /portal/gdpr:
     get:
       summary: Fetch all GDPR purpose of uses
@@ -966,6 +1001,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/service-object-documents'
+
+    callback-request:
+      description: a callback request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/callback-request'
 
     gdpr:
       description: GDPR purpose of use data
@@ -1989,6 +2031,24 @@ components:
         active:
           type: boolean
           description: is the purpose of use active?
+          example: true
+
+    callback-request_upload:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Text you want to submit to the recipient of the request
+          example: Please call me
+        
+    callback-request:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/callback-request_upload'
+      properties:
+        open:
+          type: boolean
+          description: Is the request still unanswered
           example: true
 
     ########################################################################
