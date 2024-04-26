@@ -103,13 +103,13 @@ paths:
   /portal/quote-request:
     post:
       summary: Create a new quote request.
-      description: This will create a new task with your message.
+      description: This will create a new task with your message. And also a quote is created.
       tags:
         - quote
       parameters:
         - $ref: '#/components/parameters/language_query'
       requestBody:
-        description: The message
+        description: The message and quote data
         required: true
         content:
           application/json:
@@ -309,6 +309,7 @@ paths:
             type: string
         - $ref: '#/components/parameters/language_query'
         - $ref: '#/components/parameters/count_query'
+        - $ref: '#/components/parameters/limit_query'
       responses:
         '200':
           $ref: '#/components/responses/messages'
@@ -1260,7 +1261,7 @@ components:
       properties:
         message:
           type: string
-          description: Text you want to submit to the recipient of the request
+          description: Text you want to submit to the recipient of the request. The message is stored at the task and the quote.
           example: Please send me a quote
         quoteData:
           $ref: '#/components/schemas/quote-request-data'
@@ -1272,6 +1273,7 @@ components:
 
     quote-request-data:
       type: object
+      description: If the quoteData is set, a quote will also be created with the provided data. This feature needs to be enabled with the variable 'PSA_RST_API_JR_QUO_REQ_CRE'
       properties:
         keyword: 
           type: string
@@ -1942,6 +1944,10 @@ components:
           type: string
           description: Status identifier
           example: PSA_ART_SVC_ACT
+        category:
+          type: string
+          description: Product category
+          example: PSA_ART_CAT_SVC_PCK
         responsibleAgent:
           type: string
           description: Id of the user that is responsible for this object
@@ -1982,6 +1988,14 @@ components:
           type: string
           description: ISO date time when the warranty ends
           example: 2024-01-31T11:42:58Z
+        productType:
+          type: string
+          description: Product type
+          example: PSA_MEN_ART_TYP_10
+        type:
+          type: string
+          description: Type
+          example: PSA_SVC_OBJ_TYP_MOD
         information:
           type: string
           description: Description
