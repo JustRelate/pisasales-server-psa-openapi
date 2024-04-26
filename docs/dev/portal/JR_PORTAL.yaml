@@ -100,6 +100,29 @@ paths:
         '403':
           $ref: '#/components/responses/error_403'
 
+  /portal/quote-request:
+    post:
+      summary: Create a new quote request.
+      description: This will create a new task with your message.
+      tags:
+        - quote
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The message
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/quote-request_upload'
+      responses:
+        '201':
+          description: The task was created
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_403'
+
   /portal/order:
     get:
       summary: Fetch all orders
@@ -1192,7 +1215,7 @@ components:
           example: PSA_TOP_10
         totalPrice:
           type: number
-          description: totel price of the project
+          description: total price of the project
           example: 73429.50
         totalPriceCurrency:
           type: string
@@ -1202,7 +1225,11 @@ components:
           type: string
           description: description of the project
           example: First offer
-          
+        url:
+          type: string
+          description: URL of the project
+          example: https://www.justrelate.com
+
     quote:
       type: object
       allOf:
@@ -1227,7 +1254,38 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/quote'
-            
+
+    quote-request_upload:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Text you want to submit to the recipient of the request
+          example: Please send me a quote
+        quoteData:
+          $ref: '#/components/schemas/quote-request-data'
+        attachments:
+          type: array
+          description: Files to attach to the new ticket
+          items:
+            $ref: '#/components/schemas/binary-upload'
+
+    quote-request-data:
+      type: object
+      properties:
+        keyword: 
+          type: string
+          description: The keyword for the quote
+          example: Quote number 1
+        price:
+          type: number
+          description: total price of the quote
+          example: 120000.99 
+        url:
+          type: string
+          description: Link to the product configuration
+          example: https://www.justrelate.com/cpq
+
     order:
       type: object
       allOf:
@@ -1247,7 +1305,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/order'
-            
+
     project-item:
       type: object
       allOf:
