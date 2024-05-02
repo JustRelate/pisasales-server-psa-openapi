@@ -117,7 +117,7 @@ paths:
               $ref: '#/components/schemas/quote-request_upload'
       responses:
         '201':
-          description: The task was created
+          description: A quote if a quote was created. If only a task was created the body is empty.
         '400':
           $ref: '#/components/responses/error_missing_data'
         '403':
@@ -214,6 +214,29 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/order-documents'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/order-request:
+    post:
+      summary: Create a new order request.
+      description: This will create a new task which instructs the commercial agent to convert a quote into an order.
+      tags:
+        - order
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The quote id
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/order-request_upload'
+      responses:
+        '201':
+          description: If a task was created the body is empty.
+        '400':
+          $ref: '#/components/responses/error_missing_data'
         '403':
           $ref: '#/components/responses/error_403'
 
@@ -1307,6 +1330,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/order'
+
+    order-request_upload:
+      type: object
+      properties:
+        quote:
+          type: string
+          description: The id of the quote that should be transfered
+          example: 709A9335EA1A473E855F4FCA4A12A027
 
     project-item:
       type: object
