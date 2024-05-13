@@ -117,7 +117,13 @@ paths:
               $ref: '#/components/schemas/quote-request_upload'
       responses:
         '201':
-          description: A quote if a quote was created. If only a task was created the body is empty.
+          description: A quote, if a quote was created. If only a task was created, the body is empty.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/empty'
+                  - $ref: '#/components/schemas/quote'
         '400':
           $ref: '#/components/responses/error_missing_data'
         '403':
@@ -234,11 +240,14 @@ paths:
               $ref: '#/components/schemas/order-request_upload'
       responses:
         '201':
-          description: If a task was created the body is empty.
+          $ref: '#/components/responses/empty'
+          description: If a task was created, the body is empty.
         '400':
           $ref: '#/components/responses/error_missing_data'
         '403':
           $ref: '#/components/responses/error_403'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
 
   /portal/ticket:
     get:
@@ -1091,6 +1100,13 @@ components:
           schema:
             $ref: '#/components/schemas/binary-access-token'
 
+    empty:
+      description: An empty JSON
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/empty'
+
     error_403:
       description: The authentication has failed
       content:
@@ -1334,7 +1350,7 @@ components:
     order-request_upload:
       type: object
       properties:
-        quote:
+        quoteId:
           type: string
           description: The id of the quote that should be transfered
           example: 709A9335EA1A473E855F4FCA4A12A027
@@ -1771,6 +1787,9 @@ components:
           type: string
           description: service agent
           example: 9BFC4D9331B84D2E8DB6C0BCAA851007
+
+    empty:
+      type: object
 
     binary-access-token:
       type: object
