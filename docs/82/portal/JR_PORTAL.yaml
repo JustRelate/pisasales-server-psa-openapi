@@ -667,7 +667,7 @@ paths:
           $ref: '#/components/responses/error_403'
         '404':
           $ref: '#/components/responses/error_record_not_found'
-    post:
+    put:
       summary: Create a new callback request.
       description: This will create a new task with your message.
       tags:
