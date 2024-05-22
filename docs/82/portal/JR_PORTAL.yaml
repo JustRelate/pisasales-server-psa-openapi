@@ -240,14 +240,46 @@ paths:
               $ref: '#/components/schemas/order-request_upload'
       responses:
         '201':
-          $ref: '#/components/responses/empty'
-          description: If a task was created, the body is empty.
+          $ref: '#/components/responses/order-request'
         '400':
           $ref: '#/components/responses/error_missing_data'
         '403':
           $ref: '#/components/responses/error_403'
         '404':
           $ref: '#/components/responses/error_record_not_found'
+
+    get:
+      summary: Fetch all order requests
+      description: Searches order requests that were created by the logged in user. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - order
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/order-requests'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/order-request/{id}:
+    get:
+      summary: Fetch a single order request
+      description: Searches the _id of an order request
+      tags:
+        - order
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/order-request'
+        '403':
+          $ref: '#/components/responses/error_403'
 
   /portal/ticket:
     get:
@@ -633,6 +665,8 @@ paths:
           $ref: '#/components/responses/callback-request'
         '403':
           $ref: '#/components/responses/error_403'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
     post:
       summary: Create a new callback request.
       description: This will create a new task with your message.
@@ -654,6 +688,23 @@ paths:
           $ref: '#/components/responses/error_missing_data'
         '403':
           $ref: '#/components/responses/error_403'
+
+  /portal/callback-request/{id}:
+    delete:
+      summary: Cancel an open callback request
+      description: Changes the status of the task if it is still open
+      tags:
+        - callback-request
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '204':
+          description: The callback request was canceled
+        '403':
+          $ref: '#/components/responses/error_403'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
 
   /portal/gdpr:
     get:
@@ -903,6 +954,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/order-items'
+
+    order-requests:
+      description: list of order requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/order-requests'
+
+    order-request:
+      description: order request data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/order-request'
           
     ticket:
       description: ticket data
@@ -1347,6 +1412,27 @@ components:
           items:
             $ref: '#/components/schemas/order'
 
+    order-request:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/order-request_upload'
+
+    order-requests:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/order-request'
+
     order-request_upload:
       type: object
       properties:
@@ -1748,8 +1834,8 @@ components:
           example: John Doe
         salutation:
           type: string
-          description: salutation of the person
-          example: Mr.
+          description: identifier of the salutation of the person
+          example: M
         givenName:
           type: string
           description: first name
@@ -2046,6 +2132,10 @@ components:
           type: string
           description: Type
           example: PSA_SVC_OBJ_TYP_MOD
+        parentId:
+          type: string
+          description: ID of the parent service object in the tree structure
+          example: 7EE9B4F3EAF2450384738C3667AE6956
         information:
           type: string
           description: Description
@@ -2166,12 +2256,8 @@ components:
     callback-request:
       type: object
       allOf:
+        - $ref: '#/components/schemas/object'
         - $ref: '#/components/schemas/callback-request_upload'
-      properties:
-        open:
-          type: boolean
-          description: Is the request still unanswered
-          example: true
 
     ########################################################################
     # errors
