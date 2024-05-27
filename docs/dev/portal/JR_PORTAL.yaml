@@ -6,6 +6,61 @@ info:
   description: Endpoints to be used by the Scrivito portal. All endpoints require an IAM authorization.
 
 paths:
+  /portal/opportunity:
+    get:
+      summary: Fetch all opportunities
+      description: Searches all opportunities that are related to the logged in user. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - opportunity
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/opportunity'
+        '403':
+          $ref: '#/components/responses/error_403'
+    post:
+      summary: Create a new opportunity
+      description: This will create a new opportunity with the scope of delivery in the description
+      tags:
+        - opportunity
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The opportunity data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/opportunity_upload'
+      responses:
+        '201':
+          $ref: '#/components/responses/opportunity'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/opportunity/{id}:
+    get:
+      summary: Fetch a single opportunity
+      description: Searches the _id of an opportunity
+      tags:
+        - opportunity
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/opportunity'
+        '403':
+          $ref: '#/components/responses/error_403'
+  
   /portal/quote:
     get:
       summary: Fetch all quotes
@@ -899,6 +954,20 @@ components:
   # responses
   ########################################################################
   responses:
+    opportunity:
+      description: opportunity data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/opportunity'
+
+    opportunities:
+      description: a list of opportunities
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/opportunities'
+
     quote:
       description: quote data
       content:
@@ -1334,6 +1403,43 @@ components:
           type: string
           description: URL of the project
           example: https://www.justrelate.com
+
+    opportunity:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project'
+      properties:
+        opportunityAt:
+          type: string
+          description: the date when the opportunity was created
+          example: 2024-01-05T10:00:00Z
+  
+    opportunities:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/opportunity'
+
+    opportunity_upload:
+      type: object
+      properties:
+        keyword:
+          type: string
+          description: The keyword for the new opportunity
+          example: New opportunity from the portal
+        description:
+          type: string
+          description: description containing the ordered items
+          example: "1x Filling line \"Brewery\"\n5x Plug-in nozzle 0.4mm"
 
     quote:
       type: object
