@@ -177,7 +177,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/empty'
+                  - $ref: '#/components/schemas/quote-request'
                   - $ref: '#/components/schemas/quote'
         '400':
           $ref: '#/components/responses/error_missing_data'
@@ -411,6 +411,100 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ticket-documents'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/contract:
+    get:
+      summary: Fetch all contracts
+      description: Searches all contracts that are related to the logged in user. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - contract
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contracts'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/contract/{id}:
+    get:
+      summary: Fetch a single contract
+      description: Searches the _id of a contract
+      tags:
+        - contract
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contract'
+        '403':
+          $ref: '#/components/responses/error_403'
+          
+  /portal/contract-item:
+    get:
+      summary: Fetch the scope of delivery for a contract
+      description: Searches all products that are assigned to a contract. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - contract
+      parameters:
+        - name: contractId
+          in: query
+          description: id of the contract. If this parameter is missing, the items of a random qcontractuote will be returned.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contract-items'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/contract-item/{id}:
+    get:
+      summary: Fetch a single product from the scope of delivery of a contract
+      description: Searches the _id of a product from the scope of delivery
+      tags:
+        - contract
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contract-item'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/contract-document:
+    get:
+      summary: Fetch all contract document relations
+      description: Searches all documents that are related to a contract
+      tags:
+        - contract
+      parameters:
+        - name: contractId
+          in: query
+          description: id of the contract. If this parameter is missing, the items of a random contract will be returned.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contract-documents'
         '403':
           $ref: '#/components/responses/error_403'
 
@@ -995,7 +1089,21 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/quote-items'
-                
+
+    quote-document:
+      description: quote document relation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/quote-document'
+
+    quote-documents:
+      description: a list of quote document relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/quote-documents'
+
     order:
       description: order data
       content:
@@ -1024,6 +1132,20 @@ components:
           schema:
             $ref: '#/components/schemas/order-items'
 
+    order-document:
+      description: order document relation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/order-document'
+
+    order-documents:
+      description: a list of order document relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/order-documents'
+
     order-requests:
       description: list of order requests
       content:
@@ -1051,20 +1173,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/tickets'
-            
-    message:
-      description: message
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/message'
-
-    messages:
-      description: a list of messages
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/messages'
 
     ticket-document:
       description: ticket document relation
@@ -1079,6 +1187,62 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ticket-documents'
+
+    contract:
+      description: contract data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/contract'
+
+    contracts:
+      description: a list of contracts
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/contracts'
+            
+    contract-item:
+      description: contract item data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/contract-item'
+
+    contract-items:
+      description: a list of contract items
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/contract-items'
+
+    contract-document:
+      description: contract document relation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/contract-document'
+
+    contract-documents:
+      description: a list of contract document relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/contract-documents'
+
+    message:
+      description: message
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/message'
+
+    messages:
+      description: a list of messages
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/messages'
 
     event:
       description: event data
@@ -1135,34 +1299,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/documents'
-
-    quote-document:
-      description: quote document relation
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/quote-document'
-
-    quote-documents:
-      description: a list of quote document relations
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/quote-documents'
-
-    order-document:
-      description: order document relation
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/order-document'
-
-    order-documents:
-      description: a list of order document relations
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/order-documents'
 
     service-object:
       description: service object data
@@ -1498,6 +1634,11 @@ components:
           description: Link to the product configuration
           example: https://www.justrelate.com/cpq
 
+    quote-request:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+
     order:
       type: object
       allOf:
@@ -1605,7 +1746,7 @@ components:
         quoteKeyword:
           type: string
           description: keyword of the quote
-          example: 1C76FE9771A1FE15E040A8C00F011E5D
+          example: Seconds filling line
           
     quote-items:
       type: object
@@ -1771,6 +1912,141 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ticket'
+
+    contract:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        keyword:
+          type: string
+          description: Keyword of the contract
+          example: Maintenance contract
+        number:
+          type: string
+          description: Number of the contract
+          example: C-24-002069
+        type:
+          type: string
+          description: Contract type
+          example: PSA_CTR_TYP_20
+        category:
+          type: string
+          description: Contract category
+          example: PSA_CTR_KND_10
+        partner:
+          type: string
+          description: Contract partner
+          example: ACME Ltd.
+        agent:
+          type: string
+          description: Contract agent
+          example: A0DF5579E90D4DC4B47393A69D71C827
+        internalDepartment:
+          type: string
+          description: Internal department
+          example: 6A71BBB6956E4F7B8220E15E6BB8D958
+        status:
+          type: string
+          description: Status
+          example: PSA_PRO_CTR_INI
+        startAt:
+          type: string
+          description: Begin date
+          example: 2024-06-18T10:04:36Z
+        endAt:
+          type: string
+          description: End date
+          example: 2024-06-18T10:04:36Z
+        minimumTerm:
+          type: integer
+          description: Minimum term length
+          example: 1
+        minimumTermUnit:
+          type: integer
+          description: Minimum term unit
+          example: PSA_CTR_CYC_YEA
+        cancelationEndAt:
+          type: string
+          description: Cancellation period ends on
+          example: 2024-06-18T10:04:36Z
+        termExtensionEndAt:
+          type: string
+          description: Term extension ends on
+          example: 2024-06-18T10:04:36Z
+        totalPrice:
+          type: number
+          description: Total value of the contract
+          example: 12000.0
+
+    contracts:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/contract'
+
+    contract-item:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project-item'
+      properties:
+        contractId:
+          type: string
+          description: identifier of the contract
+          example: 53473550DE1D4C30850183583F3B1B9A
+        contractKeyword:
+          type: string
+          description: keyword of the contract
+          example: Service contract
+          
+    contract-items:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/contract-item'
+
+    contract-document:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project-document'
+      properties:
+        contractId:
+          type: string
+          description: Contract Id
+          example: 53473550DE1D4C30850183583F3B1B9A
+
+    contract-documents:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/contract-document'
 
     message_base:
       type: object
