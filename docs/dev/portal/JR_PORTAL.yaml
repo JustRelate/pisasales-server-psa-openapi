@@ -1974,6 +1974,18 @@ components:
           type: string
           description: Term extension ends on
           example: 2024-06-18T10:04:36Z
+        termExtensionYears:
+          type: integer
+          description: Term extension in years
+          example: 1
+        termExtensionMonths:
+          type: integer
+          description: Term extension in months
+          example: 0
+        termExtensionDays:
+          type: integer
+          description: Term extension in days
+          example: 0
         totalPrice:
           type: number
           description: Total value of the contract
