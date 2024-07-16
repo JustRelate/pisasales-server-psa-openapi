@@ -1,0 +1,448 @@
+openapi: 3.0.3
+
+info:
+  version: '8.3'
+  title: Sales portal API
+  description: Endpoints to be used by the Scrivito sales portal. All endpoints require an IAM authorization.
+
+paths:
+  /salesportal/contact/{id}:
+    get:
+      summary: Get information about a single contact
+      description: Returns contact data.
+      tags:
+        - contact
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contact'
+        '400':
+          $ref: '#/components/responses/error_invalid_id'
+        '403':
+          $ref: '#/components/responses/error_403'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
+  /salesportal/whoami:
+    get:
+      summary: Get information about the authenticated user
+      description: Returns contact data of the user
+      tags:
+        - contact
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/whoami'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /salesportal/company:
+    get:
+      summary: Fetch all companies
+      description: Searches all cmpanies. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - company
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/companies'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /salesportal/company/{id}:
+    get:
+      summary: Fetch a single company
+      description: Searches the _id of an company
+      tags:
+        - company
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/company'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+components:
+  ########################################################################
+  # parameters
+  ########################################################################
+  parameters:
+    id_path:
+      in: path
+      name: id
+      description: if of the record
+      required: true
+      schema:
+        type: string
+
+    continuation_query:
+      in: query
+      name: _continuation
+      description: continuation key that was returned with the last result list
+      schema:
+        type: string
+
+    search_query:
+      in: query
+      name: _search
+      description: Full text (EUREKA) search term
+      schema:
+        type: string
+        
+    order_query:
+      in: query
+      name: _order
+      description: list of fields that should be used for ordering
+      example: createdAt.desc,name.asc
+      schema:
+        type: string
+        
+    limit_query:
+      in: query
+      name: _limit
+      description: maximum number of records to return. if the maximum is reached a continuation key will be in the response. the default value is 100
+      example: 10
+      schema:
+        type: number
+
+    language_query:
+      in: query
+      name: _language
+      description: Language to be used for the localized data fields (e.g. GER or ENG). If no language is specified, English will always be returned.
+      example: GER
+      schema:
+        type: string
+
+    count_query:
+      in: query
+      name: _count
+      description: count the total number of results available
+      example: false
+      schema:
+        type: boolean
+
+  ########################################################################
+  # responses
+  ########################################################################
+  responses:
+    contact:
+      description: contact data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/contact'
+            
+    whoami:
+      description: current user
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/whoami'
+
+    company:
+      description: company data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/company'
+
+    companies:
+      description: a list of companies
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/companies'
+
+    error_403:
+      description: The authentication has failed
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/error_user_unknown'
+              - $ref: '#/components/schemas/error_user_locked'
+
+    error_invalid_id:
+      description: The authenticated IAM user was not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+                example: 'invalid.id'
+              error:
+                type: string
+                example: 'The ID is invalid'
+              details:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 'XXX'
+
+    error_record_not_found:
+      description: The record was not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+                example: 'record.not_found'
+              error:
+                type: string
+                example: 'The record was not found'
+              details:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 'XXX'
+
+    error_missing_data:
+      description: Not all necessary data was submitted by the client
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+                example: 'missing.data'
+              error:
+                type: string
+                example: 'Some data is missing'
+              details:
+                type: object
+                properties:
+                  field:
+                    type: string
+                    description: name of the missing field
+                    example: 'title'
+
+  schemas:
+    ########################################################################
+    # objects
+    ########################################################################
+    object:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: identifier of the record
+          example: F9BB0AAA22C947BAE030A8C00C015B91
+  
+    contact:
+      description: user object
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        name:
+          type: string
+          description: For a person the name consisting of given and family name. For a company the name.
+          example: John Doe
+        salutation:
+          type: string
+          description: identifier of the salutation of the person
+          example: M
+        givenName:
+          type: string
+          description: first name
+          example: John
+        familyName:
+          type: string
+          description: last name
+          example: Doe
+        email:
+          type: string
+          description: email address
+          example: john.doe@acme.com
+        position:
+          type: string
+          description: persons position inside of the organization
+          example: Sales manager
+        isPerson:
+          type: boolean
+          description: is the contact a person?
+          example: true
+        isExternal:
+          type: boolean
+          description: is the contact external?
+          example: true
+        image:
+          description: Image of the user or the company logo
+          $ref: '#/components/schemas/binary'
+
+    whoami:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/contact'
+
+    company:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        name:
+          type: string
+          description: The name of the company
+          example: ACME Ltd.
+        number:
+          type: string
+          description: The internal number of the company
+          example: C-20-000491
+        status:
+          type: string
+          description: The identifier of the current status
+          example: PSA_ORG_CST_PRC
+        group:
+          type: string
+          description: The identifier of the group
+          example: PSA_ORG_CST
+        accountManager:
+          type: string
+          description: Id of the account manager
+          example: 5150FF4BF8774C36A59D57FE47C38B58
+        branch:
+          type: string
+          description: Name of the main branch the company
+          example: Manufacture of chemicals and chemical products
+        region:
+          type: string
+          description: Name of the region where the company is located
+          example: North Germany
+        since:
+          type: string
+          description: Date when the first contact with this company was made
+          example: 2020-04-01T08:00:00Z
+        occasion:
+          type: string
+          description: Occasion of the first contact
+          example: DXD Digital Experience Days
+        addressStreet:
+          type: string
+          description: Street and house number of the main address
+          example: Bundesallee 1
+        addressPostalCode:
+          type: string
+          description: Postal code of the main address
+          example: 14050
+        addressCity:
+          type: string
+          description: City of the main address
+          example: Berlin
+        addressCountry:
+          type: string
+          description: Country identifier of the main address
+          example: DEU
+        phone:
+          type: string
+          description: Telephone number
+          example: +490 30 23125641
+        email:
+          type: string
+          description: Email address
+          example: info@acme.org
+        url:
+          type: string
+          description: Web site
+          example: https://www.acme.org
+        description:
+          type: string
+          description: Description of the company
+          example: Awesome company
+        image:
+          description: Image or logo
+          $ref: '#/components/schemas/binary'
+
+    companies:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/company'
+
+    binary:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Identifier that is used to request a binary access token
+          example: c231fa48df3ee393c92dccac4dba5e7dE308ED22299D449C97DB6B7642FA2CA9
+        filename:
+          type: string
+          description: filename
+          example: screenshot1.jpg
+        contentType:
+          type: string
+          description: MIME type
+          example: image/jpg
+        contentLength:
+          type: integer
+          description: estimated size of the binary data in bytes
+          example: 245120
+
+    ########################################################################
+    # errors
+    ########################################################################
+
+    error_user_unknown:
+      description: The authenticated IAM user was not found
+      type: object
+      properties:
+        code:
+          type: string
+          example: 'user.unknown'
+        error:
+          type: string
+          example: 'The user was not found'
+        details:
+          type: object
+          properties:
+            email:
+              type: string
+              example: 'john.doe@acme.org'
+
+    error_user_locked:
+      description: The authenticated IAM user is not allowed to login because the contact is locked
+      type: object
+      properties:
+        code:
+          type: string
+          example: 'user.locked'
+        error:
+          type: string
+          example: 'The user is locked'
+        details:
+          type: object
+          properties:
+            email:
+              type: string
+              example: 'john.doe@acme.org'
+            status:
+              type: string
+              description: identifier of the current status
+              example: PSA_PRS_LEA_BLC

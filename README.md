@@ -23,6 +23,10 @@
 [Swagger](https://pisasales.github.io/server-psa-openapi/dev/portal/api-swagger.htm) | 
 [Stoplight](https://pisasales.github.io/server-psa-openapi/dev/portal/api-stoplight.htm) |
 [Redoc](https://pisasales.github.io/server-psa-openapi/dev/portal/api-redoc.htm)
+- Sales portal
+[Swagger](https://pisasales.github.io/server-psa-openapi/dev/salesportal/api-swagger.htm) | 
+[Stoplight](https://pisasales.github.io/server-psa-openapi/dev/salesportal/api-stoplight.htm) |
+[Redoc](https://pisasales.github.io/server-psa-openapi/dev/salesportal/api-redoc.htm)
 
 ## Javadoc
 
