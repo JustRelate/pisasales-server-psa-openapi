@@ -73,6 +73,108 @@ paths:
         '403':
           $ref: '#/components/responses/error_403'
 
+  /salesportal/opportunity:
+    get:
+      summary: Fetch all opportunities
+      description: Searches all opportunities. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - opportunity
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/opportunities'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /salesportal/opportunity/{id}:
+    get:
+      summary: Fetch a single opportunity
+      description: Searches the _id of an opportunity
+      tags:
+        - opportunity
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/opportunity'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /salesportal/quote:
+    get:
+      summary: Fetch all quotes
+      description: Searches all quotes. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - quote
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/quotes'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /salesportal/quote/{id}:
+    get:
+      summary: Fetch a single quote
+      description: Searches the _id of an quote
+      tags:
+        - quote
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/quote'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /salesportal/order:
+    get:
+      summary: Fetch all orders
+      description: Searches all orders. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - order
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/orders'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /salesportal/order/{id}:
+    get:
+      summary: Fetch a single order
+      description: Searches the _id of an order
+      tags:
+        - order
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/order'
+        '403':
+          $ref: '#/components/responses/error_403'
+
 components:
   ########################################################################
   # parameters
@@ -163,6 +265,48 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/companies'
+
+    opportunity:
+      description: opportunity data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/opportunity'
+
+    opportunities:
+      description: a list of opportunities
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/opportunities'
+
+    quote:
+      description: quote data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/quote'
+
+    quotes:
+      description: a list of quotes
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/quotes'
+
+    order:
+      description: order data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/order'
+
+    orders:
+      description: a list of orders
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/orders'
 
     error_403:
       description: The authentication has failed
@@ -384,6 +528,157 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/company'
+
+    project:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        keyword:
+          type: string
+          description: Keyword of the project
+          example: Filling line
+        number:
+          type: string
+          description: Number of the project
+          example: P-24-000615
+        type:
+          type: string
+          description: Identifier of the sub type of the project
+          example: PSA_QUO_STY_STD
+        customer:
+          type: string
+          description: ID of the customer
+          example: 52C3DFF6E44B45448CF8C2ECB55E3400
+        commercialAgent:
+          type: string
+          description: ID of the commercial agent
+          example: CD2B46B28C944FA2B5CE6BF3B5402E64
+        technicalAgent:
+          type: string
+          description: ID of the technical agent
+          example: F8635575DA604488981AECFB2B871ED5
+        salesPartner:
+          type: string
+          description: ID of the sales partner for this project
+          example: 191C336104A44A9484A045325D2DC21D
+        status:
+          type: string
+          description: ID of the projects current status
+          example: PSA_PRO_QUO_CPE
+        mainStatus:
+          type: string
+          description: ID of the projects main status
+          example: PSA_SAP_MAI_QUO_QUO_GEN
+        open:
+          type: boolean
+          description: Is the project currently in an open status?
+          example: true
+        opportunityAt:
+          type: string
+          description: ISO formatted date string of the opportunity date
+          example: 2024-07-17T12:00:45Z
+        quoteAt:
+          type: string
+          description: ISO formatted date string of the quote date
+          example: 2024-07-17T12:00:45Z
+        orderAt:
+          type: string
+          description: ISO formatted date string of the order date
+          example: 2024-07-17T12:00:45Z
+        deliveryAt:
+          type: string
+          description: ISO formatted date string of the order delivery date
+          example: 2024-07-17T12:00:45Z
+        termsOfDelivery:
+          type: string
+          description: ID of the agreed terms of delivery
+          example: RFC_TOD_CFR
+        termsOfPayment:
+          type: string
+          description: ID the agreed terms of payment
+          example: PSA_TOP_10
+        totalPrice:
+          type: number
+          description: Total price of the project
+          example: 100499
+        totalPriceCurrency:
+          type: string
+          description: ISO 4217 code of the currency
+          example: EUR
+        description:
+          type: string
+          description: Description of the project
+          example: New variant
+        url:
+          type: string
+          description: URL of the project
+          example: https://www.tynacoon.com
+
+    opportunity:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project'
+
+    opportunities:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/opportunity'
+
+    quote:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project'
+      properties:
+        validUntil:
+          type: string
+          description: ISO formatted date string until when the quote is valid
+          example: 2024-07-30T12:00:00Z
+
+    quotes:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/quote'
+
+    order:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project'
+
+    orders:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/order'
 
     binary:
       type: object
