@@ -175,6 +175,40 @@ paths:
         '403':
           $ref: '#/components/responses/error_403'
 
+  /salesportal/activity:
+    get:
+      summary: Fetch all activities
+      description: Searches all activities. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - activity
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/activities'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /salesportal/activity/{id}:
+    get:
+      summary: Fetch a single activity
+      description: Searches the _id of an activity
+      tags:
+        - activity
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/activity'
+        '403':
+          $ref: '#/components/responses/error_403'
+
 components:
   ########################################################################
   # parameters
@@ -307,6 +341,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/orders'
+
+    activity:
+      description: activity data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/activity'
+
+    activities:
+      description: a list of activities
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/activities'
 
     error_403:
       description: The authentication has failed
@@ -679,6 +727,79 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/order'
+
+    activity:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        subject:
+          type: string
+          description: The subject of the activity
+          example: Sales meeting
+        beginAt:
+          type: string
+          description: ISO formatted date string of the starting time
+          example: 2024-07-18T11:39:35Z
+        endAt:
+          type: string
+          description: ISO formatted date string of the ending time
+          example: 2024-07-18T11:39:35Z
+        agent:
+          type: string
+          description: ID of the responsible person
+          example: F6BB015098FA45DB959CE19E482B593F
+        contacts:
+          type: array
+          description: A list of IDs with the associated contacts
+          example: [F6BB015098FA45DB959CE19E482B593F, 5150FF4BF8774C36A59D57FE47C38B58]
+          items:
+            type: string
+        project:
+          type: string
+          description: ID of the main project
+          example: 4DC09B1C4215476891FD68B2BA126482
+        location:
+          type: string
+          description: Location of the activity/appointment
+          example: Convention center
+        type:
+          type: string
+          description: ID of the activity type
+          example: APPOINTMENT
+        subType:
+          type: string
+          description: ID of the activity sub type
+          example: EVENT
+        classifications:
+          type: array
+          description: IDs of the classifications of the activity
+          example: [PSA_ACT_CLA_PRO_SAL, PSA_ACT_CLA_CST_COM]
+          items:
+            type: string
+        priority:
+          type: string
+          description: ID of the priority
+          example: PSA_NRM
+        note:
+          type: string
+          description: Notes made for the activity
+          example: Strategy meeting for the next release
+
+    activities:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/activity'
 
     binary:
       type: object
