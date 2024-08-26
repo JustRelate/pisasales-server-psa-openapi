@@ -2514,7 +2514,7 @@ components:
           type: string
           description: ISO date time when the object was installed
           example: 2024-01-31T11:42:58Z
-        warrentyEndsAt:
+        warrantyEndsAt:
           type: string
           description: ISO date time when the warranty ends
           example: 2024-01-31T11:42:58Z

@@ -57,6 +57,27 @@ paths:
           $ref: '#/components/responses/companies'
         '403':
           $ref: '#/components/responses/error_403'
+    post:
+      summary: Create a company
+      description: This will create a new external company
+      tags:
+        - company
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The company data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/company_base'
+      responses:
+        '201':
+          $ref: '#/components/responses/company'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_403'
 
   /salesportal/company/{id}:
     get:
@@ -72,6 +93,43 @@ paths:
           $ref: '#/components/responses/company'
         '403':
           $ref: '#/components/responses/error_403'
+    patch:
+      summary: Update a company
+      description: This will update an existing external company
+      tags:
+        - company
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The company data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/company_base'
+      responses:
+        '200':
+          $ref: '#/components/responses/company'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_403'
+    delete:
+      summary: Delete a company
+      description: Searches the _id of an company and deletes the record
+      tags:
+        - company
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The company request was deleted
+        '403':
+          $ref: '#/components/responses/error_403'
+        '404':
+          description: The company was not found
+        '409':
+          description: The company could not be deleted due to a conflict        
 
   /salesportal/opportunity:
     get:
@@ -485,10 +543,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/contact'
 
-    company:
+    company_base:
       type: object
-      allOf:
-        - $ref: '#/components/schemas/object'
       properties:
         name:
           type: string
@@ -502,22 +558,10 @@ components:
           type: string
           description: The identifier of the current status
           example: PSA_ORG_CST_PRC
-        group:
-          type: string
-          description: The identifier of the group
-          example: PSA_ORG_CST
         accountManager:
           type: string
           description: Id of the account manager
           example: 5150FF4BF8774C36A59D57FE47C38B58
-        branch:
-          type: string
-          description: Name of the main branch the company
-          example: Manufacture of chemicals and chemical products
-        region:
-          type: string
-          description: Name of the region where the company is located
-          example: North Germany
         since:
           type: string
           description: Date when the first contact with this company was made
@@ -558,6 +602,25 @@ components:
           type: string
           description: Description of the company
           example: Awesome company
+
+    company:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/company_base'
+      properties:
+        group:
+          type: string
+          description: The identifier of the group
+          example: PSA_ORG_CST
+        branch:
+          type: string
+          description: Name of the main branch the company
+          example: Manufacture of chemicals and chemical products
+        region:
+          type: string
+          description: Name of the region where the company is located
+          example: North Germany
         image:
           description: Image or logo
           $ref: '#/components/schemas/binary'
