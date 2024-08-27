@@ -75,7 +75,13 @@ paths:
         '201':
           $ref: '#/components/responses/company'
         '400':
-          $ref: '#/components/responses/error_missing_data'
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
         '403':
           $ref: '#/components/responses/error_403'
 
@@ -127,9 +133,29 @@ paths:
         '403':
           $ref: '#/components/responses/error_403'
         '404':
-          description: The company was not found
+          $ref: '#/components/responses/error_record_not_found'
         '409':
           description: The company could not be deleted due to a conflict        
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 'relation.check_failed'
+                  error:
+                    type: string
+                    example: 'relation count exceeds delete check'
+                  details:
+                    type: object
+                    properties:
+                      count:
+                        type: string
+                        example: '1'
+                      relation:
+                        type: string
+                        example: 'Main company'
 
   /salesportal/opportunity:
     get:
@@ -428,20 +454,27 @@ components:
       content:
         application/json:
           schema:
+            $ref: '#/components/schemas/error_invalid_id'
+
+    error_invalid_data:
+      description: The provided data was not valid
+      content:
+        application/json:
+          schema:
             type: object
             properties:
               code:
                 type: string
-                example: 'invalid.id'
+                example: 'invalid.data'
               error:
                 type: string
-                example: 'The ID is invalid'
+                example: The provided data is invalid
               details:
                 type: object
                 properties:
-                  id:
+                  field:
                     type: string
-                    example: 'XXX'
+                    example: 'D07C1943E1929F83E030A8C0290112EB'
 
     error_record_not_found:
       description: The record was not found
@@ -468,21 +501,7 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              code:
-                type: string
-                example: 'missing.data'
-              error:
-                type: string
-                example: 'Some data is missing'
-              details:
-                type: object
-                properties:
-                  field:
-                    type: string
-                    description: name of the missing field
-                    example: 'title'
+            $ref: '#/components/schemas/error_missing_data'
 
   schemas:
     ########################################################################
@@ -925,3 +944,38 @@ components:
               type: string
               description: identifier of the current status
               example: PSA_PRS_LEA_BLC
+
+    error_invalid_id:
+      description: The authenticated IAM user was not found
+      type: object
+      properties:
+        code:
+          type: string
+          example: 'invalid.id'
+        error:
+          type: string
+          example: 'The ID is invalid'
+        details:
+          type: object
+          properties:
+            id:
+              type: string
+              example: 'XXX'
+
+    error_missing_data:
+      description: Not all necessary data was submitted by the client
+      type: object
+      properties:
+        code:
+          type: string
+          example: 'missing.data'
+        error:
+          type: string
+          example: 'Some data is missing'
+        details:
+          type: object
+          properties:
+            field:
+              type: string
+              description: name of the missing field
+              example: 'title'
