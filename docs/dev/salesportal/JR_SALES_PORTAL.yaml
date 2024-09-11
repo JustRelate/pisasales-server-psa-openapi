@@ -293,6 +293,26 @@ paths:
         '403':
           $ref: '#/components/responses/error_403'
 
+  /salesportal/schema:
+    get:
+      summary: Fetch schemas
+      description: Returns the schema of all entities
+      tags:
+        - schema
+      parameters:
+        - name: name
+          in: query
+          description: Search for a single schema by name
+          example: company
+          schema:
+            type: string
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/schemas'
+        '403':
+          $ref: '#/components/responses/error_403'
+
 components:
   ########################################################################
   # parameters
@@ -439,6 +459,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/activities'
+
+    schemas:
+      description: a list of the schema for all entites
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas'
 
     error_403:
       description: The authentication has failed
@@ -596,7 +623,7 @@ components:
         addressPostalCode:
           type: string
           description: Postal code of the main address
-          example: 14050
+          example: '14050'
         addressCity:
           type: string
           description: City of the main address
@@ -882,6 +909,66 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/activity'
+
+    schemas:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/schema'
+
+    schema:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        name:
+          type: string
+          description: The name of the group
+          example: base
+        general:
+          type: object
+          properties:
+            title:
+              type: string
+              example: Organization
+            icon: 
+              type: string
+              example: ''
+            groupOrder:
+              type: array
+              items:
+                type: string
+                example: ["base", "additional"]
+        groups:
+          type: object
+          properties:
+            title:
+              type: string
+              example: Base data
+            attributeOrder:
+              type: array
+              example: ["name", "email"]
+              items:
+                type: string
+        attributes:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              hidden:
+                type: boolean
+                example: false
+              maxLength:
+                type: integer
+                example: 32
+              mandatory:
+                type: boolean
+                example: false
+              readonly:
+                type: boolean
+                example: false
 
     binary:
       type: object
