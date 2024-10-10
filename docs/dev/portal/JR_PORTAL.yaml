@@ -1543,12 +1543,16 @@ components:
     opportunity:
       type: object
       allOf:
-        - $ref: '#/components/schemas/project'
+        - $ref: '#/components/schemas/object'
       properties:
-        opportunityAt:
+        keyword:
           type: string
-          description: the date when the opportunity was created
-          example: 2024-01-05T10:00:00Z
+          description: keyword of the opportunity
+          example: New filling line
+        description:
+          type: string
+          description: description of the opportunity
+          example: 1x filling line
   
     opportunities:
       type: object

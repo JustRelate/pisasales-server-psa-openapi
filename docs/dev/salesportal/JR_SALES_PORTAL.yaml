@@ -88,7 +88,7 @@ paths:
   /salesportal/company/{id}:
     get:
       summary: Fetch a single company
-      description: Searches the _id of an company
+      description: Searches the _id of a company
       tags:
         - company
       parameters:
@@ -122,14 +122,14 @@ paths:
           $ref: '#/components/responses/error_403'
     delete:
       summary: Delete a company
-      description: Searches the _id of an company and deletes the record
+      description: Searches the _id of a company and deletes the record
       tags:
         - company
       parameters:
         - $ref: '#/components/parameters/id_path'
       responses:
         '204':
-          description: The company request was deleted
+          description: The company was deleted
         '403':
           $ref: '#/components/responses/error_403'
         '404':
@@ -292,6 +292,20 @@ paths:
           $ref: '#/components/responses/activity'
         '403':
           $ref: '#/components/responses/error_403'
+    delete:
+      summary: Delete an activity
+      description: Searches the _id of an activity and deletes the record
+      tags:
+        - activity
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The activity was deleted
+        '403':
+          $ref: '#/components/responses/error_403'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
 
   /salesportal/schema:
     get:
@@ -860,8 +874,20 @@ components:
           example: F6BB015098FA45DB959CE19E482B593F
         contacts:
           type: array
-          description: A list of IDs with the associated contacts
+          description: A list of IDs with the associated contacts (non external persons or companies)
           example: [F6BB015098FA45DB959CE19E482B593F, 5150FF4BF8774C36A59D57FE47C38B58]
+          items:
+            type: string
+        persons:
+          type: array
+          description: A list of IDs with the associated external persons
+          example: [4F0204C8310F4ADF939DBB0DBA26B605]
+          items:
+            type: string
+        companies:
+          type: array
+          description: A list of IDs with the associated external companies
+          example: [A53D7E4D7002403B9A0912F278FCA97B]
           items:
             type: string
         project:
