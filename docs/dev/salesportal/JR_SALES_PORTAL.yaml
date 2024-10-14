@@ -21,7 +21,7 @@ paths:
         '400':
           $ref: '#/components/responses/error_invalid_id'
         '403':
-          $ref: '#/components/responses/error_403'
+          $ref: '#/components/responses/error_authentication_failed'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -37,7 +37,7 @@ paths:
         '200':
           $ref: '#/components/responses/whoami'
         '403':
-          $ref: '#/components/responses/error_403'
+          $ref: '#/components/responses/error_authentication_failed'
 
   /salesportal/company:
     get:
@@ -56,7 +56,7 @@ paths:
         '200':
           $ref: '#/components/responses/companies'
         '403':
-          $ref: '#/components/responses/error_403'
+          $ref: '#/components/responses/error_authentication_failed'
     post:
       summary: Create a company
       description: This will create a new external company
@@ -83,7 +83,9 @@ paths:
                   - $ref: '#/components/schemas/error_invalid_id'
                   - $ref: '#/components/schemas/error_missing_data'
         '403':
-          $ref: '#/components/responses/error_403'
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_check_failed'
 
   /salesportal/company/{id}:
     get:
@@ -98,7 +100,7 @@ paths:
         '200':
           $ref: '#/components/responses/company'
         '403':
-          $ref: '#/components/responses/error_403'
+          $ref: '#/components/responses/error_authentication_failed'
     patch:
       summary: Update a company
       description: This will update an existing external company
@@ -119,7 +121,9 @@ paths:
         '400':
           $ref: '#/components/responses/error_missing_data'
         '403':
-          $ref: '#/components/responses/error_403'
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_check_failed'
     delete:
       summary: Delete a company
       description: Searches the _id of a company and deletes the record
@@ -131,7 +135,7 @@ paths:
         '204':
           description: The company was deleted
         '403':
-          $ref: '#/components/responses/error_403'
+          $ref: '#/components/responses/error_authentication_failed'
         '404':
           $ref: '#/components/responses/error_record_not_found'
         '409':
@@ -174,7 +178,7 @@ paths:
         '200':
           $ref: '#/components/responses/opportunities'
         '403':
-          $ref: '#/components/responses/error_403'
+          $ref: '#/components/responses/error_authentication_failed'
 
   /salesportal/opportunity/{id}:
     get:
@@ -189,7 +193,7 @@ paths:
         '200':
           $ref: '#/components/responses/opportunity'
         '403':
-          $ref: '#/components/responses/error_403'
+          $ref: '#/components/responses/error_authentication_failed'
 
   /salesportal/quote:
     get:
@@ -208,7 +212,7 @@ paths:
         '200':
           $ref: '#/components/responses/quotes'
         '403':
-          $ref: '#/components/responses/error_403'
+          $ref: '#/components/responses/error_authentication_failed'
 
   /salesportal/quote/{id}:
     get:
@@ -223,7 +227,7 @@ paths:
         '200':
           $ref: '#/components/responses/quote'
         '403':
-          $ref: '#/components/responses/error_403'
+          $ref: '#/components/responses/error_authentication_failed'
 
   /salesportal/order:
     get:
@@ -242,7 +246,7 @@ paths:
         '200':
           $ref: '#/components/responses/orders'
         '403':
-          $ref: '#/components/responses/error_403'
+          $ref: '#/components/responses/error_authentication_failed'
 
   /salesportal/order/{id}:
     get:
@@ -257,7 +261,7 @@ paths:
         '200':
           $ref: '#/components/responses/order'
         '403':
-          $ref: '#/components/responses/error_403'
+          $ref: '#/components/responses/error_authentication_failed'
 
   /salesportal/activity:
     get:
@@ -276,7 +280,36 @@ paths:
         '200':
           $ref: '#/components/responses/activities'
         '403':
-          $ref: '#/components/responses/error_403'
+          $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Create a new activity
+      description: This will create a new activity
+      tags:
+        - activity
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The activity data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/activity_insert'
+      responses:
+        '201':
+          $ref: '#/components/responses/activity'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_check_failed'
 
   /salesportal/activity/{id}:
     get:
@@ -291,7 +324,30 @@ paths:
         '200':
           $ref: '#/components/responses/activity'
         '403':
-          $ref: '#/components/responses/error_403'
+          $ref: '#/components/responses/error_authentication_failed'
+    patch:
+      summary: Update an activity
+      description: This will update an existing activity
+      tags:
+        - activity
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The activity data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/activity_update'
+      responses:
+        '200':
+          $ref: '#/components/responses/activity'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_check_failed'
     delete:
       summary: Delete an activity
       description: Searches the _id of an activity and deletes the record
@@ -303,7 +359,7 @@ paths:
         '204':
           description: The activity was deleted
         '403':
-          $ref: '#/components/responses/error_403'
+          $ref: '#/components/responses/error_authentication_failed'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -325,7 +381,7 @@ paths:
         '200':
           $ref: '#/components/responses/schemas'
         '403':
-          $ref: '#/components/responses/error_403'
+          $ref: '#/components/responses/error_authentication_failed'
 
 components:
   ########################################################################
@@ -461,11 +517,25 @@ components:
             $ref: '#/components/schemas/orders'
 
     activity:
-      description: activity data
+      description: activity data for fetching
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/activity'
+
+    activity_insert:
+      description: activity data for insert
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/activity_insert'
+
+    activity_update:
+      description: activity data for update
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/activity_update'
 
     activities:
       description: a list of activities
@@ -481,7 +551,7 @@ components:
           schema:
             $ref: '#/components/schemas/schemas'
 
-    error_403:
+    error_authentication_failed:
       description: The authentication has failed
       content:
         application/json:
@@ -543,6 +613,26 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/error_missing_data'
+
+    error_data_check_failed:
+      description: The provided data failed a check
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+                example: 'check.failed'
+              error:
+                type: string
+                example: The provided data failed a check
+              details:
+                type: object
+                properties:
+                  cause:
+                    type: string
+                    example: data size too long for field!
 
   schemas:
     ########################################################################
@@ -851,10 +941,8 @@ components:
           items:
             $ref: '#/components/schemas/order'
 
-    activity:
+    activity_base:
       type: object
-      allOf:
-        - $ref: '#/components/schemas/object'
       properties:
         subject:
           type: string
@@ -872,6 +960,41 @@ components:
           type: string
           description: ID of the responsible person
           example: F6BB015098FA45DB959CE19E482B593F
+        project:
+          type: string
+          description: ID of the main project
+          example: 4DC09B1C4215476891FD68B2BA126482
+        location:
+          type: string
+          description: Location of the activity/appointment
+          example: Convention center
+        status:
+          type: string
+          description: ID of the activity status
+          example: PSA_STA_APM_AGR
+        priority:
+          type: string
+          description: ID of the priority
+          example: PSA_NRM
+        note:
+          type: string
+          description: Notes made for the activity
+          example: Strategy meeting for the next release
+
+    activity:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/activity_base'
+      properties:
+        type:
+          type: string
+          description: ID of the activity type
+          example: APPOINTMENT
+        subType:
+          type: string
+          description: ID of the activity sub type
+          example: EVENT
         contacts:
           type: array
           description: A list of IDs with the associated contacts (non external persons or companies)
@@ -890,36 +1013,27 @@ components:
           example: [A53D7E4D7002403B9A0912F278FCA97B]
           items:
             type: string
-        project:
-          type: string
-          description: ID of the main project
-          example: 4DC09B1C4215476891FD68B2BA126482
-        location:
-          type: string
-          description: Location of the activity/appointment
-          example: Convention center
-        type:
-          type: string
-          description: ID of the activity type
-          example: APPOINTMENT
-        subType:
-          type: string
-          description: ID of the activity sub type
-          example: EVENT
         classifications:
           type: array
           description: IDs of the classifications of the activity
           example: [PSA_ACT_CLA_PRO_SAL, PSA_ACT_CLA_CST_COM]
           items:
             type: string
-        priority:
+
+    activity_insert:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/activity_base'
+      properties:
+        subType:
           type: string
-          description: ID of the priority
-          example: PSA_NRM
-        note:
-          type: string
-          description: Notes made for the activity
-          example: Strategy meeting for the next release
+          description: ID of the activity sub type
+          example: EVENT
+
+    activity_update:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/activity_base'
 
     activities:
       type: object
