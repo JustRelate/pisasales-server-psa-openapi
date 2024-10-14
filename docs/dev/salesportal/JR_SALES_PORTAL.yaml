@@ -6,6 +6,25 @@ info:
   description: Endpoints to be used by the Scrivito sales portal. All endpoints require an IAM authorization.
 
 paths:
+  /salesportal/contact:
+    get:
+      summary: Get information about contacts
+      description: Returns a list of all contacts
+      tags:
+        - contact
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contacts'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+
   /salesportal/contact/{id}:
     get:
       summary: Get information about a single contact
@@ -452,6 +471,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/contact'
+
+    contacts:
+      description: a list of contacts
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/contacts'
             
     whoami:
       description: current user
@@ -687,6 +713,21 @@ components:
         image:
           description: Image of the user or the company logo
           $ref: '#/components/schemas/binary'
+
+    contacts:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/contact'
 
     whoami:
       type: object
