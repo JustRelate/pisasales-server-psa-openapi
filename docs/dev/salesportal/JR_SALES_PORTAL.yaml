@@ -104,7 +104,7 @@ paths:
         '403':
           $ref: '#/components/responses/error_authentication_failed'
         '422':
-          $ref: '#/components/responses/error_data_check_failed'
+          $ref: '#/components/responses/error_data_validation_failed'
 
   /salesportal/company/{id}:
     get:
@@ -120,6 +120,8 @@ paths:
           $ref: '#/components/responses/company'
         '403':
           $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
     patch:
       summary: Update a company
       description: This will update an existing external company
@@ -141,8 +143,10 @@ paths:
           $ref: '#/components/responses/error_missing_data'
         '403':
           $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
         '422':
-          $ref: '#/components/responses/error_data_check_failed'
+          $ref: '#/components/responses/error_data_validation_failed'
     delete:
       summary: Delete a company
       description: Searches the _id of a company and deletes the record
@@ -213,6 +217,8 @@ paths:
           $ref: '#/components/responses/opportunity'
         '403':
           $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
 
   /salesportal/quote:
     get:
@@ -247,6 +253,8 @@ paths:
           $ref: '#/components/responses/quote'
         '403':
           $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
 
   /salesportal/order:
     get:
@@ -281,6 +289,8 @@ paths:
           $ref: '#/components/responses/order'
         '403':
           $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
 
   /salesportal/activity:
     get:
@@ -328,7 +338,7 @@ paths:
         '403':
           $ref: '#/components/responses/error_authentication_failed'
         '422':
-          $ref: '#/components/responses/error_data_check_failed'
+          $ref: '#/components/responses/error_data_validation_failed'
 
   /salesportal/activity/{id}:
     get:
@@ -344,6 +354,8 @@ paths:
           $ref: '#/components/responses/activity'
         '403':
           $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
     patch:
       summary: Update an activity
       description: This will update an existing activity
@@ -365,8 +377,10 @@ paths:
           $ref: '#/components/responses/error_missing_data'
         '403':
           $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
         '422':
-          $ref: '#/components/responses/error_data_check_failed'
+          $ref: '#/components/responses/error_data_validation_failed'
     delete:
       summary: Delete an activity
       description: Searches the _id of an activity and deletes the record
@@ -381,6 +395,64 @@ paths:
           $ref: '#/components/responses/error_authentication_failed'
         '404':
           $ref: '#/components/responses/error_record_not_found'
+
+  /portal/binary-access-token:
+    get:
+      summary: Request a token for accessing binary data
+      description: Returns an URL containing a token that is valid for a limited time and grants access to a single record
+      tags:
+        - binary-access
+      parameters:
+        - name: id
+          in: path
+          description: binary ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/binary-access-token'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+
+  /portal/binary-access:
+    get:
+      summary: Get the binary data for an access token
+      description: No IAM is needed for this endpoint
+      tags:
+        - binary-access
+      parameters:
+        - name: token
+          in: path
+          description: binary access token
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: binary data
+          content:
+            application/octet-stream: 
+              schema:
+                type: string
+                format: binary
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                description: MIME type
+                example: image/jpg
+            Content-Length:
+              schema:
+                type: integer
+                description: Length in bytes
+                example: 22192
+            Content-Disposition:
+              schema:
+                type: string
+                example: attachment; filename="screenshot.jpg"
+        '401':
+          description: the token is invalid or expired
 
   /salesportal/schema:
     get:
@@ -570,6 +642,13 @@ components:
           schema:
             $ref: '#/components/schemas/activities'
 
+    binary-access-token:
+      description: token for accessing binary data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/binary-access-token'
+
     schemas:
       description: a list of the schema for all entites
       content:
@@ -640,8 +719,8 @@ components:
           schema:
             $ref: '#/components/schemas/error_missing_data'
 
-    error_data_check_failed:
-      description: The provided data failed a check
+    error_data_validation_failed:
+      description: The provided data failed a validation
       content:
         application/json:
           schema:
@@ -649,10 +728,10 @@ components:
             properties:
               code:
                 type: string
-                example: 'check.failed'
+                example: 'validation.failed'
               error:
                 type: string
-                example: The provided data failed a check
+                example: The provided data failed a validation
               details:
                 type: object
                 properties:
@@ -800,6 +879,14 @@ components:
         - $ref: '#/components/schemas/object'
         - $ref: '#/components/schemas/company_base'
       properties:
+        updatedAt:
+          type: string
+          description: Date of the last update of this record
+          example: 2024-10-15T09:47:44Z
+        createdAt:
+          type: string
+          description: Date when this record was created
+          example: 2024-10-15T09:47:44Z
         group:
           type: string
           description: The identifier of the group
@@ -836,6 +923,14 @@ components:
       allOf:
         - $ref: '#/components/schemas/object'
       properties:
+        updatedAt:
+          type: string
+          description: Date of the last update of this record
+          example: 2024-10-15T09:47:44Z
+        createdAt:
+          type: string
+          description: Date when this record was created
+          example: 2024-10-15T09:47:44Z
         keyword:
           type: string
           description: Keyword of the project
@@ -844,7 +939,7 @@ components:
           type: string
           description: Number of the project
           example: P-24-000615
-        type:
+        projectType:
           type: string
           description: Identifier of the sub type of the project
           example: PSA_QUO_STY_STD
@@ -1028,11 +1123,19 @@ components:
         - $ref: '#/components/schemas/object'
         - $ref: '#/components/schemas/activity_base'
       properties:
-        type:
+        updatedAt:
+          type: string
+          description: Date of the last update of this record
+          example: 2024-10-15T09:47:44Z
+        createdAt:
+          type: string
+          description: Date when this record was created
+          example: 2024-10-15T09:47:44Z
+        activityType:
           type: string
           description: ID of the activity type
           example: APPOINTMENT
-        subType:
+        activitySubType:
           type: string
           description: ID of the activity sub type
           example: EVENT
@@ -1066,7 +1169,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/activity_base'
       properties:
-        subType:
+        activitySubType:
           type: string
           description: ID of the activity sub type
           example: EVENT
@@ -1090,6 +1193,18 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/activity'
+
+    binary-access-token:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: URL for accessing the binary data
+          example: /binary-access/1649cff06611a6025da3dd511a97fb4328ABC5BC362145C0A6F308F116C6A7A5
+        maxAge:
+          type: integer
+          description: time in seconds how long the token is valid
+          example: 3600
 
     schemas:
       type: object
@@ -1138,6 +1253,23 @@ components:
           additionalProperties:
             type: object
             properties:
+              type:
+                type: string
+                example: string
+              referenceTo:
+                type: string
+                example: Company
+              enumValues:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    value:
+                      type: string
+                      example: IDENTIFIER_001
+                    title: 
+                      type: string
+                      example: Value 1
               hidden:
                 type: boolean
                 example: false
