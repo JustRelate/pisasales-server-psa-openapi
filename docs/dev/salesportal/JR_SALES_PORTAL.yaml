@@ -61,7 +61,7 @@ paths:
   /salesportal/company:
     get:
       summary: Fetch all companies
-      description: Searches all cmpanies. Additional queries can be set by simply adding the field name as query parameter.
+      description: Searches all companies. Additional queries can be set by simply adding the field name as query parameter.
       tags:
         - company
       parameters:
@@ -183,6 +183,132 @@ paths:
                       relation:
                         type: string
                         example: 'Main company'
+
+  /salesportal/person:
+    get:
+      summary: Fetch all persons
+      description: Searches all persons. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - person
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/persons'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Create a person
+      description: This will create a new external person
+      tags:
+        - person
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The person data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/person_base'
+      responses:
+        '201':
+          $ref: '#/components/responses/person'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+
+  /salesportal/person/{id}:
+    get:
+      summary: Fetch a single person
+      description: Searches the _id of a person
+      tags:
+        - person
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/person'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    patch:
+      summary: Update a person
+      description: This will update an existing external person
+      tags:
+        - person
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The person data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/person_base'
+      responses:
+        '200':
+          $ref: '#/components/responses/person'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    delete:
+      summary: Delete a person
+      description: Searches the _id of a person and deletes the record
+      tags:
+        - person
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The person was deleted
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+        '409':
+          description: The person could not be deleted due to a conflict        
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 'relation.check_failed'
+                  error:
+                    type: string
+                    example: 'relation count exceeds delete check'
+                  details:
+                    type: object
+                    properties:
+                      count:
+                        type: string
+                        example: '1'
+                      relation:
+                        type: string
+                        example: 'quote'
 
   /salesportal/opportunity:
     get:
@@ -396,7 +522,7 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
-  /portal/binary-access-token:
+  /salesportal/binary-access-token/{id}:
     get:
       summary: Request a token for accessing binary data
       description: Returns an URL containing a token that is valid for a limited time and grants access to a single record
@@ -415,7 +541,7 @@ paths:
         '403':
           $ref: '#/components/responses/error_authentication_failed'
 
-  /portal/binary-access:
+  /salesportal/binary-access/{token}:
     get:
       summary: Get the binary data for an access token
       description: No IAM is needed for this endpoint
@@ -470,7 +596,7 @@ paths:
         - $ref: '#/components/parameters/language_query'
       responses:
         '200':
-          $ref: '#/components/responses/schemas'
+          $ref: '#/components/responses/schema-list'
         '403':
           $ref: '#/components/responses/error_authentication_failed'
 
@@ -572,6 +698,20 @@ components:
           schema:
             $ref: '#/components/schemas/companies'
 
+    person:
+      description: person data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/person'
+
+    persons:
+      description: a list of persons
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/persons'
+
     opportunity:
       description: opportunity data
       content:
@@ -649,12 +789,12 @@ components:
           schema:
             $ref: '#/components/schemas/binary-access-token'
 
-    schemas:
+    schema-list:
       description: a list of the schema for all entites
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/schemas'
+            $ref: '#/components/schemas/schema-list'
 
     error_authentication_failed:
       description: The authentication has failed
@@ -813,16 +953,16 @@ components:
       allOf:
         - $ref: '#/components/schemas/contact'
 
-    company_base:
+    external_contact_base:
       type: object
       properties:
         name:
           type: string
-          description: The name of the company
+          description: The name of the contact
           example: ACME Ltd.
         number:
           type: string
-          description: The internal number of the company
+          description: The internal number of the contact
           example: C-20-000491
         status:
           type: string
@@ -834,7 +974,7 @@ components:
           example: 5150FF4BF8774C36A59D57FE47C38B58
         since:
           type: string
-          description: Date when the first contact with this company was made
+          description: Date when the first contact with this contact was made
           example: 2020-04-01T08:00:00Z
         occasion:
           type: string
@@ -870,8 +1010,13 @@ components:
           example: https://www.acme.org
         description:
           type: string
-          description: Description of the company
+          description: Description of the contact
           example: Awesome company
+
+    company_base:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/external_contact_base'
 
     company:
       type: object
@@ -887,6 +1032,10 @@ components:
           type: string
           description: Date when this record was created
           example: 2024-10-15T09:47:44Z
+        createdBy:
+          type: string
+          description: contact id of the person who has created this company
+          example: D1E9954702698E6BE030A8C029015B96
         group:
           type: string
           description: The identifier of the group
@@ -918,6 +1067,87 @@ components:
           items:
             $ref: '#/components/schemas/company'
 
+    person_base:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/external_contact_base'
+      properties:
+        salutation:
+          type: string
+          description: Salutation of the person
+          example: M
+        title:
+          type: string
+          description: Academic title
+          example: PSA_DR
+        givenName:
+          type: string
+          description: Given name
+          example: John
+        additionalGivenName:
+          type: string
+          description: additional given name
+          example: Jones
+        nameSuffix:
+          type: string
+          description: Name suffix
+          example: jr.
+
+    person:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/person_base'
+      properties:
+        updatedAt:
+          type: string
+          description: Date of the last update of this record
+          example: 2024-10-15T09:47:44Z
+        createdAt:
+          type: string
+          description: Date when this record was created
+          example: 2024-10-15T09:47:44Z
+        createdBy:
+          type: string
+          description: contact id of the person who has created this person
+          example: D1E9954702698E6BE030A8C029015B96
+        group:
+          type: string
+          description: The identifier of the group
+          example: PSA_PRS_CST
+        companies:
+          type: array
+          description: The list of companies this person is related to. The first index is the main company.
+          items:
+            type: object
+            properties:
+              _id:
+                type: string
+                description: id of the relation
+                example: 4A0BBE996D89F6A5E040007F010005A4
+              company: 
+                type: string
+                description: id of the company
+                example: DD0AB9752680C88BE030A8C029014E7E
+        image:
+          description: Image or logo
+          $ref: '#/components/schemas/binary'
+
+    persons:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/person'
+  
     project:
       type: object
       allOf:
@@ -931,6 +1161,10 @@ components:
           type: string
           description: Date when this record was created
           example: 2024-10-15T09:47:44Z
+        createdBy:
+          type: string
+          description: contact id of the person who has created this company
+          example: D1E9954702698E6BE030A8C029015B96
         keyword:
           type: string
           description: Keyword of the project
@@ -1096,10 +1330,6 @@ components:
           type: string
           description: ID of the responsible person
           example: F6BB015098FA45DB959CE19E482B593F
-        project:
-          type: string
-          description: ID of the main project
-          example: 4DC09B1C4215476891FD68B2BA126482
         location:
           type: string
           description: Location of the activity/appointment
@@ -1131,6 +1361,10 @@ components:
           type: string
           description: Date when this record was created
           example: 2024-10-15T09:47:44Z
+        createdBy:
+          type: string
+          description: contact id of the person who has created this company
+          example: D1E9954702698E6BE030A8C029015B96
         activityType:
           type: string
           description: ID of the activity type
@@ -1142,27 +1376,50 @@ components:
         contacts:
           type: array
           description: A list of IDs with the associated contacts (non external persons or companies)
-          example: [F6BB015098FA45DB959CE19E482B593F, 5150FF4BF8774C36A59D57FE47C38B58]
           items:
-            type: string
+            $ref: '#/components/schemas/activity-contact'
         persons:
           type: array
           description: A list of IDs with the associated external persons
-          example: [4F0204C8310F4ADF939DBB0DBA26B605]
           items:
-            type: string
+            $ref: '#/components/schemas/activity-contact'
         companies:
           type: array
           description: A list of IDs with the associated external companies
-          example: [A53D7E4D7002403B9A0912F278FCA97B]
           items:
-            type: string
+            $ref: '#/components/schemas/activity-contact'
         classifications:
           type: array
           description: IDs of the classifications of the activity
           example: [PSA_ACT_CLA_PRO_SAL, PSA_ACT_CLA_CST_COM]
           items:
             type: string
+        projects:
+          type: array
+          description: The list of projects this activity is related to. The first index is the main project.
+          items:
+            type: object
+            properties:
+              _id:
+                type: string
+                description: id of the relation
+                example: 3FFA18DD83BF44F09DA1D863A67DEC90
+              project: 
+                type: string
+                description: id of the project
+                example: 045700FD66CD3BE9E040A8C00D015F8E
+
+    activity-contact:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: id of the relation
+          example: 4A0BBE996D89F6A5E040007F010005A4
+        company: 
+          type: string
+          description: id of the contact
+          example: DD0AB9752680C88BE030A8C029014E7E
 
     activity_insert:
       type: object
@@ -1206,7 +1463,7 @@ components:
           description: time in seconds how long the token is valid
           example: 3600
 
-    schemas:
+    schema-list:
       type: object
       properties:
         results:

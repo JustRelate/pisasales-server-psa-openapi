@@ -927,7 +927,45 @@ paths:
         '403':
           $ref: '#/components/responses/error_403'
 
-  /portal/binary-access-token:
+  /portal/country:
+    get:
+      summary: Fetch all countries
+      description: Searches all available countries
+      tags:
+        - country
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/countries'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/country/{id}:
+    get:
+      summary: Get information about a single country
+      description: Returns country data
+      tags:
+        - country
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/country'
+        '400':
+          $ref: '#/components/responses/error_invalid_id'
+        '403':
+          $ref: '#/components/responses/error_403'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
+  /portal/binary-access-token/{id}:
     get:
       summary: Request a token for accessing binary data
       description: Returns an URL containing a token that is valid for a limited time and grants access to a single record
@@ -946,7 +984,7 @@ paths:
         '403':
           $ref: '#/components/responses/error_403'
 
-  /portal/binary-access:
+  /portal/binary-access/{token}:
     get:
       summary: Get the binary data for an access token
       description: No IAM is needed for this endpoint
@@ -1348,6 +1386,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/gdprs'
+
+    country:
+      description: country data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/country'
+
+    countries:
+      description: a list of countries
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/countries'
 
     user:
       description: user data
@@ -2656,6 +2708,46 @@ components:
       allOf:
         - $ref: '#/components/schemas/object'
         - $ref: '#/components/schemas/callback-request_upload'
+
+    country:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        name:
+          type: string
+          description: Country name
+          example: Germany
+        iso3166A3:
+          type: string
+          description: ISO-3166 Alpha 3 code
+          example: DEU
+        iso3166A2:
+          type: string
+          description: ISO-3166 Alpha 2 code
+          example: DE
+        iso3166Numeric:
+          type: string
+          description: ISO-3166 numeric code
+          example: 276
+        countryCode:
+          type: string
+          description: Telephone country code
+          example: +49
+    countries:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/country'
 
     ########################################################################
     # errors
