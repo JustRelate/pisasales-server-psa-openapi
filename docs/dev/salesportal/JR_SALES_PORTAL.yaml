@@ -646,7 +646,7 @@ components:
     language_query:
       in: query
       name: _language
-      description: Language to be used for the localized data fields (e.g. GER or ENG). If no language is specified, English will always be returned.
+      description: Language to be used for the localized data fields (e.g. GER or ENG). Overwrites the Accept-Language header.
       example: GER
       schema:
         type: string
