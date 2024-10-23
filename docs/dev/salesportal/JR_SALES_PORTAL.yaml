@@ -1028,6 +1028,10 @@ components:
           type: string
           description: Date of the last update of this record
           example: 2024-10-15T09:47:44Z
+        updatedBy:
+            type: string
+            description: contact id of the last person who has updated this contact
+            example: D1E9954702698E6BE030A8C029015B96
         createdAt:
           type: string
           description: Date when this record was created
@@ -1048,6 +1052,12 @@ components:
           type: string
           description: Name of the region where the company is located
           example: North Germany
+        companies:
+          type: array
+          description: The list of parent companies. The first index is the top company.
+          example: [DD0AB9752680C88BE030A8C029014E7E]
+          items:
+            type: string
         image:
           description: Image or logo
           $ref: '#/components/schemas/binary'
@@ -1103,6 +1113,10 @@ components:
           type: string
           description: Date of the last update of this record
           example: 2024-10-15T09:47:44Z
+        updatedBy:
+            type: string
+            description: contact id of the last person who has updated this contact
+            example: D1E9954702698E6BE030A8C029015B96
         createdAt:
           type: string
           description: Date when this record was created
@@ -1157,6 +1171,10 @@ components:
           type: string
           description: Date of the last update of this record
           example: 2024-10-15T09:47:44Z
+        updatedBy:
+            type: string
+            description: contact id of the last person who has updated this contact
+            example: D1E9954702698E6BE030A8C029015B96
         createdAt:
           type: string
           description: Date when this record was created
@@ -1357,6 +1375,10 @@ components:
           type: string
           description: Date of the last update of this record
           example: 2024-10-15T09:47:44Z
+        updatedBy:
+            type: string
+            description: contact id of the last person who has updated this contact
+            example: D1E9954702698E6BE030A8C029015B96
         createdAt:
           type: string
           description: Date when this record was created
@@ -1479,7 +1501,7 @@ components:
         name:
           type: string
           description: The name of the group
-          example: base
+          example: company
         general:
           type: object
           properties:
@@ -1491,9 +1513,9 @@ components:
               example: ''
             groupOrder:
               type: array
+              example: ["base", "additional"]
               items:
                 type: string
-                example: ["base", "additional"]
         groups:
           type: object
           properties:
