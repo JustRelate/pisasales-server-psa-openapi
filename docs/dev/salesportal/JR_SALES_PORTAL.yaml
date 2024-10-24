@@ -522,6 +522,51 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
+  /salesportal/activity-contact:
+    post:
+      summary: Create a new activity-contact-relation
+      description: This will create a new relation between an activity and a contact (person or company)
+      tags:
+        - relation
+      requestBody:
+        description: The activity data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/activity-contact_insert'
+      responses:
+        '201':
+          $ref: '#/components/responses/activity-contact'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    
+  /salesportal/activity-contact/{id}:
+    delete:
+      summary: Delete an activity-contact-relation
+      description: Searches the _id of a relation and deletes the record
+      tags:
+        - relation
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The activity was deleted
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
   /salesportal/binary-access-token/{id}:
     get:
       summary: Request a token for accessing binary data
@@ -781,6 +826,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/activities'
+
+    activity-contact:
+      description: activity-contact-relation data for fetching
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/activity-contact_fetch'
 
     binary-access-token:
       description: token for accessing binary data
@@ -1399,17 +1451,17 @@ components:
           type: array
           description: A list of IDs with the associated contacts (non external persons or companies)
           items:
-            $ref: '#/components/schemas/activity-contact'
+            $ref: '#/components/schemas/activity-contact_contact'
         persons:
           type: array
           description: A list of IDs with the associated external persons
           items:
-            $ref: '#/components/schemas/activity-contact'
+            $ref: '#/components/schemas/activity-contact_contact'
         companies:
           type: array
           description: A list of IDs with the associated external companies
           items:
-            $ref: '#/components/schemas/activity-contact'
+            $ref: '#/components/schemas/activity-contact_contact'
         classifications:
           type: array
           description: IDs of the classifications of the activity
@@ -1431,18 +1483,6 @@ components:
                 description: id of the project
                 example: 045700FD66CD3BE9E040A8C00D015F8E
 
-    activity-contact:
-      type: object
-      properties:
-        _id:
-          type: string
-          description: id of the relation
-          example: 4A0BBE996D89F6A5E040007F010005A4
-        company: 
-          type: string
-          description: id of the contact
-          example: DD0AB9752680C88BE030A8C029014E7E
-
     activity_insert:
       type: object
       allOf:
@@ -1454,9 +1494,9 @@ components:
           example: EVENT
 
     activity_update:
-          type: object
-          allOf:
-            - $ref: '#/components/schemas/activity_base'
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/activity_base'
 
     activities:
       type: object
@@ -1472,6 +1512,42 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/activity'
+
+    activity-contact_fetch:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        activity:
+          type: string
+          description: ID of the associated activity
+          example: 8830238D81214394A18D65DFEE655ADB
+        contact:
+          type: string
+          description: ID of the associated contact
+          example: 862166B3FFEE4D30B45B4EC63FFEE78B
+
+    activity-contact_insert:
+      type: object
+      properties:
+        activity:
+          type: string
+          description: ID of the associated activity
+          example: 8830238D81214394A18D65DFEE655ADB
+        contact:
+          type: string
+          description: ID of the associated contact
+          example: 862166B3FFEE4D30B45B4EC63FFEE78B
+
+    activity-contact_contact:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        contact:
+          type: string
+          description: ID of the associated contact
+          example: 862166B3FFEE4D30B45B4EC63FFEE78B
 
     binary-access-token:
       type: object
