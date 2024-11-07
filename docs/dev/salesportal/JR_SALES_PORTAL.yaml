@@ -44,6 +44,30 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
+  /salesportal/contact-mget:
+    post:
+      summary: Get information about multiple contacts
+      description: Returns a list of contacts
+      tags:
+        - contact
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      requestBody:
+        description: The IDs to search
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/mget'
+      responses:
+        '200':
+          $ref: '#/components/responses/contacts'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+
   /salesportal/whoami:
     get:
       summary: Get information about the authenticated user
@@ -184,6 +208,30 @@ paths:
                         type: string
                         example: 'Main company'
 
+  /salesportal/company-mget:
+    post:
+      summary: Get information about multiple companies
+      description: Returns a list of companies
+      tags:
+        - company
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      requestBody:
+        description: The IDs to search
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/mget'
+      responses:
+        '200':
+          $ref: '#/components/responses/companies'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+
   /salesportal/person:
     get:
       summary: Fetch all persons
@@ -310,6 +358,30 @@ paths:
                         type: string
                         example: 'quote'
 
+  /salesportal/person-mget:
+    post:
+      summary: Get information about multiple persons
+      description: Returns a list of persons
+      tags:
+        - person
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      requestBody:
+        description: The IDs to search
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/mget'
+      responses:
+        '200':
+          $ref: '#/components/responses/persons'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+
   /salesportal/project:
     get:
       summary: Get information about projects
@@ -348,6 +420,30 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
+  /salesportal/project-mget:
+    post:
+      summary: Get information about multiple projects
+      description: Returns a list of projects
+      tags:
+        - project
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      requestBody:
+        description: The IDs to search
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/mget'
+      responses:
+        '200':
+          $ref: '#/components/responses/projects'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+
   /salesportal/opportunity:
     get:
       summary: Fetch all opportunities
@@ -383,6 +479,30 @@ paths:
           $ref: '#/components/responses/error_authentication_failed'
         '404':
           $ref: '#/components/responses/error_record_not_found'
+
+  /salesportal/opportunity-mget:
+    post:
+      summary: Get information about multiple opportunities
+      description: Returns a list of opportunities
+      tags:
+        - opportunity
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      requestBody:
+        description: The IDs to search
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/mget'
+      responses:
+        '200':
+          $ref: '#/components/responses/opportunities'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
 
   /salesportal/quote:
     get:
@@ -420,6 +540,30 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
+  /salesportal/quote-mget:
+    post:
+      summary: Get information about multiple quotes
+      description: Returns a list of quotes
+      tags:
+        - quote
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      requestBody:
+        description: The IDs to search
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/mget'
+      responses:
+        '200':
+          $ref: '#/components/responses/quotes'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+
   /salesportal/order:
     get:
       summary: Fetch all orders
@@ -455,6 +599,30 @@ paths:
           $ref: '#/components/responses/error_authentication_failed'
         '404':
           $ref: '#/components/responses/error_record_not_found'
+
+  /salesportal/order-mget:
+    post:
+      summary: Get information about multiple orders
+      description: Returns a list of orders
+      tags:
+        - order
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      requestBody:
+        description: The IDs to search
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/mget'
+      responses:
+        '200':
+          $ref: '#/components/responses/orders'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
 
   /salesportal/activity:
     get:
@@ -559,6 +727,30 @@ paths:
           $ref: '#/components/responses/error_authentication_failed'
         '404':
           $ref: '#/components/responses/error_record_not_found'
+
+  /salesportal/activity-mget:
+    post:
+      summary: Get information about multiple activities
+      description: Returns a list of activities
+      tags:
+        - activity
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      requestBody:
+        description: The IDs to search
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/mget'
+      responses:
+        '200':
+          $ref: '#/components/responses/activities'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
 
   /salesportal/activity-contact:
     post:
@@ -1767,15 +1959,17 @@ components:
                 type: string
         groups:
           type: object
-          properties:
-            title:
-              type: string
-              example: Base data
-            attributeOrder:
-              type: array
-              example: ["name", "email"]
-              items:
+          additionalProperties:
+            type: object
+            properties:
+              title:
                 type: string
+                example: Base data
+              attributeOrder:
+                type: array
+                example: ["name", "email"]
+                items:
+                  type: string
         attributes:
           type: object
           additionalProperties:
@@ -1798,6 +1992,17 @@ components:
                     title: 
                       type: string
                       example: Value 1
+                    constraints:
+                      type: object
+                      additionalProperties:
+                        type: array
+                        items:
+                          type: string
+              referenceFilter:
+                  type: object
+                  description: attributes and the query to be used when listing elements of the referenced object
+                  additionalProperties:
+                    type: string
               hidden:
                 type: boolean
                 example: false
@@ -1830,6 +2035,15 @@ components:
           type: integer
           description: estimated size of the binary data in bytes
           example: 245120
+
+    mget:
+      type: object
+      properties:
+        ids:
+            type: array
+            example: [F9BB0AAA22C947BAE030A8C00C015B91, DD45243467F344D5AFD59E0E05B8AE8B, 59A2B16DB6B24F0E87D7A0EF5DDDE28D]
+            items:
+              type: string
 
     ########################################################################
     # errors
