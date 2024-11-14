@@ -102,7 +102,7 @@ paths:
           $ref: '#/components/responses/error_authentication_failed'
     post:
       summary: Create a company
-      description: This will create a new external company
+      description: This will create a new company
       tags:
         - company
       parameters:
@@ -148,7 +148,7 @@ paths:
           $ref: '#/components/responses/error_record_not_found'
     patch:
       summary: Update a company
-      description: This will update an existing external company
+      description: This will update an existing company
       tags:
         - company
       parameters:
@@ -252,7 +252,7 @@ paths:
           $ref: '#/components/responses/error_authentication_failed'
     post:
       summary: Create a person
-      description: This will create a new external person
+      description: This will create a new person
       tags:
         - person
       parameters:
@@ -298,7 +298,7 @@ paths:
           $ref: '#/components/responses/error_record_not_found'
     patch:
       summary: Update a person
-      description: This will update an existing external person
+      description: This will update an existing person
       tags:
         - person
       parameters:
@@ -1309,13 +1309,9 @@ components:
       allOf:
         - $ref: '#/components/schemas/contact'
 
-    external_contact_base:
+    contact_base:
       type: object
       properties:
-        name:
-          type: string
-          description: The name of the contact
-          example: ACME Ltd.
         number:
           type: string
           description: The internal number of the contact
@@ -1368,11 +1364,15 @@ components:
           type: string
           description: Description of the contact
           example: Awesome company
+        isExternal:
+          type: boolean
+          description: is the contact external?
+          example: true
 
     company_base:
       type: object
       allOf:
-        - $ref: '#/components/schemas/external_contact_base'
+        - $ref: '#/components/schemas/contact_base'
 
     company:
       type: object
@@ -1380,6 +1380,10 @@ components:
         - $ref: '#/components/schemas/object'
         - $ref: '#/components/schemas/company_base'
       properties:
+        name:
+          type: string
+          description: The name of the company
+          example: ACME Ltd.
         updatedAt:
           type: string
           description: Date of the last update of this record
@@ -1440,7 +1444,7 @@ components:
     person_base:
       type: object
       allOf:
-        - $ref: '#/components/schemas/external_contact_base'
+        - $ref: '#/components/schemas/contact_base'
       properties:
         salutation:
           type: string
@@ -1454,6 +1458,10 @@ components:
           type: string
           description: Given name
           example: John
+        familyName:
+          type: string
+          description: Family name
+          example: Doe
         additionalGivenName:
           type: string
           description: additional given name
@@ -1469,6 +1477,10 @@ components:
         - $ref: '#/components/schemas/object'
         - $ref: '#/components/schemas/person_base'
       properties:
+        name:
+          type: string
+          description: Composed name (given name + family name)
+          example: John Doe
         updatedAt:
           type: string
           description: Date of the last update of this record
@@ -1776,19 +1788,14 @@ components:
           type: string
           description: ID of the activity sub type
           example: EVENT
-        contacts:
-          type: array
-          description: A list of IDs with the associated contacts (non external persons or companies)
-          items:
-            $ref: '#/components/schemas/activity-contact_contact'
         persons:
           type: array
-          description: A list of IDs with the associated external persons
+          description: A list of IDs with the associated persons
           items:
             $ref: '#/components/schemas/activity-contact_contact'
         companies:
           type: array
-          description: A list of IDs with the associated external companies
+          description: A list of IDs with the associated companies
           items:
             $ref: '#/components/schemas/activity-contact_contact'
         classifications:
