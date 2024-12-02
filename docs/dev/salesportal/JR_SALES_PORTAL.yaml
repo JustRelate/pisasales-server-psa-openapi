@@ -13,6 +13,7 @@ paths:
       tags:
         - contact
       parameters:
+        - $ref: '#/components/parameters/id_query'
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
@@ -89,6 +90,7 @@ paths:
       tags:
         - company
       parameters:
+        - $ref: '#/components/parameters/id_query'
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
@@ -245,6 +247,7 @@ paths:
       tags:
         - person
       parameters:
+        - $ref: '#/components/parameters/id_query'
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
@@ -401,6 +404,7 @@ paths:
       tags:
         - project
       parameters:
+        - $ref: '#/components/parameters/id_query'
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
@@ -463,6 +467,7 @@ paths:
       tags:
         - opportunity
       parameters:
+        - $ref: '#/components/parameters/id_query'
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
@@ -523,6 +528,7 @@ paths:
       tags:
         - quote
       parameters:
+        - $ref: '#/components/parameters/id_query'
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
@@ -583,6 +589,7 @@ paths:
       tags:
         - order
       parameters:
+        - $ref: '#/components/parameters/id_query'
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
@@ -643,6 +650,7 @@ paths:
       tags:
         - activity
       parameters:
+        - $ref: '#/components/parameters/id_query'
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
@@ -1002,6 +1010,14 @@ components:
       example: false
       schema:
         type: boolean
+
+    id_query:
+      in: query
+      name: _id
+      description: Search for multiple IDs. Values are separated by a comma
+      example: 8065A97B2E1843E292CAAC1480EBAD84,F143C455A23E4A1B991D0DF2726755A6
+      schema:
+        type: string
 
   ########################################################################
   # responses
