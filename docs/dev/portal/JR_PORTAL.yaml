@@ -804,10 +804,22 @@ paths:
   /portal/callback-request:
     get:
       summary: Get the last callback request
-      description: Returns the most recent open request. If no open request is found, the last closed request is returned.
+      description: Returns the most recent open request.
       tags:
         - callback-request
       parameters:
+        - name: projectId
+          in: query
+          description: Search callback requests that are related to a project
+          example: DA8FA0F7483D467B905207A0CAB8D1DE
+          schema:
+            type: string
+        - name: serviceObjectId
+          in: query
+          description: Search callback requests that are related to a service object
+          example: F0A8F7FE7D354F8D832B934B2603480E
+          schema:
+            type: string
         - $ref: '#/components/parameters/language_query'
       responses:
         '200':
@@ -818,7 +830,7 @@ paths:
           $ref: '#/components/responses/error_record_not_found'
     put:
       summary: Create a new callback request.
-      description: This will create a new task with your message.
+      description: This will create a new task with your message. All existing open requests will be canceled.
       tags:
         - callback-request
       parameters:
@@ -2701,6 +2713,14 @@ components:
           type: string
           description: Text you want to submit to the recipient of the request
           example: Please call me
+        projectId: 
+          type: string
+          description: Optional ID of a project. The activity will have this project as main project.
+          example: DD5A4BB3B64E0B13E030A8C029013F22
+        serviceObjectId:
+          type: string
+          description: Optional ID of a service object. The activity will be assigned to this service object.
+          example: 4660FAE914FB4C9EAE7F0C968F845E8E
         
     callback-request:
       type: object

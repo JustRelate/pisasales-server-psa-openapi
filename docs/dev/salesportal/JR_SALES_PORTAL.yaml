@@ -13,7 +13,7 @@ paths:
       tags:
         - contact
       parameters:
-        - $ref: '#/components/parameters/id_query'
+        - $ref: '#/components/parameters/ids_query'
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
@@ -45,30 +45,6 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
-  /salesportal/contact-mget:
-    post:
-      summary: Get information about multiple contacts
-      description: Returns a list of contacts
-      tags:
-        - contact
-      parameters:
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-      requestBody:
-        description: The IDs to search
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/mget'
-      responses:
-        '200':
-          $ref: '#/components/responses/contacts'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-
   /salesportal/whoami:
     get:
       summary: Get information about the authenticated user
@@ -90,7 +66,7 @@ paths:
       tags:
         - company
       parameters:
-        - $ref: '#/components/parameters/id_query'
+        - $ref: '#/components/parameters/ids_query'
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
@@ -216,30 +192,6 @@ paths:
                         type: string
                         example: 'Main company'
 
-  /salesportal/company-mget:
-    post:
-      summary: Get information about multiple companies
-      description: Returns a list of companies
-      tags:
-        - company
-      parameters:
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-      requestBody:
-        description: The IDs to search
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/mget'
-      responses:
-        '200':
-          $ref: '#/components/responses/companies'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-
   /salesportal/person:
     get:
       summary: Fetch all persons
@@ -247,7 +199,7 @@ paths:
       tags:
         - person
       parameters:
-        - $ref: '#/components/parameters/id_query'
+        - $ref: '#/components/parameters/ids_query'
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
@@ -373,29 +325,109 @@ paths:
                         type: string
                         example: 'quote'
 
-  /salesportal/person-mget:
-    post:
-      summary: Get information about multiple persons
-      description: Returns a list of persons
+  /salesportal/address:
+    get:
+      summary: Get information about addreses
+      description: Returns a list of all addresses
       tags:
-        - person
+        - address
       parameters:
+        - $ref: '#/components/parameters/ids_query'
         - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
         - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/addresses'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Create an address
+      description: This will create a new address
+      tags:
+        - address
+      parameters:
+        - $ref: '#/components/parameters/language_query'
       requestBody:
-        description: The IDs to search
+        description: The address data
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/mget'
+              $ref: '#/components/schemas/address_base'
       responses:
-        '200':
-          $ref: '#/components/responses/persons'
+        '201':
+          $ref: '#/components/responses/address'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
         '403':
           $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+
+  /salesportal/address/{id}:
+    get:
+      summary: Fetch a single address
+      description: Searches the _id of an address
+      tags:
+        - address
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/address'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    patch:
+      summary: Update an address
+      description: This will update an existing address
+      tags:
+        - address
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The address data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/address_base'
+      responses:
+        '200':
+          $ref: '#/components/responses/address'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    delete:
+      summary: Delete an address
+      description: Searches the _id of an address and deletes the record
+      tags:
+        - address
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The address was deleted
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
 
   /salesportal/project:
     get:
@@ -404,7 +436,7 @@ paths:
       tags:
         - project
       parameters:
-        - $ref: '#/components/parameters/id_query'
+        - $ref: '#/components/parameters/ids_query'
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
@@ -436,30 +468,6 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
-  /salesportal/project-mget:
-    post:
-      summary: Get information about multiple projects
-      description: Returns a list of projects
-      tags:
-        - project
-      parameters:
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-      requestBody:
-        description: The IDs to search
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/mget'
-      responses:
-        '200':
-          $ref: '#/components/responses/projects'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-
   /salesportal/opportunity:
     get:
       summary: Fetch all opportunities
@@ -467,7 +475,7 @@ paths:
       tags:
         - opportunity
       parameters:
-        - $ref: '#/components/parameters/id_query'
+        - $ref: '#/components/parameters/ids_query'
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
@@ -497,30 +505,6 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
-  /salesportal/opportunity-mget:
-    post:
-      summary: Get information about multiple opportunities
-      description: Returns a list of opportunities
-      tags:
-        - opportunity
-      parameters:
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-      requestBody:
-        description: The IDs to search
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/mget'
-      responses:
-        '200':
-          $ref: '#/components/responses/opportunities'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-
   /salesportal/quote:
     get:
       summary: Fetch all quotes
@@ -528,7 +512,7 @@ paths:
       tags:
         - quote
       parameters:
-        - $ref: '#/components/parameters/id_query'
+        - $ref: '#/components/parameters/ids_query'
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
@@ -558,30 +542,6 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
-  /salesportal/quote-mget:
-    post:
-      summary: Get information about multiple quotes
-      description: Returns a list of quotes
-      tags:
-        - quote
-      parameters:
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-      requestBody:
-        description: The IDs to search
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/mget'
-      responses:
-        '200':
-          $ref: '#/components/responses/quotes'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-
   /salesportal/order:
     get:
       summary: Fetch all orders
@@ -589,7 +549,7 @@ paths:
       tags:
         - order
       parameters:
-        - $ref: '#/components/parameters/id_query'
+        - $ref: '#/components/parameters/ids_query'
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
@@ -619,30 +579,6 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
-  /salesportal/order-mget:
-    post:
-      summary: Get information about multiple orders
-      description: Returns a list of orders
-      tags:
-        - order
-      parameters:
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-      requestBody:
-        description: The IDs to search
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/mget'
-      responses:
-        '200':
-          $ref: '#/components/responses/orders'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-
   /salesportal/activity:
     get:
       summary: Fetch all activities
@@ -650,7 +586,7 @@ paths:
       tags:
         - activity
       parameters:
-        - $ref: '#/components/parameters/id_query'
+        - $ref: '#/components/parameters/ids_query'
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/order_query'
@@ -760,31 +696,21 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
-  /salesportal/activity-mget:
-    post:
-      summary: Get information about multiple activities
-      description: Returns a list of activities
+  /salesportal/activity-contact:
+    get:
+      summary: Fetch all activity-contact-relations
+      description: Searches all relations
       tags:
-        - activity
+        - relation
       parameters:
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
         - $ref: '#/components/parameters/count_query'
-      requestBody:
-        description: The IDs to search
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/mget'
       responses:
         '200':
-          $ref: '#/components/responses/activities'
+          $ref: '#/components/responses/activity-contacts'
         '403':
           $ref: '#/components/responses/error_authentication_failed'
-
-  /salesportal/activity-contact:
     post:
       summary: Create a new activity-contact-relation
       description: This will create a new relation between an activity and a contact (person or company)
@@ -830,6 +756,20 @@ paths:
           $ref: '#/components/responses/error_record_not_found'
 
   /salesportal/company-person:
+    get:
+      summary: Fetch all company-persons-relations
+      description: Searches all relations
+      tags:
+        - relation
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/company-persons'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
     post:
       summary: Create a new company-person-relation
       description: This will create a new relation between a company and a person
@@ -861,6 +801,65 @@ paths:
   /salesportal/company-person/{id}:
     delete:
       summary: Delete a company-person-relation
+      description: Searches the _id of a relation and deletes the record
+      tags:
+        - relation
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The relation was deleted
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
+  /salesportal/address-contact:
+    get:
+      summary: Fetch all address-contact-relations
+      description: Searches all relations
+      tags:
+        - relation
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/address-contacts'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Create a new address-contact-relation
+      description: This will create a new relation between an address and a contact
+      tags:
+        - relation
+      requestBody:
+        description: The relation data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/address-contact_insert'
+      responses:
+        '201':
+          $ref: '#/components/responses/address-contact'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    
+  /salesportal/address-contact/{id}:
+    delete:
+      summary: Delete a address-contact-relation
       description: Searches the _id of a relation and deletes the record
       tags:
         - relation
@@ -960,7 +959,7 @@ components:
     id_path:
       in: path
       name: id
-      description: if of the record
+      description: ID of the record
       required: true
       schema:
         type: string
@@ -1011,9 +1010,9 @@ components:
       schema:
         type: boolean
 
-    id_query:
+    ids_query:
       in: query
-      name: _id
+      name: ids
       description: Search for multiple IDs. Values are separated by a comma
       example: 8065A97B2E1843E292CAAC1480EBAD84,F143C455A23E4A1B991D0DF2726755A6
       schema:
@@ -1078,6 +1077,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/project'
+
+    address:
+      description: address data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/address'
+
+    addresses:
+      description: a list of addresses
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/addresses'
 
     projects:
       description: a list of projects
@@ -1156,6 +1169,13 @@ components:
           schema:
             $ref: '#/components/schemas/activities'
 
+    activity-contacts:
+      description: a list of activity contact relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/activity-contacts'
+
     activity-contact:
       description: activity-contact-relation data for fetching
       content:
@@ -1163,12 +1183,33 @@ components:
           schema:
             $ref: '#/components/schemas/activity-contact_fetch'
 
+    company-persons:
+      description: a list of company person relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/company-persons'
+
     company-person:
       description: company-person-relation data for fetching
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/company-person_fetch'
+
+    address-contacts:
+      description: a list of address contact relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/address-contacts'
+
+    address-contact:
+      description: address-contact-relation data for fetching
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/address-contact_fetch'
 
     binary-access-token:
       description: token for accessing binary data
@@ -1372,26 +1413,16 @@ components:
           type: string
           description: Occasion of the first contact
           example: DXD Digital Experience Days
-        addressStreet:
-          type: string
-          description: Street and house number of the main address
-          example: Bundesallee 1
-        addressPostalCode:
-          type: string
-          description: Postal code of the main address
-          example: '14050'
-        addressCity:
-          type: string
-          description: City of the main address
-          example: Berlin
-        addressCountry:
-          type: string
-          description: Country identifier of the main address
-          example: DEU
+        addresses:
+          type: array
+          description: List if address IDs
+          example: ["43D937F0D5C9870EE040007F01007806","F5909F1CDC51A943E030A8C00C012134"]
+          items:
+            type: string
         phone:
           type: string
           description: Telephone number
-          example: +490 30 23125641
+          example: +49 30 23125641
         email:
           type: string
           description: Email address
@@ -1575,7 +1606,54 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/person'
-  
+
+    address_base:
+      description: address object
+      type: object
+      properties:
+        type:
+          type: string
+          description: address type
+          example: MAIN_ADDRESS
+        street:
+          type: string
+          description: Street and house number
+          example: Bundesallee 1
+        postalCode:
+          type: string
+          description: Postal code
+          example: '14050'
+        city:
+          type: string
+          description: City
+          example: Berlin
+        country:
+          type: string
+          description: Country identifier
+          example: DEU
+
+    address:
+      description: address object
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/address_base'
+
+    addresses:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/address'
+
     project:
       type: object
       allOf:
@@ -1796,6 +1874,10 @@ components:
           type: string
           description: ID of the activity status
           example: PSA_STA_APM_AGR
+        activitySubType:
+            type: string
+            description: ID of the activity sub type
+            example: EVENT
         priority:
           type: string
           description: ID of the priority
@@ -1804,6 +1886,16 @@ components:
           type: string
           description: Notes made for the activity
           example: Strategy meeting for the next release
+        classification:
+          type: string
+          description: ID of the main classification of the activity
+          example: PSA_ACT_CLA_PRO_SAL
+        additionalClassifications:
+          type: array
+          description: IDs of the additional classifications of the activity
+          example: [PSA_ACT_CLA_CST_COM]
+          items:
+            type: string
 
     activity:
       type: object
@@ -1831,10 +1923,6 @@ components:
           type: string
           description: ID of the activity type
           example: APPOINTMENT
-        activitySubType:
-          type: string
-          description: ID of the activity sub type
-          example: EVENT
         persons:
           type: array
           description: A list of IDs with the associated persons
@@ -1845,12 +1933,6 @@ components:
           description: A list of IDs with the associated companies
           items:
             $ref: '#/components/schemas/activity-contact_contact'
-        classifications:
-          type: array
-          description: IDs of the classifications of the activity
-          example: [PSA_ACT_CLA_PRO_SAL, PSA_ACT_CLA_CST_COM]
-          items:
-            type: string
         projects:
           type: array
           description: The list of projects this activity is related to. The first index is the main project.
@@ -1870,11 +1952,6 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/activity_base'
-      properties:
-        activitySubType:
-          type: string
-          description: ID of the activity sub type
-          example: EVENT
 
     activity_update:
       type: object
@@ -1895,6 +1972,21 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/activity'
+
+    activity-contacts:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/activity-contact_fetch'
 
     activity-contact_fetch:
       type: object
@@ -1932,6 +2024,21 @@ components:
           description: ID of the associated contact
           example: 862166B3FFEE4D30B45B4EC63FFEE78B
 
+    company-persons:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/company-person_fetch'
+
     company-person_fetch:
       type: object
       allOf:
@@ -1967,6 +2074,47 @@ components:
           type: string
           description: ID of the associated company
           example: 862166B3FFEE4D30B45B4EC63FFEE78B
+
+    address-contacts:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/address-contact_fetch'
+
+    address-contact_fetch:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        address:
+          type: string
+          description: ID of the associated address
+          example: C249361A232A4E8F859A13593B9D6440
+        contact:
+          type: string
+          description: ID of the associated contact
+          example: 21F28013E5A24B85BEEF56C8A2423898
+
+    address-contact_insert:
+      type: object
+      properties:
+        address:
+          type: string
+          description: ID of the associated address
+          example: C249361A232A4E8F859A13593B9D6440
+        contact:
+          type: string
+          description: ID of the associated contact
+          example: 21F28013E5A24B85BEEF56C8A2423898
 
     binary-access-token:
       type: object
@@ -2089,15 +2237,6 @@ components:
           type: integer
           description: estimated size of the binary data in bytes
           example: 245120
-
-    mget:
-      type: object
-      properties:
-        ids:
-            type: array
-            example: [F9BB0AAA22C947BAE030A8C00C015B91, DD45243467F344D5AFD59E0E05B8AE8B, 59A2B16DB6B24F0E87D7A0EF5DDDE28D]
-            items:
-              type: string
 
     ########################################################################
     # errors
