@@ -75,7 +75,7 @@ paths:
         - $ref: '#/components/parameters/count_query'
         - name: persons
           in: query
-          description: Comma separated list of person IDs. Finds all companies which are assiciated to the given persons.
+          description: Comma separated list of person IDs. Finds all companies which are associated to the given persons.
           example: DA8FA0F7483D467B905207A0CAB8D1DE
           schema:
             type: string
@@ -208,7 +208,7 @@ paths:
         - $ref: '#/components/parameters/count_query'
         - name: companies
           in: query
-          description: Comma separated list of company IDs. Finds all persons which are assiciated to the given companies.
+          description: Comma separated list of company IDs. Finds all persons which are associated to the given companies.
           example: 44AB4B88EBD34608B0E4A81C1DA1D85B
           schema:
             type: string
@@ -595,13 +595,13 @@ paths:
         - $ref: '#/components/parameters/count_query'
         - name: contacts
           in: query
-          description: Comma separated list of contact IDs. Finds all activities which are assiciated to the given contacts.
+          description: Comma separated list of contact IDs. Finds all activities which are associated to the given contacts.
           example: DA8FA0F7483D467B905207A0CAB8D1DE
           schema:
             type: string
         - name: projects
           in: query
-          description: Comma separated list of project IDs. Finds all activities which are assiciated to the given project.
+          description: Comma separated list of project IDs. Finds all activities which are associated to the given project.
           example: DA8FA0F7483D467B905207B0CAB8D1DE
           schema:
             type: string
@@ -1483,16 +1483,16 @@ components:
           type: boolean
           description: is the contact external?
           example: true
-        duplicateOf:
-          type: string
-          description: ID of a contact that is the master in case this contact is a duplicate
-          example: 44AB4B88EBD34608B0E4A81C1DA1D85B
-        companies:
+        parents:
           type: array
           description: The list of parent companies. The first index is the top company.
           example: [DD0AB9752680C88BE030A8C029014E7E]
           items:
             type: string
+        duplicateOf:
+          type: string
+          description: ID of a contact that is the master in case this contact is a duplicate
+          example: 44AB4B88EBD34608B0E4A81C1DA1D85B
         image:
           description: Image or logo
           $ref: '#/components/schemas/binary'
@@ -1580,6 +1580,12 @@ components:
           type: boolean
           description: is the contact external?
           example: true
+        parents:
+          type: array
+          description: The list of parent companies. The first index is the top company.
+          example: [DD0AB9752680C88BE030A8C029014E7E]
+          items:
+            type: string
         duplicateOf:
           type: string
           description: ID of a contact that is the master in case this contact is a duplicate
