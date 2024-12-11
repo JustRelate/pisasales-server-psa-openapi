@@ -579,6 +579,45 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
+  /salesportal/ticket:
+    get:
+      summary: Get information about tickets
+      description: Returns a list of all tickets
+      tags:
+        - ticket
+      parameters:
+        - $ref: '#/components/parameters/ids_query'
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/tickets'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+
+  /salesportal/ticket/{id}:
+    get:
+      summary: Get information about a single ticket
+      description: Returns ticket data.
+      tags:
+        - ticket
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/ticket'
+        '400':
+          $ref: '#/components/responses/error_invalid_id'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
   /salesportal/activity:
     get:
       summary: Fetch all activities
@@ -1071,13 +1110,6 @@ components:
           schema:
             $ref: '#/components/schemas/persons'
 
-    project:
-      description: project data
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/project'
-
     address:
       description: address data
       content:
@@ -1092,12 +1124,33 @@ components:
           schema:
             $ref: '#/components/schemas/addresses'
 
+    project:
+      description: project data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/project'
+
     projects:
       description: a list of projects
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/projects'
+
+    ticket:
+      description: ticket data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ticket'
+
+    tickets:
+      description: a list of tickets
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/tickets'
 
     opportunity:
       description: opportunity data
@@ -1660,7 +1713,7 @@ components:
           items:
             $ref: '#/components/schemas/address'
 
-    project:
+    project_base:
       type: object
       allOf:
         - $ref: '#/components/schemas/object'
@@ -1689,9 +1742,15 @@ components:
           type: string
           description: Number of the project
           example: P-24-000615
+
+    project:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project_base'
+      properties:
         entity:
           type: string
-          description: Object type that corresponds to an endpoint (project/opportunity/quote/order) for more data
+          description: Object type that corresponds to an endpoint (e.g. project/opportunity/quote/order/ticket) for more data
           example: quote
 
     projects:
@@ -1709,11 +1768,84 @@ components:
           items:
             $ref: '#/components/schemas/project'
 
+    ticket:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project_base'
+      properties:
+        type:
+          type: string
+          description: 'Type of the ticket'
+          example: PSA_SVC_CAL
+        status:
+          type: string
+          description: 'Status'
+          example: PSA_SVC_CAL_ACQ
+        open:
+          type: boolean
+          description: Is the ticket currently in an open status?
+          example: true
+        openSince:
+          type: integer
+          description: Number of days the ticket is open
+          example: 15
+        dueAt:
+          type: string
+          description: Date when the ticket should be closed
+          example: 2024-12-11T15:46:34Z
+        statusAt:
+          type: string
+          description: Date when the current status was set
+          example: 2024-12-11T15:46:34Z
+        description:
+          type: string
+          description: Description of the ticket/problem
+          example: It is not working
+        referenceNumber:
+          type: string
+          description: Customer reference number
+          example: '#12345'
+        responsibleAgent:
+          type: string
+          description: ID of the responsible person
+          example: F0EC0D64556846A48D988781DEA397A0
+        customer:
+          type: string
+          description: ID of the customer
+          example: 8FDDFCC964044F189A09F7ACEA157F98
+        submittedBy:
+          type: string
+          description: Free text who has submitted this ticket
+          example: John Doe
+        submittedAt:
+          type: string
+          description: Date when the ticket was submitted
+          example: 2024-12-11T15:46:34Z
+        origin:
+          type: string
+          description: Medium that was used to submit this ticket
+          example: PSA_SVC_ORI_TYP_PRT        
+
+    tickets:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ticket'
+
     salesproject:
       type: object
       allOf:
         - $ref: '#/components/schemas/object'
-        - $ref: '#/components/schemas/project'
+        - $ref: '#/components/schemas/project_base'
       properties:
         projectType:
           type: string
@@ -1779,6 +1911,10 @@ components:
           type: string
           description: ISO 4217 code of the currency
           example: EUR
+        statusInformation:
+          type: string
+          description: Status information
+          example: Very promising
         description:
           type: string
           description: Description of the project
