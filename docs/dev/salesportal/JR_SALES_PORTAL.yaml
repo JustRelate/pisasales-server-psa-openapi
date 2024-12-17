@@ -803,6 +803,64 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
+  /salesportal/message:
+    get:
+      summary: Fetch all messages
+      description: Searches all messages that belong to a certain object (like a project)
+      tags:
+        - message
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/count_query'
+        - name: subjectId
+          in: query
+          description: ID of the associated object
+          required: true
+          example: DDF8F474C125466DAB2A4937D5945E11
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/messages'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Post a new message
+      description: Post a new message
+      tags:
+        - message
+      requestBody:
+        description: The message data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/message_post'
+      responses:
+        '201':
+          $ref: '#/components/responses/message'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+  /salesportal/message/{id}:
+    get:
+      summary: Fetch a single message
+      description: Searches the _id of a message
+      tags:
+        - message
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/message'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
   /salesportal/activity-contact:
     get:
       summary: Fetch all activity-contact-relations
@@ -1282,6 +1340,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/activities'
+
+    message:
+      description: message data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/message'
+
+    messages:
+      description: a list of messages
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/messages'
 
     activity-contacts:
       description: a list of activity contact relations
@@ -2133,6 +2205,68 @@ components:
           items:
             $ref: '#/components/schemas/activity'
 
+    message_base:
+      type: object
+      properties:
+        subjectId:
+          type: string
+          description: reference to the project
+          example: DDF8F474C125466DAB2A4937D5945E11
+        text:
+          type: string
+          description: text of the message
+          example: Hello world
+        public:
+          type: boolean
+          description: Is this message visible to everyone?
+          example: false
+          
+    message:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/message_base'
+      properties:
+        createdAt:
+          type: string
+          description: Date when this message was created
+          example: 2024-12-17T13:41:19Z
+        createdBy:
+          type: string
+          description: contact id of the person who has created this contact
+          example: 
+        attachments:
+          type: array
+          description: Files that were attached to this message
+          items:
+            $ref: '#/components/schemas/binary'
+
+    message_post:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/message_base'
+      properties:
+        attachments:
+          type: array
+          description: Files to attach to this message
+          items:
+            $ref: '#/components/schemas/binary-upload'
+
+    messages:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/message'
+
     activity-contacts:
       type: object
       properties:
@@ -2373,6 +2507,18 @@ components:
           type: integer
           description: estimated size of the binary data in bytes
           example: 245120
+
+    binary-upload:
+      type: object
+      properties:
+        filename:
+          type: string
+          description: file name of the uploaded binary data
+          example: text.txt
+        dataBase64:
+          type: string
+          description: Base64 encoded data
+          example: SGVsbG8gd29ybGQ=
 
     ########################################################################
     # errors
