@@ -861,6 +861,102 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
+  /salesportal/questionnaire:
+    get:
+      summary: Fetch all questionnaires
+      description: Searches all questionnaires. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - questionnaire
+      parameters:
+        - $ref: '#/components/parameters/ids_query'
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+        - name: externalId
+          in: query
+          description: external ID. Find all questionnaires that refer to thei external ID
+          example: questionnaire
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/questionnaires'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Create a new questionnaire
+      description: This will create a new questionnaire
+      tags:
+        - questionnaire
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The questionnaire data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/questionnaire_base'
+      responses:
+        '201':
+          $ref: '#/components/responses/questionnaire'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+
+  /salesportal/questionnaire/{id}:
+    get:
+      summary: Fetch a single questionnaire
+      description: Searches the _id of an questionnaire
+      tags:
+        - questionnaire
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/questionnaire'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    patch:
+      summary: Update an questionnaire
+      description: This will update an existing questionnaire
+      tags:
+        - questionnaire
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The questionnaire data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/questionnaire_base'
+      responses:
+        '200':
+          $ref: '#/components/responses/questionnaire'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+
   /salesportal/activity-contact:
     get:
       summary: Fetch all activity-contact-relations
@@ -1327,13 +1423,6 @@ components:
           schema:
             $ref: '#/components/schemas/activity'
 
-    activity_base:
-      description: activity data for insert or update
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/activity_base'
-
     activities:
       description: a list of activities
       content:
@@ -1354,6 +1443,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/messages'
+
+    questionnaire:
+      description: questionnaire data for fetching
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/questionnaire'
+
+    questionnaires:
+      description: a list of questionnaire
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/questionnaires'
 
     activity-contacts:
       description: a list of activity contact relations
@@ -2267,6 +2370,60 @@ components:
           items:
             $ref: '#/components/schemas/message'
 
+    questionnaire_base:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title of the questionnaire
+          example: Fair report
+        externalId:
+          type: string
+          description: External identifier used by external systems to find the questionnaire later
+          example: _CdFzNF3YlboTsec9L49
+        activityId:
+          type: string
+          description: ID of a activity. All answers are linked to this activity. 
+          example: 07CD20BE2F2B4D46B4F8F373EC0D404E
+        contactId:
+          type: string
+          description: ID of a contact. All answers are linked to this contact.
+          example: 1B83E58E510C4D96979AAE0FC77A96F8
+        projectId:
+          type: string
+          description: ID of a project. All answers are linked to this project.
+          example: 3B265355228640DF8E05366E6F4CFD28
+        inputType:
+          type: string
+          enum: [once_updatable, once_only, repeatable]
+          description: >
+            Mode of the questionnaire how data is entered:
+              * once_only - Only one answer is store. The answer can not be changed.
+              * once_updatable - Only one is stored. The answer can be changed later.
+              * repeatable - Multiple answers can be stored. Each individual answer can not be changed.
+          example: once_updatable
+
+    questionnaire:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/questionnaire_base'
+
+    questionnaires:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/questionnaire'
+          
     activity-contacts:
       type: object
       properties:
