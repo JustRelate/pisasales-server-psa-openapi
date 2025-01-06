@@ -962,7 +962,7 @@ paths:
       summary: Fetch all questions
       description: Searches all questions. Additional queries can be set by simply adding the field name as query parameter.
       tags:
-        - questionnaire
+        - question
       parameters:
         - $ref: '#/components/parameters/ids_query'
         - $ref: '#/components/parameters/continuation_query'
@@ -985,7 +985,7 @@ paths:
       summary: Create a new question
       description: This will add a new question to a questionnaire
       tags:
-        - questionnaire
+        - question
       parameters:
         - $ref: '#/components/parameters/language_query'
       requestBody:
@@ -1016,7 +1016,7 @@ paths:
       summary: Fetch a single question
       description: Searches the _id of a question
       tags:
-        - questionnaire
+        - question
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
@@ -1031,7 +1031,7 @@ paths:
       summary: Update a question
       description: This will update an existing question
       tags:
-        - questionnaire
+        - question
       parameters:
         - $ref: '#/components/parameters/language_query'
       requestBody:
@@ -1056,12 +1056,122 @@ paths:
       summary: Delete a question
       description: Searches the _id of a question and deletes the record
       tags:
-        - questionnaire
+        - question
       parameters:
         - $ref: '#/components/parameters/id_path'
       responses:
         '204':
           description: The question was deleted
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
+  /salesportal/question-option:
+    get:
+      summary: Fetch all options of questions
+      description: Searches all options. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - question-option
+      parameters:
+        - $ref: '#/components/parameters/ids_query'
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+        - name: externalId
+          in: query
+          description: external ID. Find all questions that refer to this external ID
+          example: FZmouxAtG2vRf_EiF6yq
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/question-options'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Create a new option for a question question
+      description: This will add a new option to a question
+      tags:
+        - question-option
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The option data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/question-option_base'
+      responses:
+        '201':
+          $ref: '#/components/responses/question-option'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+
+  /salesportal/question-option/{id}:
+    get:
+      summary: Fetch a single option of a question
+      description: Searches the _id of an option
+      tags:
+        - question-option
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/question-option'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    patch:
+      summary: Update an option of a question
+      description: This will update an existing option
+      tags:
+        - question-option
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The option data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/question-option_base'
+      responses:
+        '200':
+          $ref: '#/components/responses/question-option'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    delete:
+      summary: Delete an option of a question
+      description: Searches the _id of an option and deletes the record
+      tags:
+        - question-option
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The option was deleted
         '403':
           $ref: '#/components/responses/error_authentication_failed'
         '404':
@@ -1581,6 +1691,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/questions'
+
+    question-option:
+      description: option data for fetching
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/question-option'
+
+    question-options:
+      description: a list of question options
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/question-options'
 
     activity-contacts:
       description: a list of activity contact relations
@@ -2518,6 +2642,10 @@ components:
           type: string
           description: Identifier of the questionnaire status
           example: PSA_QST_ACT
+        forms:
+          type: boolean
+          description: Are the questionnaire forms created? In case of an insert or update this value will create or delete the forms.
+          example: true
 
     questionnaire:
       type: object
@@ -2605,6 +2733,51 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/question'
+
+    question-option_base:
+      type: object
+      properties:
+        questionId:
+          type: string
+          description: ID of the associated question
+          example: 206C110F3A6449B994129AA19AA6F99C
+        position:
+          type: integer
+          description: Position number used for ordering the options of a question
+          example: 10
+        text:
+          type: string
+          description: Text
+          example: Send me more information
+        identifier:
+          type: string
+          description: Unique identifier. Mainly used within actions
+          example: MORE_INFORMATION
+        externalId:
+          type: string
+          description: External ID
+          example: Xfm_324572538
+
+    question-option:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/question-option_base'
+
+    question-options:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/question-option'
           
     activity-contacts:
       type: object
