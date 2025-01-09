@@ -1221,6 +1221,21 @@ paths:
           $ref: '#/components/responses/error_data_validation_failed'
     
   /salesportal/activity-contact/{id}:
+    get:
+      summary: Fetch a activity-contact-relation
+      description: Searches the _id of a relation
+      tags:
+        - relation
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/activity-contact'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
     delete:
       summary: Delete an activity-contact-relation
       description: Searches the _id of a relation and deletes the record
@@ -1280,6 +1295,21 @@ paths:
           $ref: '#/components/responses/error_data_validation_failed'
     
   /salesportal/company-person/{id}:
+    get:
+      summary: Fetch a company-person-relation
+      description: Searches the _id of a relation
+      tags:
+        - relation
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/company-person'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
     delete:
       summary: Delete a company-person-relation
       description: Searches the _id of a relation and deletes the record
@@ -1339,6 +1369,21 @@ paths:
           $ref: '#/components/responses/error_data_validation_failed'
     
   /salesportal/address-contact/{id}:
+    get:
+      summary: Fetch a address-contact-relation
+      description: Searches the _id of a relation
+      tags:
+        - relation
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/address-contact'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
     delete:
       summary: Delete a address-contact-relation
       description: Searches the _id of a relation and deletes the record
@@ -2799,6 +2844,12 @@ components:
       allOf:
         - $ref: '#/components/schemas/object'
         - $ref: '#/components/schemas/activity-contact_base'
+      properties:
+        contactType:
+          type: string
+          description: type of the contact
+          enum: [person, company]
+          example: person
 
     activity-contact_base:
       type: object
