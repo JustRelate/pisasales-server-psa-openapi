@@ -1177,6 +1177,54 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
+  /salesportal/questionnaire-answer:
+    get:
+      summary: Fetch all questionnaire answers
+      description: Searches all answers. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - questionnaire-answer
+      parameters:
+        - $ref: '#/components/parameters/ids_query'
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/questionnaire-answers'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Submit a new set of questionnaire answers
+      description: This will store the answers and run the actions based on the questionnaire configuration.
+      tags:
+        - questionnaire-answer
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The questionnaire data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/questionnaire-answer_insert'
+      responses:
+        '201':
+          $ref: '#/components/responses/questionnaire-answers'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+
   /salesportal/activity-contact:
     get:
       summary: Fetch all activity-contact-relations
@@ -1750,6 +1798,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/question-options'
+
+    questionnaire-answers:
+      description: a list of questionnaire answers
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/questionnaire-answers'
 
     activity-contacts:
       description: a list of activity contact relations
@@ -2823,6 +2878,91 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/question-option'
+
+    questionnaire-answer_insert:
+      type: object
+      properties:
+        keys:
+          type: object
+          properties:
+            activityId:
+              type: string
+              description: ID of the associated activity
+              example: 80B60D3878DF49478964A10BFA21E490
+            contactId:
+              type: string
+              description: ID of the associated contact
+              example: 9F25DE367EF14AD3B4AF89C006B6C6D2
+            projectId:
+              type: string
+              description: ID of the associated project
+              example: B426C482890B4A02B039ABE3C55D6573
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/questionnaire-answer_base'
+
+    questionnaire-answer_base:
+      type: object
+      properties:
+        questionId:
+          type: string
+          description: ID of the associated question
+          example: 206C110F3A6449B994129AA19AA6F99C
+        updatedAt:
+          type: string
+          description: Last date when the answer was changed. (Optional)
+          example: 2025-01-10T10:53:51Z
+        value:
+          type: object
+          description: Text of the answer. May be a comma separated list if multiple options were selected.
+          example: Send me news
+        valueIdentifier:
+          type: object
+          description: An identifier of the answer. May be a comma separated list if multiple options were selected.
+          example: NEWS
+
+    questionnaire-answer:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/questionnaire-answer_base'
+      properties:
+        questionnaireId:
+          type: string
+          description: ID of the associated questionnaire
+          example: 55A2A83EFD7940E191B8DEC345424F7D
+        activityId:
+          type: string
+          description: ID of the associated activity
+          example: 80B60D3878DF49478964A10BFA21E490
+        contactId:
+          type: string
+          description: ID of the associated contact
+          example: 9F25DE367EF14AD3B4AF89C006B6C6D2
+        projectId:
+          type: string
+          description: ID of the associated project
+          example: B426C482890B4A02B039ABE3C55D6573
+        number:
+          type: integer
+          description: number that groups multiple answers that bolong together
+          example: 817
+
+    questionnaire-answers:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/questionnaire-answer'
           
     activity-contacts:
       type: object
