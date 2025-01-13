@@ -6,12 +6,12 @@ info:
   description: Endpoints to be used by the Scrivito sales portal. All endpoints require an IAM authorization.
 
 paths:
-  /salesportal/contact:
+  /salesportal/activity:
     get:
-      summary: Get information about contacts
-      description: Returns a list of all contacts
+      summary: Fetch all activities
+      description: Searches all activities. Additional queries can be set by simply adding the field name as query parameter.
       tags:
-        - contact
+        - activity
       parameters:
         - $ref: '#/components/parameters/ids_query'
         - $ref: '#/components/parameters/continuation_query'
@@ -20,44 +20,301 @@ paths:
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
         - $ref: '#/components/parameters/count_query'
+        - name: contacts
+          in: query
+          description: Comma separated list of contact IDs. Finds all activities which are associated to the given contacts.
+          example: DA8FA0F7483D467B905207A0CAB8D1DE
+          schema:
+            type: string
+        - name: projects
+          in: query
+          description: Comma separated list of project IDs. Finds all activities which are associated to the given project.
+          example: DA8FA0F7483D467B905207B0CAB8D1DE
+          schema:
+            type: string
       responses:
         '200':
-          $ref: '#/components/responses/contacts'
+          $ref: '#/components/responses/activities'
         '403':
           $ref: '#/components/responses/error_authentication_failed'
-
-  /salesportal/contact/{id}:
-    get:
-      summary: Get information about a single contact
-      description: Returns contact data.
+    post:
+      summary: Create a new activity
+      description: This will create a new activity
       tags:
-        - contact
+        - activity
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The activity data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/activity_base'
+      responses:
+        '201':
+          $ref: '#/components/responses/activity'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+
+  /salesportal/activity/{id}:
+    get:
+      summary: Fetch a single activity
+      description: Searches the _id of an activity
+      tags:
+        - activity
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
       responses:
         '200':
-          $ref: '#/components/responses/contact'
+          $ref: '#/components/responses/activity'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    patch:
+      summary: Update an activity
+      description: This will update an existing activity
+      tags:
+        - activity
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The activity data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/activity_base'
+      responses:
+        '200':
+          $ref: '#/components/responses/activity'
         '400':
-          $ref: '#/components/responses/error_invalid_id'
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    delete:
+      summary: Delete an activity
+      description: Searches the _id of an activity and deletes the record
+      tags:
+        - activity
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The activity was deleted
         '403':
           $ref: '#/components/responses/error_authentication_failed'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
-  /salesportal/whoami:
+  /salesportal/address:
     get:
-      summary: Get information about the authenticated user
-      description: Returns contact data of the user
+      summary: Get information about addreses
+      description: Returns a list of all addresses
       tags:
-        - contact
+        - address
+      parameters:
+        - $ref: '#/components/parameters/ids_query'
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/addresses'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Create an address
+      description: This will create a new address
+      tags:
+        - address
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The address data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/address_base'
+      responses:
+        '201':
+          $ref: '#/components/responses/address'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+
+  /salesportal/address/{id}:
+    get:
+      summary: Fetch a single address
+      description: Searches the _id of an address
+      tags:
+        - address
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/address'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    patch:
+      summary: Update an address
+      description: This will update an existing address
+      tags:
+        - address
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The address data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/address_base'
+      responses:
+        '200':
+          $ref: '#/components/responses/address'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    delete:
+      summary: Delete an address
+      description: Searches the _id of an address and deletes the record
+      tags:
+        - address
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The address was deleted
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
+  /salesportal/binary-access-token/{id}:
+    get:
+      summary: Request a token for accessing binary data
+      description: Returns an URL containing a token that is valid for a limited time and grants access to a single record
+      tags:
+        - binary-access
+      parameters:
+        - name: id
+          in: path
+          description: binary ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/binary-access-token'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+
+  /salesportal/binary-access/{token}:
+    get:
+      summary: Get the binary data for an access token
+      description: No IAM is needed for this endpoint
+      tags:
+        - binary-access
+      parameters:
+        - name: token
+          in: path
+          description: binary access token
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: binary data
+          content:
+            application/octet-stream: 
+              schema:
+                type: string
+                format: binary
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                description: MIME type
+                example: image/jpg
+            Content-Length:
+              schema:
+                type: integer
+                description: Length in bytes
+                example: 22192
+            Content-Disposition:
+              schema:
+                type: string
+                example: attachment; filename="screenshot.jpg"
+        '401':
+          description: the token is invalid or expired
+
+  /salesportal/cockpit-element:
+    get:
+      summary: Fetch all available cockpit elements
+      description: Searches all configured elements
+      tags:
+        - cockpit
       parameters:
         - $ref: '#/components/parameters/language_query'
       responses:
         '200':
-          $ref: '#/components/responses/whoami'
+          $ref: '#/components/responses/cockpit-elements'
         '403':
           $ref: '#/components/responses/error_authentication_failed'
+
+  /salesportal/cockpit-element/{id}:
+    get:
+      summary: Fetch a single cockpit element
+      description: Searches the _id of a cockpit element
+      tags:
+        - cockpit
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/cockpit-element'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
 
   /salesportal/company:
     get:
@@ -192,6 +449,191 @@ paths:
                         type: string
                         example: 'Main company'
 
+  /salesportal/contact:
+    get:
+      summary: Get information about contacts
+      description: Returns a list of all contacts
+      tags:
+        - contact
+      parameters:
+        - $ref: '#/components/parameters/ids_query'
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contacts'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+
+  /salesportal/contact/{id}:
+    get:
+      summary: Get information about a single contact
+      description: Returns contact data.
+      tags:
+        - contact
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contact'
+        '400':
+          $ref: '#/components/responses/error_invalid_id'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
+  /salesportal/whoami:
+    get:
+      summary: Get information about the authenticated user
+      description: Returns contact data of the user
+      tags:
+        - contact
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/whoami'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+
+  /salesportal/message:
+    get:
+      summary: Fetch all messages
+      description: Searches all messages that belong to a certain object (like a project)
+      tags:
+        - message
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/count_query'
+        - name: subjectId
+          in: query
+          description: ID of the associated object
+          required: true
+          example: DDF8F474C125466DAB2A4937D5945E11
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/messages'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Post a new message
+      description: Post a new message
+      tags:
+        - message
+      requestBody:
+        description: The message data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/message_post'
+      responses:
+        '201':
+          $ref: '#/components/responses/message'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+  /salesportal/message/{id}:
+    get:
+      summary: Fetch a single message
+      description: Searches the _id of a message
+      tags:
+        - message
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/message'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+  
+  /salesportal/opportunity:
+    get:
+      summary: Fetch all opportunities
+      description: Searches all opportunities. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - opportunity
+      parameters:
+        - $ref: '#/components/parameters/ids_query'
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/opportunities'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+
+  /salesportal/opportunity/{id}:
+    get:
+      summary: Fetch a single opportunity
+      description: Searches the _id of an opportunity
+      tags:
+        - opportunity
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/opportunity'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
+  /salesportal/order:
+    get:
+      summary: Fetch all orders
+      description: Searches all orders. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - order
+      parameters:
+        - $ref: '#/components/parameters/ids_query'
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/orders'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+
+  /salesportal/order/{id}:
+    get:
+      summary: Fetch a single order
+      description: Searches the _id of an order
+      tags:
+        - order
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/order'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
   /salesportal/person:
     get:
       summary: Fetch all persons
@@ -325,110 +767,6 @@ paths:
                         type: string
                         example: 'quote'
 
-  /salesportal/address:
-    get:
-      summary: Get information about addreses
-      description: Returns a list of all addresses
-      tags:
-        - address
-      parameters:
-        - $ref: '#/components/parameters/ids_query'
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/addresses'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-    post:
-      summary: Create an address
-      description: This will create a new address
-      tags:
-        - address
-      parameters:
-        - $ref: '#/components/parameters/language_query'
-      requestBody:
-        description: The address data
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/address_base'
-      responses:
-        '201':
-          $ref: '#/components/responses/address'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-        '422':
-          $ref: '#/components/responses/error_data_validation_failed'
-
-  /salesportal/address/{id}:
-    get:
-      summary: Fetch a single address
-      description: Searches the _id of an address
-      tags:
-        - address
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-        - $ref: '#/components/parameters/language_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/address'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-        '404':
-          $ref: '#/components/responses/error_record_not_found'
-    patch:
-      summary: Update an address
-      description: This will update an existing address
-      tags:
-        - address
-      parameters:
-        - $ref: '#/components/parameters/language_query'
-      requestBody:
-        description: The address data
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/address_base'
-      responses:
-        '200':
-          $ref: '#/components/responses/address'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-        '404':
-          $ref: '#/components/responses/error_record_not_found'
-        '422':
-          $ref: '#/components/responses/error_data_validation_failed'
-    delete:
-      summary: Delete an address
-      description: Searches the _id of an address and deletes the record
-      tags:
-        - address
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-      responses:
-        '204':
-          description: The address was deleted
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-        '404':
-          $ref: '#/components/responses/error_record_not_found'
-
   /salesportal/project:
     get:
       summary: Get information about projects
@@ -463,399 +801,6 @@ paths:
           $ref: '#/components/responses/project'
         '400':
           $ref: '#/components/responses/error_invalid_id'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-        '404':
-          $ref: '#/components/responses/error_record_not_found'
-
-  /salesportal/opportunity:
-    get:
-      summary: Fetch all opportunities
-      description: Searches all opportunities. Additional queries can be set by simply adding the field name as query parameter.
-      tags:
-        - opportunity
-      parameters:
-        - $ref: '#/components/parameters/ids_query'
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/search_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/opportunities'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-
-  /salesportal/opportunity/{id}:
-    get:
-      summary: Fetch a single opportunity
-      description: Searches the _id of an opportunity
-      tags:
-        - opportunity
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-        - $ref: '#/components/parameters/language_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/opportunity'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-        '404':
-          $ref: '#/components/responses/error_record_not_found'
-
-  /salesportal/quote:
-    get:
-      summary: Fetch all quotes
-      description: Searches all quotes. Additional queries can be set by simply adding the field name as query parameter.
-      tags:
-        - quote
-      parameters:
-        - $ref: '#/components/parameters/ids_query'
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/search_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/quotes'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-
-  /salesportal/quote/{id}:
-    get:
-      summary: Fetch a single quote
-      description: Searches the _id of an quote
-      tags:
-        - quote
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-        - $ref: '#/components/parameters/language_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/quote'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-        '404':
-          $ref: '#/components/responses/error_record_not_found'
-
-  /salesportal/order:
-    get:
-      summary: Fetch all orders
-      description: Searches all orders. Additional queries can be set by simply adding the field name as query parameter.
-      tags:
-        - order
-      parameters:
-        - $ref: '#/components/parameters/ids_query'
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/search_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/orders'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-
-  /salesportal/order/{id}:
-    get:
-      summary: Fetch a single order
-      description: Searches the _id of an order
-      tags:
-        - order
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-        - $ref: '#/components/parameters/language_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/order'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-        '404':
-          $ref: '#/components/responses/error_record_not_found'
-
-  /salesportal/ticket:
-    get:
-      summary: Get information about tickets
-      description: Returns a list of all tickets
-      tags:
-        - ticket
-      parameters:
-        - $ref: '#/components/parameters/ids_query'
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/search_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/tickets'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-    post:
-      summary: Create a ticket
-      description: This will create a new ticket
-      tags:
-        - ticket
-      parameters:
-        - $ref: '#/components/parameters/language_query'
-      requestBody:
-        description: The ticket data
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ticket_base'
-      responses:
-        '201':
-          $ref: '#/components/responses/ticket'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-        '422':
-          $ref: '#/components/responses/error_data_validation_failed'
-
-  /salesportal/ticket/{id}:
-    get:
-      summary: Get information about a single ticket
-      description: Returns ticket data.
-      tags:
-        - ticket
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-        - $ref: '#/components/parameters/language_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/ticket'
-        '400':
-          $ref: '#/components/responses/error_invalid_id'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-        '404':
-          $ref: '#/components/responses/error_record_not_found'
-    patch:
-      summary: Update a ticket
-      description: This will update an existing ticket
-      tags:
-        - ticket
-      parameters:
-        - $ref: '#/components/parameters/language_query'
-      requestBody:
-        description: The ticket data
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ticket_base'
-      responses:
-        '200':
-          $ref: '#/components/responses/ticket'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-        '404':
-          $ref: '#/components/responses/error_record_not_found'
-        '422':
-          $ref: '#/components/responses/error_data_validation_failed'
-    delete:
-      summary: Delete a ticket
-      description: Searches the _id of a ticket and deletes the record
-      tags:
-        - ticket
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-      responses:
-        '204':
-          description: The ticket was deleted
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-        '404':
-          $ref: '#/components/responses/error_record_not_found'
-
-  /salesportal/activity:
-    get:
-      summary: Fetch all activities
-      description: Searches all activities. Additional queries can be set by simply adding the field name as query parameter.
-      tags:
-        - activity
-      parameters:
-        - $ref: '#/components/parameters/ids_query'
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/search_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-        - name: contacts
-          in: query
-          description: Comma separated list of contact IDs. Finds all activities which are associated to the given contacts.
-          example: DA8FA0F7483D467B905207A0CAB8D1DE
-          schema:
-            type: string
-        - name: projects
-          in: query
-          description: Comma separated list of project IDs. Finds all activities which are associated to the given project.
-          example: DA8FA0F7483D467B905207B0CAB8D1DE
-          schema:
-            type: string
-      responses:
-        '200':
-          $ref: '#/components/responses/activities'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-    post:
-      summary: Create a new activity
-      description: This will create a new activity
-      tags:
-        - activity
-      parameters:
-        - $ref: '#/components/parameters/language_query'
-      requestBody:
-        description: The activity data
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/activity_base'
-      responses:
-        '201':
-          $ref: '#/components/responses/activity'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-        '422':
-          $ref: '#/components/responses/error_data_validation_failed'
-
-  /salesportal/activity/{id}:
-    get:
-      summary: Fetch a single activity
-      description: Searches the _id of an activity
-      tags:
-        - activity
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-        - $ref: '#/components/parameters/language_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/activity'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-        '404':
-          $ref: '#/components/responses/error_record_not_found'
-    patch:
-      summary: Update an activity
-      description: This will update an existing activity
-      tags:
-        - activity
-      parameters:
-        - $ref: '#/components/parameters/language_query'
-      requestBody:
-        description: The activity data
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/activity_base'
-      responses:
-        '200':
-          $ref: '#/components/responses/activity'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-        '404':
-          $ref: '#/components/responses/error_record_not_found'
-        '422':
-          $ref: '#/components/responses/error_data_validation_failed'
-    delete:
-      summary: Delete an activity
-      description: Searches the _id of an activity and deletes the record
-      tags:
-        - activity
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-      responses:
-        '204':
-          description: The activity was deleted
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-        '404':
-          $ref: '#/components/responses/error_record_not_found'
-
-  /salesportal/message:
-    get:
-      summary: Fetch all messages
-      description: Searches all messages that belong to a certain object (like a project)
-      tags:
-        - message
-      parameters:
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/count_query'
-        - name: subjectId
-          in: query
-          description: ID of the associated object
-          required: true
-          example: DDF8F474C125466DAB2A4937D5945E11
-          schema:
-            type: string
-      responses:
-        '200':
-          $ref: '#/components/responses/messages'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-    post:
-      summary: Post a new message
-      description: Post a new message
-      tags:
-        - message
-      requestBody:
-        description: The message data
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/message_post'
-      responses:
-        '201':
-          $ref: '#/components/responses/message'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-  /salesportal/message/{id}:
-    get:
-      summary: Fetch a single message
-      description: Searches the _id of a message
-      tags:
-        - message
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-      responses:
-        '200':
-          $ref: '#/components/responses/message'
         '403':
           $ref: '#/components/responses/error_authentication_failed'
         '404':
@@ -1225,6 +1170,43 @@ paths:
         '422':
           $ref: '#/components/responses/error_data_validation_failed'
 
+  /salesportal/quote:
+    get:
+      summary: Fetch all quotes
+      description: Searches all quotes. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - quote
+      parameters:
+        - $ref: '#/components/parameters/ids_query'
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/quotes'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+
+  /salesportal/quote/{id}:
+    get:
+      summary: Fetch a single quote
+      description: Searches the _id of an quote
+      tags:
+        - quote
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/quote'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
   /salesportal/activity-contact:
     get:
       summary: Fetch all activity-contact-relations
@@ -1447,64 +1429,6 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
-  /salesportal/binary-access-token/{id}:
-    get:
-      summary: Request a token for accessing binary data
-      description: Returns an URL containing a token that is valid for a limited time and grants access to a single record
-      tags:
-        - binary-access
-      parameters:
-        - name: id
-          in: path
-          description: binary ID
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          $ref: '#/components/responses/binary-access-token'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-
-  /salesportal/binary-access/{token}:
-    get:
-      summary: Get the binary data for an access token
-      description: No IAM is needed for this endpoint
-      tags:
-        - binary-access
-      parameters:
-        - name: token
-          in: path
-          description: binary access token
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: binary data
-          content:
-            application/octet-stream: 
-              schema:
-                type: string
-                format: binary
-          headers:
-            Content-Type:
-              schema:
-                type: string
-                description: MIME type
-                example: image/jpg
-            Content-Length:
-              schema:
-                type: integer
-                description: Length in bytes
-                example: 22192
-            Content-Disposition:
-              schema:
-                type: string
-                example: attachment; filename="screenshot.jpg"
-        '401':
-          description: the token is invalid or expired
-
   /salesportal/schema:
     get:
       summary: Fetch schemas
@@ -1524,6 +1448,123 @@ paths:
           $ref: '#/components/responses/schema-list'
         '403':
           $ref: '#/components/responses/error_authentication_failed'
+
+  /salesportal/ticket:
+    get:
+      summary: Get information about tickets
+      description: Returns a list of all tickets
+      tags:
+        - ticket
+      parameters:
+        - $ref: '#/components/parameters/ids_query'
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/tickets'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Create a ticket
+      description: This will create a new ticket
+      tags:
+        - ticket
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The ticket data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ticket_base'
+      responses:
+        '201':
+          $ref: '#/components/responses/ticket'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+
+  /salesportal/ticket/{id}:
+    get:
+      summary: Get information about a single ticket
+      description: Returns ticket data.
+      tags:
+        - ticket
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/ticket'
+        '400':
+          $ref: '#/components/responses/error_invalid_id'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    patch:
+      summary: Update a ticket
+      description: This will update an existing ticket
+      tags:
+        - ticket
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The ticket data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ticket_base'
+      responses:
+        '200':
+          $ref: '#/components/responses/ticket'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    delete:
+      summary: Delete a ticket
+      description: Searches the _id of a ticket and deletes the record
+      tags:
+        - ticket
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The ticket was deleted
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
+  /salesportal/version:
+    get:
+      summary: Get information about the server version
+      description: Returns some of the relevant server versions
+      tags:
+        - version
+      responses:
+        '200':
+          $ref: '#/components/responses/version'
 
 components:
   ########################################################################
@@ -1806,6 +1847,20 @@ components:
           schema:
             $ref: '#/components/schemas/questionnaire-answers'
 
+    cockpit-element:
+      description: A cockpit element
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/cockpit-element'
+
+    cockpit-elements:
+      description: A list of cockpit element
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/cockpit-elements'
+
     activity-contacts:
       description: a list of activity contact relations
       content:
@@ -1861,6 +1916,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/schema-list'
+
+    version:
+      description: server version
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/version'
 
     error_authentication_failed:
       description: The authentication has failed
@@ -2963,7 +3025,34 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/questionnaire-answer'
-          
+        
+    cockpit-element:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        element:
+          type: string
+          description: Name of the cockpit element
+          example: Pending quotes
+        title:
+          type: string
+          description: Title of the cockpit element
+          example: Pending quotes in the current month
+        type:
+          type: string
+          description: The type of the cockpit
+          enum: [sales, marketing, service]
+          example: sales
+
+    cockpit-elements:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/cockpit-element'
+
     activity-contacts:
       type: object
       properties:
@@ -3222,6 +3311,34 @@ components:
           type: string
           description: Base64 encoded data
           example: SGVsbG8gd29ybGQ=
+
+    version:
+      type: object
+      properties:
+        server_version:
+          type: string
+          description: Version of the server
+          example: '08.03-20241115'
+        server_patch:
+          type: string
+          description: Current patch level of the server
+          example: '02'
+        rest_api_version:
+          type: string
+          description: Version of the REST API jar
+          example: '1.2.2'
+        rest_api_patch:
+          type: string
+          description: Current patch level of the REST API jar
+          example: '49'
+        dxhub_version:
+          type: string
+          description: Version of the DXHub jar
+          example: '1.1.3'
+        dxhub_patch:
+          type: string
+          description: Current patch level of the DXHub jar
+          example: '7'
 
     ########################################################################
     # errors
