@@ -1146,6 +1146,23 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
+  /salesportal/questionnaire-answer/{id}:
+    get:
+      summary: Fetch a single questionnaire answer
+      description: Searches the _id of an answer
+      tags:
+        - questionnaire-answer
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/questionnaire-answer'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
   /salesportal/questionnaire-answer:
     get:
       summary: Fetch all questionnaire answers
@@ -1177,10 +1194,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/questionnaire-answer_insert'
+              $ref: '#/components/schemas/questionnaire-answer_post_request'
       responses:
         '201':
-          $ref: '#/components/responses/questionnaire-answers'
+          $ref: '#/components/responses/questionnaire-answer_post'
         '400':
           description: The submitted data had errors
           content:
@@ -1870,6 +1887,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/questionnaire-answers'
+
+    questionnaire-answer_post:
+      description: a list of questionnaire answers
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/questionnaire-answer_post_response'
+
+    questionnaire-answer:
+      description: a questionnaire answer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/questionnaire-answer'
 
     cockpit-element:
       description: A cockpit element
@@ -2972,7 +3003,7 @@ components:
           items:
             $ref: '#/components/schemas/question-option'
 
-    questionnaire-answer_insert:
+    questionnaire-answer_post_request:
       type: object
       properties:
         keys:
@@ -2994,6 +3025,18 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/questionnaire-answer_base'
+
+    questionnaire-answer_post_response:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: identifier that is the number of the answer set
+          example: 4711
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/questionnaire-answer'
 
     questionnaire-answer_base:
       type: object
@@ -3147,8 +3190,7 @@ components:
       properties:
         FNT:
           type: string
-          description: font style
-          enum: ['bold', 'italic', 'underlined']
+          description: 'Font style. Multiple styles are separated by a comma. Possible styles: bold,italic,underlined,stroke'
           example: bold
         BGC:
           type: string
