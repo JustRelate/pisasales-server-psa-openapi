@@ -293,6 +293,13 @@ paths:
         - cockpit
       parameters:
         - $ref: '#/components/parameters/language_query'
+        - name: type
+          in: query
+          description: Type of the cockpit
+          example: sales
+          schema:
+            type: string
+            enum: [sales, marketing, service]
       responses:
         '200':
           $ref: '#/components/responses/cockpit-elements'
@@ -311,6 +318,23 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/cockpit-element'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
+  /salesportal/cockpit-data/{id}:
+    get:
+      summary: Fetch the data for a single cockpit element
+      description: Searches the _id of a cockpit elementa and returns the element data
+      tags:
+        - cockpit
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/cockpit-data'
         '403':
           $ref: '#/components/responses/error_authentication_failed'
         '404':
@@ -1861,6 +1885,13 @@ components:
           schema:
             $ref: '#/components/schemas/cockpit-elements'
 
+    cockpit-data:
+      description: The data of a cockpit element
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/cockpit-data'
+          
     activity-contacts:
       description: a list of activity contact relations
       content:
@@ -2976,13 +3007,17 @@ components:
           description: Last date when the answer was changed. (Optional)
           example: 2025-01-10T10:53:51Z
         value:
-          type: object
+          type: array
           description: Text of the answer. May be a comma separated list if multiple options were selected.
-          example: Send me news
+          example: ['Send me news']
+          items:
+            type: string
         valueIdentifier:
-          type: object
+          type: array
           description: An identifier of the answer. May be a comma separated list if multiple options were selected.
-          example: NEWS
+          example: ['NEWS']
+          items:
+            type: string
 
     questionnaire-answer:
       type: object
@@ -3052,6 +3087,77 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/cockpit-element'
+
+    cockpit-data:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        MET_DAT:
+          type: array
+          description: meta data
+          items:
+            type: object
+            properties:
+              TTL:
+                type: string
+                description: element title
+                example: Open quotes
+              SUB_TTL:
+                type: string
+                description: element sub title
+                example: 'Total: 128.346 €'
+        CRT_DAT:
+          type: array
+          description: chart data
+          items:
+            type: object
+            additionalProperties:
+              type: string
+        RAW_DAT:
+          type: array
+          description: pre formatted raw data
+          example: ['2023 - 1000 €', '2024 - 1400 €']
+          items:
+            type: string
+        LIS_DAT:
+          type: array
+          description: Data for a list element
+          items:
+            type: object
+            properties:
+              DAT:
+                type: array
+                description: Cell data
+                example: ['2023', '1000 €']
+                items:
+                  type: string
+              LNK:
+                type: array
+                description: optional deep link for each cell
+                example: ['http://']
+                items:
+                  type: string
+              STY:
+                description: style for this row
+                $ref: '#/components/schemas/cockpit-style'
+
+    cockpit-style:
+      type: object
+      properties:
+        FNT:
+          type: string
+          description: font style
+          enum: ['bold', 'italic', 'underlined']
+          example: bold
+        BGC:
+          type: string
+          description: background color
+          example: '#888888'
+        FGC:
+          type: string
+          description: foreground color
+          example: '#A0000000'
 
     activity-contacts:
       type: object
