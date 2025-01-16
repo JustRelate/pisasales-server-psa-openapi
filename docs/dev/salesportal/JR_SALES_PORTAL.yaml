@@ -1396,6 +1396,80 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
+  /salesportal/contact-project:
+    get:
+      summary: Fetch all contact-project-relations
+      description: Searches all relations
+      tags:
+        - relation
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contact-projects'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Create a new contact-project-relation
+      description: This will create a new relation between a contact and a project
+      tags:
+        - relation
+      requestBody:
+        description: The relation data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/contact-project_base'
+      responses:
+        '201':
+          $ref: '#/components/responses/contact-project'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    
+  /salesportal/contact-project/{id}:
+    get:
+      summary: Fetch a contact-project-relation
+      description: Searches the _id of a relation
+      tags:
+        - relation
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contact-project'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    delete:
+      summary: Delete a contact-project-relation
+      description: Searches the _id of a relation and deletes the record
+      tags:
+        - relation
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The relation was deleted
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
   /salesportal/address-contact:
     get:
       summary: Fetch all address-contact-relations
@@ -1924,7 +1998,7 @@ components:
             $ref: '#/components/schemas/cockpit-data'
           
     activity-contacts:
-      description: a list of activity contact relations
+      description: a list of activity-contact-relations
       content:
         application/json:
           schema:
@@ -1938,7 +2012,7 @@ components:
             $ref: '#/components/schemas/activity-contact'
 
     company-persons:
-      description: a list of company person relations
+      description: a list of company-person-relations
       content:
         application/json:
           schema:
@@ -1952,7 +2026,7 @@ components:
             $ref: '#/components/schemas/company-person'
 
     address-contacts:
-      description: a list of address contact relations
+      description: a list of address-contact-relations
       content:
         application/json:
           schema:
@@ -1964,6 +2038,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/address-contact'
+
+    contact-project:
+      description: contact-project-relation data for fetching
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/contact-project'
+
+    contact-projects:
+      description: a list of contact-project-relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/contact-projects'
 
     binary-access-token:
       description: token for accessing binary data
@@ -2141,7 +2229,8 @@ components:
           example: true
         entity:
           type: string
-          description: Object type that corresponds to an endpoint (contact/person/company) for more data
+          description: Object type that corresponds to an endpoint for more data
+          enum: [person, company, contact]
           example: person
         image:
           description: Image of the user or the company logo
@@ -2432,7 +2521,8 @@ components:
       properties:
         entity:
           type: string
-          description: Object type that corresponds to an endpoint (e.g. project/opportunity/quote/order/ticket) for more data
+          description: Object type that corresponds to an endpoint for more data
+          enum: [project, opportunity, quote, order, ticket]
           example: quote
 
     projects:
@@ -3224,8 +3314,8 @@ components:
       properties:
         contactType:
           type: string
-          description: type of the contact
-          enum: [person, company]
+          description: Type of the contact.  Defines the endpoint to fetch for more information.
+          enum: [person, company, contact]
           example: person
 
     activity-contact_base:
@@ -3325,6 +3415,54 @@ components:
           type: string
           description: ID of the associated contact
           example: 21F28013E5A24B85BEEF56C8A2423898
+
+    contact-project:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/contact-project_base'
+      properties:
+        projectType:
+          type: string
+          description: Type of the project. Defines the endpoint to fetch for more information.
+          enum: [project, ticket, opportunity, quote, order]
+          example: order
+        contactType:
+          type: string
+          description: Type of the contact. Defines the endpoint to fetch for more information.
+          enum: [contact, person, company]
+          example: person
+
+    contact-project_base:
+      type: object
+      properties:
+        contact:
+          type: string
+          description: ID of the associated contact
+          example: 8830238D81214394A18D65DFEE655ADB
+        project:
+          type: string
+          description: ID of the associated project
+          example: 812B6D2BC220411B8F177974AB50F468
+        role:
+          type: string
+          description: enum identifier of the contacts role in the project
+          example: COM_PRS
+
+    contact-projects:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/contact-project'
 
     binary-access-token:
       type: object
