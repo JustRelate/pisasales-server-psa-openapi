@@ -1322,6 +1322,80 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
+  /salesportal/activity-project:
+    get:
+      summary: Fetch all activity-project-relations
+      description: Searches all relations
+      tags:
+        - relation
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/activity-projects'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Create a new activity-project-relation
+      description: This will create a new relation between a activity and a project
+      tags:
+        - relation
+      requestBody:
+        description: The relation data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/activity-project_base'
+      responses:
+        '201':
+          $ref: '#/components/responses/activity-project'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    
+  /salesportal/activity-project/{id}:
+    get:
+      summary: Fetch a activity-project-relation
+      description: Searches the _id of a relation
+      tags:
+        - relation
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/activity-project'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    delete:
+      summary: Delete a activity-project-relation
+      description: Searches the _id of a relation and deletes the record
+      tags:
+        - relation
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The relation was deleted
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
   /salesportal/company-person:
     get:
       summary: Fetch all company-persons-relations
@@ -2052,6 +2126,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/contact-projects'
+
+    activity-project:
+      description: activity-project-relation data for fetching
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/activity-project'
+
+    activity-projects:
+      description: a list of activity-project-relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/activity-projects'
 
     binary-access-token:
       description: token for accessing binary data
@@ -3463,6 +3551,45 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/contact-project'
+
+    activity-project:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/activity-project_base'
+      properties:
+        projectType:
+          type: string
+          description: Type of the project. Defines the endpoint to fetch for more information.
+          enum: [project, ticket, opportunity, quote, order]
+          example: order
+
+    activity-project_base:
+      type: object
+      properties:
+        activity:
+          type: string
+          description: ID of the associated activity
+          example: 5C660CA5A362411F8C4FFF384C0B411E
+        project:
+          type: string
+          description: ID of the associated project
+          example: 812B6D2BC220411B8F177974AB50F468
+
+    activity-projects:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/activity-project'
 
     binary-access-token:
       type: object
