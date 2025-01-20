@@ -1196,8 +1196,10 @@ paths:
             schema:
               $ref: '#/components/schemas/questionnaire-answer_post_request'
       responses:
+        '200':
+          $ref: '#/components/responses/questionnaire-answer_update'
         '201':
-          $ref: '#/components/responses/questionnaire-answer_post'
+          $ref: '#/components/responses/questionnaire-answer_insert'
         '400':
           description: The submitted data had errors
           content:
@@ -2036,8 +2038,15 @@ components:
           schema:
             $ref: '#/components/schemas/questionnaire-answers'
 
-    questionnaire-answer_post:
-      description: a list of questionnaire answers
+    questionnaire-answer_insert:
+      description: A new set of answers was created. The answers are returned as a list.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/questionnaire-answer_post_response'
+
+    questionnaire-answer_update:
+      description: A set of answers was updated. The answers are returned as a list.
       content:
         application/json:
           schema:
@@ -2393,6 +2402,10 @@ components:
           type: string
           description: Description of the contact
           example: Awesome company
+        statusInfo:
+          type: string
+          description: Information about the current status of the contact
+          example: New customer
 
     company_base:
       type: object
