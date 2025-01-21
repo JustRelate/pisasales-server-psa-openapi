@@ -6,6 +6,29 @@ info:
   description: Endpoints to be used by the Scrivito portal. All endpoints require an IAM authorization.
 
 paths:
+  /salesportal/global-result:
+    get:
+      summary: A global full text search
+      description: Searches all entites
+      tags:
+        - global-result
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/count_query'
+        - name: entity
+          in: query
+          description: Comma separated list of entities. This limits the search results to this entities.
+          example: ticket,service-object
+          schema:
+            type: string
+            enum: ['ticket', 'opportunity', 'quote', 'order', 'event', 'contract', 'service-object']
+      responses:
+        '200':
+          $ref: '#/components/responses/global-results'
+        '403':
+          $ref: '#/components/responses/error_403'
+
   /portal/opportunity:
     get:
       summary: Fetch all opportunities
@@ -1412,6 +1435,13 @@ components:
           schema:
             $ref: '#/components/schemas/countries'
 
+    global-results:
+      description: a list of global search results
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/global-results'
+
     user:
       description: user data
       content:
@@ -2767,6 +2797,39 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/country'
+
+    global-result:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        title:
+          type: string
+          description: Title of the found record
+          example: Tynacoon GmbH
+        entity:
+          type: string
+          description: End point to query for more details
+          example: company
+        snippet:
+          type: string
+          description: Text around the searched terms
+          example: Tynacoon GmbH - Customer - C-20-0028947
+
+    global-results:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/global-result'
 
     ########################################################################
     # errors

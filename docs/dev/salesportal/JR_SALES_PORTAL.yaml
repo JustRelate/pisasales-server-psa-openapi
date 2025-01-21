@@ -526,6 +526,29 @@ paths:
         '403':
           $ref: '#/components/responses/error_authentication_failed'
 
+  /salesportal/global-result:
+    get:
+      summary: A global full text search
+      description: Searches all entites
+      tags:
+        - global-result
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/count_query'
+        - name: entity
+          in: query
+          description: Comma separated list of entities. This limits the search results to this entities.
+          example: person,company
+          schema:
+            type: string
+            enum: ['activity', 'person', 'company', 'ticket', 'opportunity']
+      responses:
+        '200':
+          $ref: '#/components/responses/global-results'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+
   /salesportal/message:
     get:
       summary: Fetch all messages
@@ -1773,7 +1796,7 @@ components:
     continuation_query:
       in: query
       name: _continuation
-      description: continuation key that was returned with the last result list
+      description: Continuation key that was returned with the last result list
       schema:
         type: string
 
@@ -1787,7 +1810,7 @@ components:
     order_query:
       in: query
       name: _order
-      description: list of fields that should be used for ordering
+      description: List of fields that should be used for ordering
       example: createdAt.desc,name.asc
       schema:
         type: string
@@ -1795,7 +1818,7 @@ components:
     limit_query:
       in: query
       name: _limit
-      description: maximum number of records to return. if the maximum is reached a continuation key will be in the response. the default value is 100
+      description: Maximum number of records to return. If the maximum is reached a continuation key will be in the response. The default value is 100.
       example: 10
       schema:
         type: number
@@ -1811,7 +1834,7 @@ components:
     count_query:
       in: query
       name: _count
-      description: count the total number of results available
+      description: Count the total number of results available
       example: false
       schema:
         type: boolean
@@ -2149,6 +2172,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/activity-projects'
+
+    global-results:
+      description: a list of global search results
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/global-results'
 
     binary-access-token:
       description: token for accessing binary data
@@ -3615,6 +3645,39 @@ components:
           type: integer
           description: time in seconds how long the token is valid
           example: 3600
+
+    global-result:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        title:
+          type: string
+          description: Title of the found record
+          example: Tynacoon GmbH
+        entity:
+          type: string
+          description: End point to query for more details
+          example: company
+        snippet:
+          type: string
+          description: Text around the searched terms
+          example: Tynacoon GmbH - Customer - C-20-0028947
+
+    global-results:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/global-result'
 
     schema-list:
       type: object
