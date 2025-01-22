@@ -2385,10 +2385,6 @@ components:
     contact_base:
       type: object
       properties:
-        number:
-          type: string
-          description: The internal number of the contact
-          example: C-20-000491
         status:
           type: string
           description: The identifier of the current status
@@ -2448,6 +2444,10 @@ components:
           type: string
           description: The name of the company
           example: ACME Ltd.
+        number:
+          type: string
+          description: The internal number of the company
+          example: C-20-000491
         group:
           type: string
           description: The identifier of the group
@@ -2472,7 +2472,7 @@ components:
             type: string
         duplicateOf:
           type: string
-          description: ID of a contact that is the master in case this contact is a duplicate
+          description: ID of a company that is the master in case this company is a duplicate
           example: 44AB4B88EBD34608B0E4A81C1DA1D85B
         image:
           description: Image or logo
@@ -2538,6 +2538,10 @@ components:
           type: string
           description: Composed name (given name + family name)
           example: John Doe
+        number:
+          type: string
+          description: The internal number of the person
+          example: C-20-000491
         group:
           type: string
           description: The identifier of the group
@@ -2554,7 +2558,7 @@ components:
             type: string
         duplicateOf:
           type: string
-          description: ID of a contact that is the master in case this contact is a duplicate
+          description: ID of a person that is the master in case this person is a duplicate
           example: 44AB4B88EBD34608B0E4A81C1DA1D85B
         image:
           description: Image or logo
@@ -2633,10 +2637,6 @@ components:
           type: string
           description: Keyword of the project
           example: Filling line
-        number:
-          type: string
-          description: Number of the project
-          example: P-24-000615
 
     project:
       type: object
@@ -2645,6 +2645,10 @@ components:
         - $ref: '#/components/schemas/system_fields'
         - $ref: '#/components/schemas/project_base'
       properties:
+        number:
+          type: string
+          description: Number of the project
+          example: P-24-000615
         entity:
           type: string
           description: Object type that corresponds to an endpoint for more data
@@ -2691,10 +2695,6 @@ components:
           type: string
           description: Date when the ticket should be closed
           example: 2024-12-11T15:46:34Z
-        statusAt:
-          type: string
-          description: Date when the current status was set
-          example: 2024-12-11T15:46:34Z
         description:
           type: string
           description: Description of the ticket/problem
@@ -2730,6 +2730,15 @@ components:
         - $ref: '#/components/schemas/object'
         - $ref: '#/components/schemas/system_fields'
         - $ref: '#/components/schemas/ticket_base'
+      properties:
+        number:
+          type: string
+          description: Number of the ticket
+          example: CP-19-006640
+        statusAt:
+          type: string
+          description: Date when the current status was set
+          example: 2024-12-11T15:46:34Z
 
     tickets:
       type: object
@@ -2753,6 +2762,10 @@ components:
         - $ref: '#/components/schemas/system_fields'
         - $ref: '#/components/schemas/project_base'
       properties:
+        number:
+          type: string
+          description: Number of the project
+          example: P-24-000615
         projectType:
           type: string
           description: Identifier of the sub type of the project
