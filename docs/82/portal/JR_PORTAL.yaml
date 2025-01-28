@@ -19,10 +19,10 @@ paths:
         - name: entity
           in: query
           description: Comma separated list of entities. This limits the search results to this entities.
-          example: ticket,service-object
+          example: Ticket,ServiceObject
           schema:
             type: string
-            enum: ['ticket', 'opportunity', 'quote', 'order', 'event', 'contract', 'service-object']
+            enum: ['Ticket', 'Opportunity', 'Quote', 'Order', 'Event', 'Contract', 'ServiceObject', 'Document']
       responses:
         '200':
           $ref: '#/components/responses/global-results'

@@ -539,10 +539,10 @@ paths:
         - name: entity
           in: query
           description: Comma separated list of entities. This limits the search results to this entities.
-          example: person,company
+          example: Person,Company
           schema:
             type: string
-            enum: ['activity', 'person', 'company', 'ticket', 'opportunity']
+            enum: ['Activity', 'Person', 'Company', 'Ticket', 'Opportunity']
       responses:
         '200':
           $ref: '#/components/responses/global-results'
@@ -2352,15 +2352,14 @@ components:
         entity:
           type: string
           description: Object type that corresponds to an endpoint for more data
-          enum: [person, company, contact]
-          example: person
+          enum: [Person, Company, Contact]
+          example: Person
         image:
           description: Image of the user or the company logo
           $ref: '#/components/schemas/binary'
-        thumbnail:
-          type: string
-          description: Thumbnail of the contact as a data URL encoded string
-          example: data:image/png;base64,iVBORw0KGg...
+        imageThumbnail:
+          description: Thumbnail of the contact image
+          $ref: '#/components/schemas/binary'
 
     contacts:
       type: object
@@ -2477,10 +2476,9 @@ components:
         image:
           description: Image or logo
           $ref: '#/components/schemas/binary'
-        thumbnail:
-          type: string
-          description: Thumbnail of the contact as a data URL encoded string
-          example: data:image/png;base64,iVBORw0KGg...
+        imageThumbnail:
+          description: Thumbnail of the image
+          $ref: '#/components/schemas/binary'
 
     companies:
       type: object
@@ -2561,12 +2559,11 @@ components:
           description: ID of a person that is the master in case this person is a duplicate
           example: 44AB4B88EBD34608B0E4A81C1DA1D85B
         image:
-          description: Image or logo
+          description: Image of the person
           $ref: '#/components/schemas/binary'
-        thumbnail:
-          type: string
-          description: Thumbnail of the contact as a data URL encoded string
-          example: data:image/png;base64,iVBORw0KGg...
+        imageThumbnail:
+          description: Thumbnail of the image
+          $ref: '#/components/schemas/binary'
 
     persons:
       type: object
@@ -2652,8 +2649,8 @@ components:
         entity:
           type: string
           description: Object type that corresponds to an endpoint for more data
-          enum: [project, opportunity, quote, order, ticket]
-          example: quote
+          enum: [Project, Opportunity, Quote, Order, Ticket]
+          example: Quote
 
     projects:
       type: object
@@ -3038,7 +3035,7 @@ components:
         createdBy:
           type: string
           description: contact id of the person who has created this contact
-          example: 
+          example: 16A156C204D74BDAAEE1EC98BCBF242A
         attachments:
           type: array
           description: Files that were attached to this message
@@ -3454,8 +3451,8 @@ components:
         contactType:
           type: string
           description: Type of the contact.  Defines the endpoint to fetch for more information.
-          enum: [person, company, contact]
-          example: person
+          enum: [Person, Company, Contact]
+          example: Person
 
     activity-contact_base:
       type: object
@@ -3564,13 +3561,13 @@ components:
         projectType:
           type: string
           description: Type of the project. Defines the endpoint to fetch for more information.
-          enum: [project, ticket, opportunity, quote, order]
-          example: order
+          enum: [Project, Ticket, Opportunity, Quote, Order]
+          example: Order
         contactType:
           type: string
           description: Type of the contact. Defines the endpoint to fetch for more information.
-          enum: [contact, person, company]
-          example: person
+          enum: [Contact, Person, Company]
+          example: Person
 
     contact-project_base:
       type: object
@@ -3612,8 +3609,8 @@ components:
         projectType:
           type: string
           description: Type of the project. Defines the endpoint to fetch for more information.
-          enum: [project, ticket, opportunity, quote, order]
-          example: order
+          enum: [Project, Ticket, Opportunity, Quote, Order]
+          example: Order
 
     activity-project_base:
       type: object
