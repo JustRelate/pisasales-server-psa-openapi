@@ -907,6 +907,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/language_query'
         - $ref: '#/components/parameters/count_query'
+        - $ref: '#/components/parameters/authorization_jwt_header'
       responses:
         '200':
           $ref: '#/components/responses/gdprs'
@@ -922,6 +923,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/authorization_jwt_header'
       requestBody:
         description: The new data
         required: true
@@ -964,6 +966,7 @@ paths:
         - user
       parameters:
         - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/authorization_jwt_header'
       responses:
         '200':
           $ref: '#/components/responses/whoami'
@@ -1123,6 +1126,13 @@ components:
       example: false
       schema:
         type: boolean
+
+    authorization_jwt_header:
+      in: header
+      name: Authorization
+      description: Header can contain the IAM token or a generated JWT. The JWT needs a prefix JWT
+      schema:
+        type: string
 
   ########################################################################
   # responses

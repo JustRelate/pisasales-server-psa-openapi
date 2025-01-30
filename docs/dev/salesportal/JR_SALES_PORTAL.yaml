@@ -89,6 +89,7 @@ paths:
       tags:
         - activity
       parameters:
+        - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
       requestBody:
         description: The activity data
@@ -193,6 +194,7 @@ paths:
       tags:
         - address
       parameters:
+        - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
       requestBody:
         description: The address data
@@ -417,6 +419,7 @@ paths:
       tags:
         - company
       parameters:
+        - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
       requestBody:
         description: The company data
@@ -766,6 +769,7 @@ paths:
       tags:
         - person
       parameters:
+        - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
       requestBody:
         description: The person data
@@ -937,6 +941,7 @@ paths:
       tags:
         - questionnaire
       parameters:
+        - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
       requestBody:
         description: The questionnaire data
@@ -1033,6 +1038,7 @@ paths:
       tags:
         - question
       parameters:
+        - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
       requestBody:
         description: The question data
@@ -1143,6 +1149,7 @@ paths:
       tags:
         - question-option
       parameters:
+        - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
       requestBody:
         description: The option data
@@ -1744,6 +1751,7 @@ paths:
       tags:
         - ticket
       parameters:
+        - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
       requestBody:
         description: The ticket data
@@ -2400,12 +2408,6 @@ components:
           type: string
           description: Occasion of the first contact
           example: DXD Digital Experience Days
-        addresses:
-          type: array
-          description: List if address IDs
-          example: ["43D937F0D5C9870EE040007F01007806","F5909F1CDC51A943E030A8C00C012134"]
-          items:
-            type: string
         phone:
           type: string
           description: Telephone number
@@ -3131,12 +3133,19 @@ components:
           example: FZmouxAtG2vRf_EiF6yq
         type:
           type: string
-          enum: [string_single_line]
+          enum: [string_single_line, string_multi_line, string_dropdown, string_radio, string_checkboxes, floating_point, date_time, date, integer, logic]
           description: >
             The data type and format the question:
               * string_single_line - A single line string
               * string_multi_line - A multi line string
               * string_dropdown - A string with a drop down selector
+              * string_radio - A string with a radio selector
+              * string_checkboxes - A string with a radio selector
+              * floating_point - A floating point number
+              * date_time - A date with day the time
+              * date - A date with only the day
+              * integer -  An integer type
+              * logic - An integer type
           example: string_single_line
         text:
           type: string
