@@ -536,6 +536,7 @@ paths:
       tags:
         - global-result
       parameters:
+        - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/count_query'
@@ -3083,13 +3084,13 @@ components:
           example: _CdFzNF3YlboTsec9L49
         inputType:
           type: string
-          enum: [once_updatable, once_only, repeatable]
+          enum: [PSA_QST_INP_TYP_ONC_UPD, PSA_QST_INP_TYP_ONC, PSA_QST_INP_TYP_REP]
           description: >
             Mode of the questionnaire how data is entered:
-              * once_only - Only one answer is store. The answer can not be changed.
-              * once_updatable - Only one is stored. The answer can be changed later.
-              * repeatable - Multiple answers can be stored. Each individual answer can not be changed.
-          example: once_updatable
+              * PSA_QST_INP_TYP_ONC - Only one answer is store. The answer can not be changed.
+              * PSA_QST_INP_TYP_ONC_UPD - Only one is stored. The answer can be changed later.
+              * PSA_QST_INP_TYP_REP - Multiple answers can be stored. Each individual answer can not be changed.
+          example: PSA_QST_INP_TYP_ONC_UPD
         status:
           type: string
           description: Identifier of the questionnaire status
@@ -3142,10 +3143,10 @@ components:
               * string_radio - A string with a radio selector
               * string_checkboxes - A string with a radio selector
               * floating_point - A floating point number
-              * date_time - A date with day the time
-              * date - A date with only the day
+              * date_time - A date with day the time (UTC formatted - yyyy-MM-ddTHH:mm:ssZ)
+              * date - A date with only the day (UTC formatted with the time fix at 12:00:00)
               * integer -  An integer type
-              * logic - An integer type
+              * logic - A boolean type (true, y, false, n)
           example: string_single_line
         text:
           type: string
