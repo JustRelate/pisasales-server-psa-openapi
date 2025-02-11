@@ -6,7 +6,482 @@ info:
   description: Endpoints to be used by the Scrivito portal. All endpoints require an IAM authorization.
 
 paths:
-  /salesportal/global-result:
+  /portal/binary-access-token/{id}:
+    get:
+      summary: Request a token for accessing binary data
+      description: Returns an URL containing a token that is valid for a limited time and grants access to a single record
+      tags:
+        - binary-access
+      parameters:
+        - name: id
+          in: path
+          description: binary ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/binary-access-token'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/binary-access/{token}:
+    get:
+      summary: Get the binary data for an access token
+      description: No IAM is needed for this endpoint
+      tags:
+        - binary-access
+      parameters:
+        - name: token
+          in: path
+          description: binary access token
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: binary data
+          content:
+            application/octet-stream: 
+              schema:
+                type: string
+                format: binary
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                description: MIME type
+                example: image/jpg
+            Content-Length:
+              schema:
+                type: integer
+                description: Length in bytes
+                example: 22192
+            Content-Disposition:
+              schema:
+                type: string
+                example: attachment; filename="screenshot.jpg"
+        '401':
+          description: the token is invalid or expired
+
+  /portal/callback-request:
+    get:
+      summary: Get the last callback request
+      description: Returns the most recent open request.
+      tags:
+        - callback-request
+      parameters:
+        - name: projectId
+          in: query
+          description: Search callback requests that are related to a project
+          example: DA8FA0F7483D467B905207A0CAB8D1DE
+          schema:
+            type: string
+        - name: serviceObjectId
+          in: query
+          description: Search callback requests that are related to a service object
+          example: F0A8F7FE7D354F8D832B934B2603480E
+          schema:
+            type: string
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/callback-request'
+        '403':
+          $ref: '#/components/responses/error_403'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    put:
+      summary: Create a new callback request.
+      description: This will create a new task with your message. All existing open requests will be canceled.
+      tags:
+        - callback-request
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The message
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/callback-request_upload'
+      responses:
+        '201':
+          $ref: '#/components/responses/callback-request'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/callback-request/{id}:
+    delete:
+      summary: Cancel an open callback request
+      description: Changes the status of the task if it is still open
+      tags:
+        - callback-request
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '204':
+          description: The callback request was canceled
+        '403':
+          $ref: '#/components/responses/error_403'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
+  /portal/contract:
+    get:
+      summary: Fetch all contracts
+      description: Searches all contracts that are related to the logged in user. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - contract
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contracts'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/contract/{id}:
+    get:
+      summary: Fetch a single contract
+      description: Searches the _id of a contract
+      tags:
+        - contract
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contract'
+        '403':
+          $ref: '#/components/responses/error_403'
+          
+  /portal/contract-item:
+    get:
+      summary: Fetch the scope of delivery for a contract
+      description: Searches all products that are assigned to a contract. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - contract
+      parameters:
+        - name: contractId
+          in: query
+          description: id of the contract. If this parameter is missing, the items of a random qcontractuote will be returned.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contract-items'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/contract-item/{id}:
+    get:
+      summary: Fetch a single product from the scope of delivery of a contract
+      description: Searches the _id of a product from the scope of delivery
+      tags:
+        - contract
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contract-item'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/contract-document:
+    get:
+      summary: Fetch all contract document relations
+      description: Searches all documents that are related to a contract
+      tags:
+        - contract
+      parameters:
+        - name: contractId
+          in: query
+          description: id of the contract. If this parameter is missing, the items of a random contract will be returned.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contract-documents'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/country:
+    get:
+      summary: Fetch all countries
+      description: Searches all available countries
+      tags:
+        - country
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/countries'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/country/{id}:
+    get:
+      summary: Get information about a single country
+      description: Returns country data
+      tags:
+        - country
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/country'
+        '400':
+          $ref: '#/components/responses/error_invalid_id'
+        '403':
+          $ref: '#/components/responses/error_403'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
+  /portal/document:
+    get:
+      summary: Fetch all documents
+      description: Searches all documents that are related to the logged in user
+      tags:
+        - document
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/documents'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/document/{id}:
+    get:
+      summary: Fetch a single document
+      description: Searches the document with the given id
+      tags:
+        - document
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/document'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/event:
+    get:
+      summary: Fetch all marketing events
+      description: Searches all events which are open for registration
+      tags:
+        - event
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/events'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/event/{id}:
+    get:
+      summary: Fetch a single marketing event
+      description: Searches the _id of an event which is open for registration
+      tags:
+        - event
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/event'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/event-registration:
+    get:
+      summary: Fetch all marketing events registrations
+      description: Searches all relations of the user to events
+      tags:
+        - event
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/event-registrations'
+        '403':
+          $ref: '#/components/responses/error_403'
+    post:
+      summary: Register for an event
+      description: adds a relation to an event for the user and sets the status to registered
+      tags:
+        - event
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The registration data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/event-registration_base'
+      responses:
+        '200':
+          $ref: '#/components/responses/event-registration'
+        '201':
+          $ref: '#/components/responses/event-registration'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/event-registration/{id}:
+    get:
+      summary: Fetch a single marketing event registration
+      description: Searches the _id of an event registration
+      tags:
+        - event
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/event-registration'
+        '403':
+          $ref: '#/components/responses/error_403'
+    delete:
+      summary: Unregister from an event
+      description: Sets the status to unregistered
+      tags:
+        - event
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/event-registration'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/event-document:
+    get:
+      summary: Fetch all event document relations
+      description: Searches all documents that are related to an event
+      tags:
+        - event
+      parameters:
+        - name: eventId
+          in: query
+          description: id of the event. If this parameter is missing, the documents of a random event will be returned.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/event-documents'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/gdpr:
+    get:
+      summary: Fetch all GDPR purpose of uses
+      description: Searches all purpose of use of the authenticated user.
+      tags:
+        - gdpr
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+        - $ref: '#/components/parameters/authorization_jwt_header'
+      responses:
+        '200':
+          $ref: '#/components/responses/gdprs'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/gdpr/{id}:
+    patch:
+      summary: Update a GDPR purpose of use
+      description: Updates the active flag
+      tags:
+        - gdpr
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/authorization_jwt_header'
+      requestBody:
+        description: The new data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/gdpr-update'
+      responses:
+        '201':
+          $ref: '#/components/responses/gdpr'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/global-document:
+    get:
+      summary: Fetch all documents that are globally available
+      description: Searches all documents with a "web flag"
+      tags:
+        - document
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/documents'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/global-result:
     get:
       summary: A global full text search
       description: Searches all entites
@@ -35,6 +510,63 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/error_invalid_data'
                   - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/message:
+    get:
+      summary: Fetch the messages of a project
+      description: The messages are ordered from oldest to newest
+      tags:
+        - message
+      parameters:
+        - name: subjectId
+          in: query
+          description: id of the project. If this parameter is missing, the messages of a random project will be returned.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+        - $ref: '#/components/parameters/limit_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/messages'
+        '403':
+          $ref: '#/components/responses/error_403'
+    post:
+      summary: Post a new message
+      description: Post a new message to a project
+      tags:
+        - message
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The message data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/message-upload'
+      responses:
+        '201':
+          $ref: '#/components/responses/message'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/message/{id}:
+    get:
+      summary: Fetch the message of a project
+      description: Returns a single project message
+      tags:
+        - message
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/message'
         '403':
           $ref: '#/components/responses/error_403'
 
@@ -93,129 +625,6 @@ paths:
         '403':
           $ref: '#/components/responses/error_403'
   
-  /portal/quote:
-    get:
-      summary: Fetch all quotes
-      description: Searches all quotes that are related to the logged in user. Additional queries can be set by simply adding the field name as query parameter.
-      tags:
-        - quote
-      parameters:
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/search_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/quotes'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/quote/{id}:
-    get:
-      summary: Fetch a single quote
-      description: Searches the _id of a quote
-      tags:
-        - quote
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-        - $ref: '#/components/parameters/language_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/quote'
-        '403':
-          $ref: '#/components/responses/error_403'
-          
-  /portal/quote-item:
-    get:
-      summary: Fetch the scope of delivery for a quote
-      description: Searches all products that are assigned to a quote. Additional queries can be set by simply adding the field name as query parameter.
-      tags:
-        - quote
-      parameters:
-        - name: quoteId
-          in: query
-          description: id of the quote. If this parameter is missing, the items of a random quote will be returned.
-          schema:
-            type: string
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/quote-items'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/quote-item/{id}:
-    get:
-      summary: Fetch a single product from the scope of delivery of a quote
-      description: Searches the _id of a product from the scope of delivery
-      tags:
-        - quote
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-        - $ref: '#/components/parameters/language_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/quote-item'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/quote-document:
-    get:
-      summary: Fetch all quote document relations
-      description: Searches all documents that are related to a quote
-      tags:
-        - quote
-      parameters:
-        - name: quoteId
-          in: query
-          description: id of the quote. If this parameter is missing, the items of a random quote will be returned.
-          schema:
-            type: string
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/quote-documents'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/quote-request:
-    post:
-      summary: Create a new quote request.
-      description: This will create a new task with your message. And also a quote is created.
-      tags:
-        - quote
-      parameters:
-        - $ref: '#/components/parameters/language_query'
-      requestBody:
-        description: The message and quote data
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/quote-request_upload'
-      responses:
-        '201':
-          description: A quote, if a quote was created. If only a task was created, the body is empty.
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/quote-request'
-                  - $ref: '#/components/schemas/quote'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
-        '403':
-          $ref: '#/components/responses/error_403'
-
   /portal/order:
     get:
       summary: Fetch all orders
@@ -368,6 +777,186 @@ paths:
         '403':
           $ref: '#/components/responses/error_403'
 
+  /portal/quote:
+    get:
+      summary: Fetch all quotes
+      description: Searches all quotes that are related to the logged in user. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - quote
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/quotes'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/quote/{id}:
+    get:
+      summary: Fetch a single quote
+      description: Searches the _id of a quote
+      tags:
+        - quote
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/quote'
+        '403':
+          $ref: '#/components/responses/error_403'
+          
+  /portal/quote-item:
+    get:
+      summary: Fetch the scope of delivery for a quote
+      description: Searches all products that are assigned to a quote. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - quote
+      parameters:
+        - name: quoteId
+          in: query
+          description: id of the quote. If this parameter is missing, the items of a random quote will be returned.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/quote-items'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/quote-item/{id}:
+    get:
+      summary: Fetch a single product from the scope of delivery of a quote
+      description: Searches the _id of a product from the scope of delivery
+      tags:
+        - quote
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/quote-item'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/quote-document:
+    get:
+      summary: Fetch all quote document relations
+      description: Searches all documents that are related to a quote
+      tags:
+        - quote
+      parameters:
+        - name: quoteId
+          in: query
+          description: id of the quote. If this parameter is missing, the items of a random quote will be returned.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/quote-documents'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/quote-request:
+    post:
+      summary: Create a new quote request.
+      description: This will create a new task with your message. And also a quote is created.
+      tags:
+        - quote
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The message and quote data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/quote-request_upload'
+      responses:
+        '201':
+          description: A quote, if a quote was created. If only a task was created, the body is empty.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/quote-request'
+                  - $ref: '#/components/schemas/quote'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/service-object:
+    get:
+      summary: Fetch all service objects
+      description: Searches all service objects where the logged in user is customer, carrier or supplier
+      tags:
+        - service-object
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/service-objects'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/service-object/{id}:
+    get:
+      summary: Fetch a single service object
+      description: Searches the service object with the given id
+      tags:
+        - service-object
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/service-object'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/service-object-document:
+    get:
+      summary: Fetch all service object document relations
+      description: Searches all documents that are related to a service object
+      tags:
+        - service-object
+      parameters:
+        - name: serviceObjectId
+          in: query
+          description: id of the service object. If this parameter is missing, the documents of a random service object will be returned.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/service-object-documents'
+        '403':
+          $ref: '#/components/responses/error_403'
+
   /portal/ticket:
     get:
       summary: Fetch all tickets
@@ -446,500 +1035,6 @@ paths:
         '403':
           $ref: '#/components/responses/error_403'
 
-  /portal/contract:
-    get:
-      summary: Fetch all contracts
-      description: Searches all contracts that are related to the logged in user. Additional queries can be set by simply adding the field name as query parameter.
-      tags:
-        - contract
-      parameters:
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/search_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/contracts'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/contract/{id}:
-    get:
-      summary: Fetch a single contract
-      description: Searches the _id of a contract
-      tags:
-        - contract
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-        - $ref: '#/components/parameters/language_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/contract'
-        '403':
-          $ref: '#/components/responses/error_403'
-          
-  /portal/contract-item:
-    get:
-      summary: Fetch the scope of delivery for a contract
-      description: Searches all products that are assigned to a contract. Additional queries can be set by simply adding the field name as query parameter.
-      tags:
-        - contract
-      parameters:
-        - name: contractId
-          in: query
-          description: id of the contract. If this parameter is missing, the items of a random qcontractuote will be returned.
-          schema:
-            type: string
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/contract-items'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/contract-item/{id}:
-    get:
-      summary: Fetch a single product from the scope of delivery of a contract
-      description: Searches the _id of a product from the scope of delivery
-      tags:
-        - contract
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-        - $ref: '#/components/parameters/language_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/contract-item'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/contract-document:
-    get:
-      summary: Fetch all contract document relations
-      description: Searches all documents that are related to a contract
-      tags:
-        - contract
-      parameters:
-        - name: contractId
-          in: query
-          description: id of the contract. If this parameter is missing, the items of a random contract will be returned.
-          schema:
-            type: string
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/contract-documents'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/message:
-    get:
-      summary: Fetch the messages of a project
-      description: The messages are ordered from oldest to newest
-      tags:
-        - message
-      parameters:
-        - name: subjectId
-          in: query
-          description: id of the project. If this parameter is missing, the messages of a random project will be returned.
-          schema:
-            type: string
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-        - $ref: '#/components/parameters/limit_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/messages'
-        '403':
-          $ref: '#/components/responses/error_403'
-    post:
-      summary: Post a new message
-      description: Post a new message to a project
-      tags:
-        - message
-      parameters:
-        - $ref: '#/components/parameters/language_query'
-      requestBody:
-        description: The message data
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/message-upload'
-      responses:
-        '201':
-          $ref: '#/components/responses/message'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/message/{id}:
-    get:
-      summary: Fetch the message of a project
-      description: Returns a single project message
-      tags:
-        - message
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-        - $ref: '#/components/parameters/language_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/message'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/event:
-    get:
-      summary: Fetch all marketing events
-      description: Searches all events which are open for registration
-      tags:
-        - event
-      parameters:
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/search_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/events'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/event/{id}:
-    get:
-      summary: Fetch a single marketing event
-      description: Searches the _id of an event which is open for registration
-      tags:
-        - event
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-        - $ref: '#/components/parameters/language_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/event'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/event-registration:
-    get:
-      summary: Fetch all marketing events registrations
-      description: Searches all relations of the user to events
-      tags:
-        - event
-      parameters:
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/event-registrations'
-        '403':
-          $ref: '#/components/responses/error_403'
-    post:
-      summary: Register for an event
-      description: adds a relation to an event for the user and sets the status to registered
-      tags:
-        - event
-      parameters:
-        - $ref: '#/components/parameters/language_query'
-      requestBody:
-        description: The registration data
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/event-registration_base'
-      responses:
-        '200':
-          $ref: '#/components/responses/event-registration'
-        '201':
-          $ref: '#/components/responses/event-registration'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/event-registration/{id}:
-    get:
-      summary: Fetch a single marketing event registration
-      description: Searches the _id of an event registration
-      tags:
-        - event
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-        - $ref: '#/components/parameters/language_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/event-registration'
-        '403':
-          $ref: '#/components/responses/error_403'
-    delete:
-      summary: Unregister from an event
-      description: Sets the status to unregistered
-      tags:
-        - event
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-        - $ref: '#/components/parameters/language_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/event-registration'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/event-document:
-    get:
-      summary: Fetch all event document relations
-      description: Searches all documents that are related to an event
-      tags:
-        - event
-      parameters:
-        - name: eventId
-          in: query
-          description: id of the event. If this parameter is missing, the documents of a random event will be returned.
-          schema:
-            type: string
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/event-documents'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/global-document:
-    get:
-      summary: Fetch all documents that are globally available
-      description: Searches all documents with a "web flag"
-      tags:
-        - document
-      parameters:
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/search_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/documents'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/document:
-    get:
-      summary: Fetch all documents
-      description: Searches all documents that are related to the logged in user
-      tags:
-        - document
-      parameters:
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/search_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/documents'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/document/{id}:
-    get:
-      summary: Fetch a single document
-      description: Searches the document with the given id
-      tags:
-        - document
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-        - $ref: '#/components/parameters/language_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/document'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/service-object:
-    get:
-      summary: Fetch all service objects
-      description: Searches all service objects where the logged in user is customer, carrier or supplier
-      tags:
-        - service-object
-      parameters:
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/search_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/service-objects'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/service-object/{id}:
-    get:
-      summary: Fetch a single service object
-      description: Searches the service object with the given id
-      tags:
-        - service-object
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-        - $ref: '#/components/parameters/language_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/service-object'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/service-object-document:
-    get:
-      summary: Fetch all service object document relations
-      description: Searches all documents that are related to a service object
-      tags:
-        - service-object
-      parameters:
-        - name: serviceObjectId
-          in: query
-          description: id of the service object. If this parameter is missing, the documents of a random service object will be returned.
-          schema:
-            type: string
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/service-object-documents'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/callback-request:
-    get:
-      summary: Get the last callback request
-      description: Returns the most recent open request.
-      tags:
-        - callback-request
-      parameters:
-        - name: projectId
-          in: query
-          description: Search callback requests that are related to a project
-          example: DA8FA0F7483D467B905207A0CAB8D1DE
-          schema:
-            type: string
-        - name: serviceObjectId
-          in: query
-          description: Search callback requests that are related to a service object
-          example: F0A8F7FE7D354F8D832B934B2603480E
-          schema:
-            type: string
-        - $ref: '#/components/parameters/language_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/callback-request'
-        '403':
-          $ref: '#/components/responses/error_403'
-        '404':
-          $ref: '#/components/responses/error_record_not_found'
-    put:
-      summary: Create a new callback request.
-      description: This will create a new task with your message. All existing open requests will be canceled.
-      tags:
-        - callback-request
-      parameters:
-        - $ref: '#/components/parameters/language_query'
-      requestBody:
-        description: The message
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/callback-request_upload'
-      responses:
-        '201':
-          $ref: '#/components/responses/callback-request'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/callback-request/{id}:
-    delete:
-      summary: Cancel an open callback request
-      description: Changes the status of the task if it is still open
-      tags:
-        - callback-request
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-        - $ref: '#/components/parameters/language_query'
-      responses:
-        '204':
-          description: The callback request was canceled
-        '403':
-          $ref: '#/components/responses/error_403'
-        '404':
-          $ref: '#/components/responses/error_record_not_found'
-
-  /portal/gdpr:
-    get:
-      summary: Fetch all GDPR purpose of uses
-      description: Searches all purpose of use of the authenticated user.
-      tags:
-        - gdpr
-      parameters:
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-        - $ref: '#/components/parameters/authorization_jwt_header'
-      responses:
-        '200':
-          $ref: '#/components/responses/gdprs'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/gdpr/{id}:
-    patch:
-      summary: Update a GDPR purpose of use
-      description: Updates the active flag
-      tags:
-        - gdpr
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/authorization_jwt_header'
-      requestBody:
-        description: The new data
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/gdpr-update'
-      responses:
-        '201':
-          $ref: '#/components/responses/gdpr'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
-        '403':
-          $ref: '#/components/responses/error_403'
-
   /portal/user/{id}:
     get:
       summary: Get information about a single contact
@@ -973,101 +1068,6 @@ paths:
           $ref: '#/components/responses/whoami'
         '403':
           $ref: '#/components/responses/error_403'
-
-  /portal/country:
-    get:
-      summary: Fetch all countries
-      description: Searches all available countries
-      tags:
-        - country
-      parameters:
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/count_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/countries'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/country/{id}:
-    get:
-      summary: Get information about a single country
-      description: Returns country data
-      tags:
-        - country
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-        - $ref: '#/components/parameters/language_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/country'
-        '400':
-          $ref: '#/components/responses/error_invalid_id'
-        '403':
-          $ref: '#/components/responses/error_403'
-        '404':
-          $ref: '#/components/responses/error_record_not_found'
-
-  /portal/binary-access-token/{id}:
-    get:
-      summary: Request a token for accessing binary data
-      description: Returns an URL containing a token that is valid for a limited time and grants access to a single record
-      tags:
-        - binary-access
-      parameters:
-        - name: id
-          in: path
-          description: binary ID
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          $ref: '#/components/responses/binary-access-token'
-        '403':
-          $ref: '#/components/responses/error_403'
-
-  /portal/binary-access/{token}:
-    get:
-      summary: Get the binary data for an access token
-      description: No IAM is needed for this endpoint
-      tags:
-        - binary-access
-      parameters:
-        - name: token
-          in: path
-          description: binary access token
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: binary data
-          content:
-            application/octet-stream: 
-              schema:
-                type: string
-                format: binary
-          headers:
-            Content-Type:
-              schema:
-                type: string
-                description: MIME type
-                example: image/jpg
-            Content-Length:
-              schema:
-                type: integer
-                description: Length in bytes
-                example: 22192
-            Content-Disposition:
-              schema:
-                type: string
-                example: attachment; filename="screenshot.jpg"
-        '401':
-          description: the token is invalid or expired
 
 components:
   ########################################################################
@@ -2834,6 +2834,14 @@ components:
           type: string
           description: Text around the searched terms
           example: Tynacoon GmbH - Customer - C-20-0028947
+        matches:
+          type: array
+          description: Starting an ending index of the matches. The starting index is included, the ending is excluded.
+          example: [[0,8]]
+          items:
+            type: array
+            items:
+              type: integer
 
     global-results:
       type: object

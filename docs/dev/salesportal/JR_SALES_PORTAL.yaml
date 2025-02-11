@@ -529,6 +529,88 @@ paths:
         '403':
           $ref: '#/components/responses/error_authentication_failed'
 
+  /salesportal/filter:
+    get:
+      summary: Get filters
+      description: Returns a list of filters that a are available for an entity and the current user
+      tags:
+        - filter
+      parameters:
+        - name: entity
+          in: query
+          required: true
+          description: Entity to get all filters for
+          example: Ticket
+          schema:
+            type: string
+            enum: [Activity, Company, Person, Opportunity, Quote, Order, Ticket]
+        - $ref: '#/components/parameters/ids_query'
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/filters'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - description: The entity was not specified
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: 'missing.data'
+                      error:
+                        type: string
+                        example: 'Some data is missing'
+                      details:
+                        type: object
+                        properties:
+                          cause:
+                            type: string
+                            example: "query parameter 'entity' is missing or empty"
+                  - description: The entity provided entity is not supported
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: 'invalid.data'
+                      error:
+                        type: string
+                        example: 'The provided data is invalid'
+                      details:
+                        type: object
+                        properties:
+                          entiy:
+                            type: string
+                            example: "Foobar"
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+
+  /salesportal/filter/{id}:
+    get:
+      summary: Get single filter
+      description: Returns the information for a single filter.
+      tags:
+        - filter
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/filter'
+        '400':
+          $ref: '#/components/responses/error_invalid_id'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
   /salesportal/global-result:
     get:
       summary: A global full text search
@@ -568,10 +650,6 @@ paths:
       tags:
         - message
       parameters:
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/count_query'
         - name: subjectId
           in: query
           description: ID of the associated object
@@ -579,6 +657,10 @@ paths:
           example: DDF8F474C125466DAB2A4937D5945E11
           schema:
             type: string
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/count_query'
       responses:
         '200':
           $ref: '#/components/responses/messages'
@@ -2190,6 +2272,20 @@ components:
           schema:
             $ref: '#/components/schemas/activity-projects'
 
+    filter:
+      description: filter data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/filter'
+
+    filters:
+      description: a list of filters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/filters'
+
     global-results:
       description: a list of global search results
       content:
@@ -3678,6 +3774,14 @@ components:
           type: string
           description: Text around the searched terms
           example: Tynacoon GmbH - Customer - C-20-0028947
+        matches:
+          type: array
+          description: Starting an ending index of the matches. The starting index is included, the ending is excluded.
+          example: [[0,8]]
+          items:
+            type: array
+            items:
+              type: integer
 
     global-results:
       type: object
@@ -3693,6 +3797,40 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/global-result'
+
+    filter:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        title:
+          type: string
+          description: Title of the filter
+          example: My tickets
+        favorite:
+          type: boolean
+          description: Is this filter a favorite of the user?
+          example: false
+        entity:
+          type: string
+          description: Entity this filter is for
+          enum: [Activity, Company, Person, Opportunity, Quote, Order, Ticket]
+          example: Ticket
+
+    filters:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/filter'
 
     schema-list:
       type: object
