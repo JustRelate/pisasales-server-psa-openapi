@@ -1381,6 +1381,78 @@ paths:
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/count_query'
+        - name: _order
+          in: query
+          description: List of fields that should be used for ordering. Beside all fields of the response it can also cotnains the query parameter starting with activity_
+          example: activity_beginAt.desc
+          schema:
+            type: string
+        - name: activity_createdAt
+          in: query
+          description: Search for the creation date of the activity
+          example: 2025-02-03T15:11:58Z
+          schema: 
+            type: string
+        - name: activity_updatedAt
+          in: query
+          description: Search for the update date of the activity
+          example: 2025-02-03T15:11:58Z
+          schema: 
+            type: string
+        - name: activity_beginAt
+          in: query
+          description: Search for the start of the activity
+          example: 2025-02-03T15:11:58Z
+          schema: 
+            type: string
+        - name: activity_endAt
+          in: query
+          description: Search for the end of the activity
+          example: 2025-02-03T15:11:58Z
+          schema: 
+            type: string
+        - name: activity_subject
+          in: query
+          description: Search for the subject of the activity
+          example: Demonstration
+          schema: 
+            type: string
+        - name: activity_activityType
+          in: query
+          description: Search for the type of the activity
+          example: APPOINTMENT
+          schema: 
+            type: string
+        - name: activity_activitySubType
+          in: query
+          description: Search for the sub type of the activity
+          example: DATE
+          schema: 
+            type: string
+        - name: activity_status
+          in: query
+          description: Search for the status of the activity
+          example: PSA_STA_APM_OPN
+          schema: 
+            type: string
+        - name: activity_classification
+          in: query
+          description: Search for the classification of the activity
+          example: PSA_ACT_CLA_PRO_SAL
+          schema: 
+            type: string
+        - name: activity_open
+          in: query
+          description: Search for the open status of the activity
+          example: true
+          schema: 
+            type: boolean
+        - name: activity_priority
+          in: query
+          description: Search for the priority of the activity
+          example: PSA_NRM
+          schema: 
+            type: string
       responses:
         '200':
           $ref: '#/components/responses/activity-contacts'
@@ -1603,6 +1675,54 @@ paths:
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/count_query'
+        - name: _order
+          in: query
+          description: List of fields that should be used for ordering. Beside all fields of the response it can also cotnains the query parameter starting with project_
+          example: project_createdAt.desc
+          schema:
+            type: string
+        - name: project_createdAt
+          in: query
+          description: Search for the creation date of the project
+          example: 2025-02-03T15:11:58Z
+          schema: 
+            type: string
+        - name: project_updatedAt
+          in: query
+          description: Search for the update date of a project
+          example: 2025-02-03T15:11:58Z
+          schema: 
+            type: string
+        - name: project_keyword
+          in: query
+          description: Search for the keyword of a project
+          example: Demo
+          schema: 
+            type: string
+        - name: project_number
+          in: query
+          description: Search for the number of a project
+          example: CP-25-007247
+          schema: 
+            type: string 
+        - name: project_status
+          in: query
+          description: Search for the status of a project
+          example: PSA_SVC_CPL_ACQ
+          schema: 
+            type: string
+        - name: project_type
+          in: query
+          description: Search for the type of a project
+          example: PSA_SVC_CPL
+          schema: 
+            type: string
+        - name: project_open
+          in: query
+          description: Search for an open status of a project
+          example: true
+          schema: 
+            type: boolean
       responses:
         '200':
           $ref: '#/components/responses/contact-projects'
@@ -2779,10 +2899,6 @@ components:
           type: string
           description: 'Status'
           example: PSA_SVC_CAL_ACQ
-        open:
-          type: boolean
-          description: Is the ticket currently in an open status?
-          example: true
         openSince:
           type: integer
           description: Number of days the ticket is open
@@ -2835,6 +2951,10 @@ components:
           type: string
           description: Date when the current status was set
           example: 2024-12-11T15:46:34Z
+        open:
+          type: boolean
+          description: Is the ticket currently in an open status?
+          example: true
 
     tickets:
       type: object
@@ -3065,6 +3185,10 @@ components:
           type: string
           description: ID of the activity type
           example: APPOINTMENT
+        open:
+          type: boolean
+          description: Is the activity currently in an open status?
+          example: true
         persons:
           type: array
           description: A list of IDs with the associated persons
@@ -3554,6 +3678,14 @@ components:
         - $ref: '#/components/schemas/object'
         - $ref: '#/components/schemas/activity-contact_base'
       properties:
+        updatedAt:
+          type: string
+          description: Date of the last update of this record
+          example: 2024-10-15T09:47:44Z
+        createdAt:
+          type: string
+          description: Date when this record was created
+          example: 2024-10-15T09:47:44Z
         contactType:
           type: string
           description: Type of the contact.  Defines the endpoint to fetch for more information.
@@ -3602,6 +3734,15 @@ components:
       allOf:
         - $ref: '#/components/schemas/object'
         - $ref: '#/components/schemas/company-person_base'
+      properties:
+        updatedAt:
+          type: string
+          description: Date of the last update of this record
+          example: 2024-10-15T09:47:44Z
+        createdAt:
+          type: string
+          description: Date when this record was created
+          example: 2024-10-15T09:47:44Z
 
     company-person_base:
       type: object
@@ -3645,6 +3786,15 @@ components:
       allOf:
         - $ref: '#/components/schemas/object'
         - $ref: '#/components/schemas/address-contact_base'
+      properties:
+        updatedAt:
+          type: string
+          description: Date of the last update of this record
+          example: 2024-10-15T09:47:44Z
+        createdAt:
+          type: string
+          description: Date when this record was created
+          example: 2024-10-15T09:47:44Z
 
     address-contact_base:
       type: object
@@ -3664,6 +3814,14 @@ components:
         - $ref: '#/components/schemas/object'
         - $ref: '#/components/schemas/contact-project_base'
       properties:
+        updatedAt:
+          type: string
+          description: Date of the last update of this record
+          example: 2024-10-15T09:47:44Z
+        createdAt:
+          type: string
+          description: Date when this record was created
+          example: 2024-10-15T09:47:44Z
         projectType:
           type: string
           description: Type of the project. Defines the endpoint to fetch for more information.
@@ -3712,6 +3870,14 @@ components:
         - $ref: '#/components/schemas/object'
         - $ref: '#/components/schemas/activity-project_base'
       properties:
+        updatedAt:
+          type: string
+          description: Date of the last update of this record
+          example: 2024-10-15T09:47:44Z
+        createdAt:
+          type: string
+          description: Date when this record was created
+          example: 2024-10-15T09:47:44Z
         projectType:
           type: string
           description: Type of the project. Defines the endpoint to fetch for more information.
