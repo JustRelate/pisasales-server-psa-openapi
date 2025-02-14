@@ -2546,6 +2546,10 @@ components:
           type: string
           description: For a person the name consisting of given and family name. For a company the name.
           example: John Doe
+        displayTitle:
+          type: string
+          description: Title of the contact. Mainly used for references and titles
+          example: Doe, John (ACME Ltd)
         salutation:
           type: string
           description: identifier of the salutation of the person
@@ -2574,6 +2578,10 @@ components:
           type: boolean
           description: is the contact external?
           example: true
+        pisaSalesLink:
+          type: string
+          description: Object link to the record in PisaSales
+          example: https://crm.pisasales.com/psaobj?title=Tynacoon&rpsids=42&login=xb64xKBsb&psacbk=cHNhb2JqPX
         entity:
           type: string
           description: Object type that corresponds to an endpoint for more data
@@ -2650,6 +2658,11 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/contact_base'
+      properties:
+        name:
+          type: string
+          description: The name of the company
+          example: ACME Ltd.
 
     company:
       type: object
@@ -2658,10 +2671,10 @@ components:
         - $ref: '#/components/schemas/system_fields'
         - $ref: '#/components/schemas/company_base'
       properties:
-        name:
+        displayTitle:
           type: string
-          description: The name of the company
-          example: ACME Ltd.
+          description: Title of the company. Mainly used for references and titles
+          example: ACME Ltd. (Berlin)
         number:
           type: string
           description: The internal number of the company
@@ -2692,6 +2705,10 @@ components:
           type: string
           description: ID of a company that is the master in case this company is a duplicate
           example: 44AB4B88EBD34608B0E4A81C1DA1D85B
+        pisaSalesLink:
+          type: string
+          description: Object link to the record in PisaSales
+          example: https://crm.pisasales.com/psaobj?title=Tynacoon&rpsids=42&login=xb64xKBsb&psacbk=cHNhb2JqPX
         image:
           description: Image or logo
           $ref: '#/components/schemas/binary'
@@ -2755,6 +2772,10 @@ components:
           type: string
           description: Composed name (given name + family name)
           example: John Doe
+        displayTitle:
+          type: string
+          description: Title of the person. Mainly used for references and titles
+          example: Doe, John (ACME Ltd)
         number:
           type: string
           description: The internal number of the person
@@ -2777,6 +2798,10 @@ components:
           type: string
           description: ID of a person that is the master in case this person is a duplicate
           example: 44AB4B88EBD34608B0E4A81C1DA1D85B
+        pisaSalesLink:
+          type: string
+          description: Object link to the record in PisaSales
+          example: https://crm.pisasales.com/psaobj?title=Tynacoon&rpsids=42&login=xb64xKBsb&psacbk=cHNhb2JqPX
         image:
           description: Image of the person
           $ref: '#/components/schemas/binary'
@@ -2861,6 +2886,10 @@ components:
         - $ref: '#/components/schemas/system_fields'
         - $ref: '#/components/schemas/project_base'
       properties:
+        displayTitle:
+          type: string
+          description: Title of the project. Mainly used for references and titles
+          example: Filling line
         number:
           type: string
           description: Number of the project
@@ -2870,6 +2899,10 @@ components:
           description: Object type that corresponds to an endpoint for more data
           enum: [Project, Opportunity, Quote, Order, Ticket]
           example: Quote
+        pisaSalesLink:
+          type: string
+          description: Object link to the record in PisaSales
+          example: https://crm.pisasales.com/psaobj?title=Tynacoon&rpsids=42&login=xb64xKBsb&psacbk=cHNhb2JqPX
 
     projects:
       type: object
@@ -2934,7 +2967,31 @@ components:
         origin:
           type: string
           description: Medium that was used to submit this ticket
-          example: PSA_SVC_ORI_TYP_PRT        
+          example: PSA_SVC_ORI_TYP_PRT
+        troubleArea:
+          type: string
+          description: Trouble area
+          example: PSA_FAQ_TYP_11
+        troubleType:
+          type: string
+          description: Trouble type
+          example: PSA_FAQ_TY2_11
+        process:
+          type: string
+          description: Affected process
+          example: PSA_AFF_PRC_PRO
+        customerExpectation:
+          type: string
+          description: Customer expectation
+          example: PSA_CST_EXP_REP
+        activity:
+          type: string
+          description: Activity
+          example: PSA_MSR_TYP_10
+        priority: 
+          type: string
+          description: Priority
+          example: PSA_PRO_PRI_NRM
 
     ticket:
       type: object
@@ -2943,6 +3000,10 @@ components:
         - $ref: '#/components/schemas/system_fields'
         - $ref: '#/components/schemas/ticket_base'
       properties:
+        displayTitle:
+          type: string
+          description: Title of the ticket. Mainly used for references and titles
+          example: Filling line
         number:
           type: string
           description: Number of the ticket
@@ -2955,6 +3016,10 @@ components:
           type: boolean
           description: Is the ticket currently in an open status?
           example: true
+        pisaSalesLink:
+          type: string
+          description: Object link to the record in PisaSales
+          example: https://crm.pisasales.com/psaobj?title=Tynacoon&rpsids=42&login=xb64xKBsb&psacbk=cHNhb2JqPX
 
     tickets:
       type: object
@@ -2978,6 +3043,10 @@ components:
         - $ref: '#/components/schemas/system_fields'
         - $ref: '#/components/schemas/project_base'
       properties:
+        displayTitle:
+          type: string
+          description: Title of the project. Mainly used for references and titles
+          example: Filling line
         number:
           type: string
           description: Number of the project
@@ -3058,6 +3127,10 @@ components:
           type: string
           description: URL of the project
           example: https://www.tynacoon.com
+        pisaSalesLink:
+          type: string
+          description: Object link to the record in PisaSales
+          example: https://crm.pisasales.com/psaobj?title=Tynacoon&rpsids=42&login=xb64xKBsb&psacbk=cHNhb2JqPX
 
     opportunity:
       type: object
@@ -3185,10 +3258,18 @@ components:
           type: string
           description: ID of the activity type
           example: APPOINTMENT
+        displayTitle:
+          type: string
+          description: Title of the activity. Mainly used for references and titles
+          example: Sales meeting
         open:
           type: boolean
           description: Is the activity currently in an open status?
           example: true
+        pisaSalesLink:
+          type: string
+          description: Object link to the record in PisaSales
+          example: https://crm.pisasales.com/psaobj?title=Tynacoon&rpsids=42&login=xb64xKBsb&psacbk=cHNhb2JqPX
         persons:
           type: array
           description: A list of IDs with the associated persons
@@ -3325,6 +3406,11 @@ components:
       allOf:
         - $ref: '#/components/schemas/object'
         - $ref: '#/components/schemas/questionnaire_base'
+      properties:
+        pisaSalesLink:
+          type: string
+          description: Object link to the record in PisaSales
+          example: https://crm.pisasales.com/psaobj?title=Tynacoon&rpsids=42&login=xb64xKBsb&psacbk=cHNhb2JqPX
 
     questionnaires:
       type: object
@@ -3932,6 +4018,10 @@ components:
           type: string
           description: Title of the found record
           example: Tynacoon GmbH
+        displayTitle:
+          type: string
+          description: Title of the search result. Mainly used for references and titles
+          example: Tynacoon GmbH
         entity:
           type: string
           description: End point to query for more details
@@ -4014,6 +4104,10 @@ components:
         name:
           type: string
           description: The name of the group
+          example: company
+        displayTitle:
+          type: string
+          description: Title of the schema. Mainly used for references and titles
           example: company
         general:
           type: object
