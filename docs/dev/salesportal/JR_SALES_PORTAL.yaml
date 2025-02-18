@@ -20,6 +20,7 @@ paths:
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
         - $ref: '#/components/parameters/count_query'
+        - $ref: '#/components/parameters/filter_query'
         - name: contacts
           in: query
           description: Comma separated list of contact IDs. Finds all activities which are associated to the given contacts.
@@ -126,7 +127,7 @@ paths:
 
   /salesportal/address:
     get:
-      summary: Get information about addreses
+      summary: Get all addresses
       description: Returns a list of all addresses
       tags:
         - address
@@ -356,6 +357,7 @@ paths:
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
         - $ref: '#/components/parameters/count_query'
+        - $ref: '#/components/parameters/filter_query'
         - name: persons
           in: query
           description: Comma separated list of person IDs. Finds all companies which are associated to the given persons.
@@ -478,7 +480,7 @@ paths:
 
   /salesportal/contact:
     get:
-      summary: Get information about contacts
+      summary: Get all contacts
       description: Returns a list of all contacts
       tags:
         - contact
@@ -498,7 +500,7 @@ paths:
 
   /salesportal/contact/{id}:
     get:
-      summary: Get information about a single contact
+      summary: Get a single contact
       description: Returns contact data.
       tags:
         - contact
@@ -517,7 +519,7 @@ paths:
 
   /salesportal/whoami:
     get:
-      summary: Get information about the authenticated user
+      summary: Get the authenticated user
       description: Returns contact data of the user
       tags:
         - contact
@@ -752,6 +754,7 @@ paths:
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
         - $ref: '#/components/parameters/count_query'
+        - $ref: '#/components/parameters/filter_query'
       responses:
         '200':
           $ref: '#/components/responses/orders'
@@ -789,6 +792,7 @@ paths:
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
         - $ref: '#/components/parameters/count_query'
+        - $ref: '#/components/parameters/filter_query'
         - name: companies
           in: query
           description: Comma separated list of company IDs. Finds all persons which are associated to the given companies.
@@ -911,7 +915,7 @@ paths:
 
   /salesportal/project:
     get:
-      summary: Get information about projects
+      summary: Get all projects
       description: Returns a list of all projects
       tags:
         - project
@@ -931,7 +935,7 @@ paths:
 
   /salesportal/project/{id}:
     get:
-      summary: Get information about a single project
+      summary: Get a single project
       description: Returns project data.
       tags:
         - project
@@ -1348,6 +1352,7 @@ paths:
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
         - $ref: '#/components/parameters/count_query'
+        - $ref: '#/components/parameters/filter_query'
       responses:
         '200':
           $ref: '#/components/responses/quotes'
@@ -1883,7 +1888,7 @@ paths:
 
   /salesportal/ticket:
     get:
-      summary: Get information about tickets
+      summary: Get all tickets
       description: Returns a list of all tickets
       tags:
         - ticket
@@ -1895,6 +1900,7 @@ paths:
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
         - $ref: '#/components/parameters/count_query'
+        - $ref: '#/components/parameters/filter_query'
       responses:
         '200':
           $ref: '#/components/responses/tickets'
@@ -1932,7 +1938,7 @@ paths:
 
   /salesportal/ticket/{id}:
     get:
-      summary: Get information about a single ticket
+      summary: Get a single ticket
       description: Returns ticket data.
       tags:
         - ticket
@@ -2004,6 +2010,14 @@ components:
   # parameters
   ########################################################################
   parameters:
+    filter_query:
+      in: query
+      name: filter
+      description: _id of a filter that will be used to set the queries
+      example: ED6894AFC1F79870E030A8C00C01651B
+      schema:
+        type: string
+
     id_path:
       in: path
       name: id
