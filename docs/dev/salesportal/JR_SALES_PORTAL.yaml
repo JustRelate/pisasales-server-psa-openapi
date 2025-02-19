@@ -717,6 +717,7 @@ paths:
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
         - $ref: '#/components/parameters/count_query'
+        - $ref: '#/components/parameters/filter_query'
       responses:
         '200':
           $ref: '#/components/responses/opportunities'
@@ -3454,7 +3455,7 @@ components:
           example: FZmouxAtG2vRf_EiF6yq
         type:
           type: string
-          enum: [string_single_line, string_multi_line, string_dropdown, string_radio, string_checkboxes, floating_point, date_time, date, integer, logic]
+          enum: [string_single_line, string_multi_line, string_dropdown, string_radio, string_checkboxes, floating_point, date_time, date, integer, logic, logic_tristate]
           description: >
             The data type and format the question:
               * string_single_line - A single line string
@@ -3466,7 +3467,8 @@ components:
               * date_time - A date with day the time (UTC formatted - yyyy-MM-ddTHH:mm:ssZ)
               * date - A date with only the day (UTC formatted with the time fix at 12:00:00)
               * integer -  An integer type
-              * logic - A boolean type (true, y, false, n)
+              * logic - A boolean type (true / false)
+              * logic_tristate - A boolean type with a third unset state (true / false / unset)
           example: string_single_line
         text:
           type: string
