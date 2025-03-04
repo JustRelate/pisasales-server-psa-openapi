@@ -665,7 +665,7 @@ paths:
       parameters:
         - name: subjectId
           in: query
-          description: ID of the associated object
+          description: ID of the associated object (project or activity)
           required: true
           example: DDF8F474C125466DAB2A4937D5945E11
           schema:
@@ -772,6 +772,35 @@ paths:
           $ref: '#/components/responses/orders'
         '403':
           $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Create an order
+      description: This will create a new order
+      tags:
+        - order
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The order data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/order_writable'
+      responses:
+        '201':
+          $ref: '#/components/responses/order'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
 
   /salesportal/order/{id}:
     get:
@@ -785,6 +814,46 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/order'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    patch:
+      summary: Update an order
+      description: This will update an existing order
+      tags:
+        - order
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The order data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/order_writable'
+      responses:
+        '200':
+          $ref: '#/components/responses/order'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    delete:
+      summary: Delete an order
+      description: Searches the _id of an order and deletes the record
+      tags:
+        - order
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The order was deleted
         '403':
           $ref: '#/components/responses/error_authentication_failed'
         '404':
@@ -1931,7 +2000,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ticket_base'
+              $ref: '#/components/schemas/ticket_writable'
       responses:
         '201':
           $ref: '#/components/responses/ticket'
@@ -1980,7 +2049,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ticket_base'
+              $ref: '#/components/schemas/ticket_writable'
       responses:
         '200':
           $ref: '#/components/responses/ticket'
@@ -2897,7 +2966,7 @@ components:
           items:
             $ref: '#/components/schemas/address'
 
-    project_base:
+    project_writable:
       type: object
       properties:
         keyword:
@@ -2910,7 +2979,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/object'
         - $ref: '#/components/schemas/system_fields'
-        - $ref: '#/components/schemas/project_base'
+        - $ref: '#/components/schemas/project_writable'
       properties:
         displayTitle:
           type: string
@@ -2945,10 +3014,10 @@ components:
           items:
             $ref: '#/components/schemas/project'
 
-    ticket_base:
+    ticket_writable:
       type: object
       allOf:
-        - $ref: '#/components/schemas/project_base'
+        - $ref: '#/components/schemas/project_writable'
       properties:
         type:
           type: string
@@ -3024,7 +3093,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/object'
         - $ref: '#/components/schemas/system_fields'
-        - $ref: '#/components/schemas/ticket_base'
+        - $ref: '#/components/schemas/ticket_writable'
       properties:
         displayTitle:
           type: string
@@ -3062,21 +3131,11 @@ components:
           items:
             $ref: '#/components/schemas/ticket'
 
-    salesproject:
+    salesproject_writable:
       type: object
       allOf:
-        - $ref: '#/components/schemas/object'
-        - $ref: '#/components/schemas/system_fields'
-        - $ref: '#/components/schemas/project_base'
+        - $ref: '#/components/schemas/project_writable'
       properties:
-        displayTitle:
-          type: string
-          description: Title of the project. Mainly used for references and titles
-          example: Filling line
-        number:
-          type: string
-          description: Number of the project
-          example: P-24-000615
         projectType:
           type: string
           description: Identifier of the sub type of the project
@@ -3101,14 +3160,6 @@ components:
           type: string
           description: ID of the projects current status
           example: PSA_PRO_QUO_CPE
-        mainStatus:
-          type: string
-          description: ID of the projects main status
-          example: PSA_SAP_MAI_QUO_QUO_GEN
-        open:
-          type: boolean
-          description: Is the project currently in an open status?
-          example: true
         opportunityAt:
           type: string
           description: ISO formatted date string of the opportunity date
@@ -3153,6 +3204,30 @@ components:
           type: string
           description: URL of the project
           example: https://www.tynacoon.com
+
+    salesproject:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/system_fields'
+        - $ref: '#/components/schemas/salesproject_writable'
+      properties:
+        displayTitle:
+          type: string
+          description: Title of the project. Mainly used for references and titles
+          example: Filling line
+        number:
+          type: string
+          description: Number of the project
+          example: P-24-000615
+        mainStatus:
+          type: string
+          description: ID of the projects main status
+          example: PSA_SAP_MAI_QUO_QUO_GEN
+        open:
+          type: boolean
+          description: Is the project currently in an open status?
+          example: true
         pisaSalesLink:
           type: string
           description: Object link to the record in PisaSales
@@ -3202,6 +3277,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/quote'
+
+    order_writable:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/salesproject_writable'
 
     order:
       type: object
@@ -3341,7 +3421,7 @@ components:
       properties:
         subjectId:
           type: string
-          description: reference to the project
+          description: reference to the object (project or activity)
           example: DDF8F474C125466DAB2A4937D5945E11
         text:
           type: string
@@ -3426,6 +3506,10 @@ components:
           type: boolean
           description: Are the questionnaire forms created? In case of an insert or update this value will create or delete the forms.
           example: true
+        origin:
+          type: string
+          description: Origin of this questionnaire (who has created it)
+          example: Scrivito questionnaire builder
 
     questionnaire:
       type: object
@@ -3816,6 +3900,10 @@ components:
           type: string
           description: ID of the associated contact
           example: 862166B3FFEE4D30B45B4EC63FFEE78B
+        email:
+          type: string
+          description: email address of the contact specific to this relation
+          example: foo@bar.com
 
     activity-contact_contact:
       type: object
