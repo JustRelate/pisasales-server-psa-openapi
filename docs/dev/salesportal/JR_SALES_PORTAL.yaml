@@ -51,7 +51,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/activity_base'
+              $ref: '#/components/schemas/activity_writable'
       responses:
         '201':
           $ref: '#/components/responses/activity'
@@ -98,7 +98,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/activity_base'
+              $ref: '#/components/schemas/activity_writable'
       responses:
         '200':
           $ref: '#/components/responses/activity'
@@ -156,7 +156,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/address_base'
+              $ref: '#/components/schemas/address_writable'
       responses:
         '201':
           $ref: '#/components/responses/address'
@@ -203,7 +203,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/address_base'
+              $ref: '#/components/schemas/address_writable'
       responses:
         '200':
           $ref: '#/components/responses/address'
@@ -388,7 +388,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/company_base'
+              $ref: '#/components/schemas/company_writable'
       responses:
         '201':
           $ref: '#/components/responses/company'
@@ -435,7 +435,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/company_base'
+              $ref: '#/components/schemas/company_writable'
       responses:
         '200':
           $ref: '#/components/responses/company'
@@ -734,6 +734,35 @@ paths:
           $ref: '#/components/responses/opportunities'
         '403':
           $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Create an opportunity
+      description: This will create a new opportunity
+      tags:
+        - opportunity
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The opportunity data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/opportunity_writable'
+      responses:
+        '201':
+          $ref: '#/components/responses/opportunity'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
 
   /salesportal/opportunity/{id}:
     get:
@@ -747,6 +776,46 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/opportunity'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    patch:
+      summary: Update an opportunity
+      description: This will update an existing opportunity
+      tags:
+        - opportunity
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The opportunity data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/opportunity_writable'
+      responses:
+        '200':
+          $ref: '#/components/responses/opportunity'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    delete:
+      summary: Delete a quote
+      description: Searches the _id of an quote and deletes the record
+      tags:
+        - opportunity
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The quote was deleted
         '403':
           $ref: '#/components/responses/error_authentication_failed'
         '404':
@@ -898,7 +967,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/person_base'
+              $ref: '#/components/schemas/person_writable'
       responses:
         '201':
           $ref: '#/components/responses/person'
@@ -945,7 +1014,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/person_base'
+              $ref: '#/components/schemas/person_writable'
       responses:
         '200':
           $ref: '#/components/responses/person'
@@ -1070,7 +1139,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/questionnaire_base'
+              $ref: '#/components/schemas/questionnaire_writable'
       responses:
         '201':
           $ref: '#/components/responses/questionnaire'
@@ -1117,7 +1186,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/questionnaire_base'
+              $ref: '#/components/schemas/questionnaire_writable'
       responses:
         '200':
           $ref: '#/components/responses/questionnaire'
@@ -1167,7 +1236,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/question_base'
+              $ref: '#/components/schemas/question_writable'
       responses:
         '201':
           $ref: '#/components/responses/question'
@@ -1214,7 +1283,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/question_base'
+              $ref: '#/components/schemas/question_writable'
       responses:
         '200':
           $ref: '#/components/responses/question'
@@ -1278,7 +1347,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/question-option_base'
+              $ref: '#/components/schemas/question-option_writable'
       responses:
         '201':
           $ref: '#/components/responses/question-option'
@@ -1325,7 +1394,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/question-option_base'
+              $ref: '#/components/schemas/question-option_writable'
       responses:
         '200':
           $ref: '#/components/responses/question-option'
@@ -1439,6 +1508,35 @@ paths:
           $ref: '#/components/responses/quotes'
         '403':
           $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Create a quote
+      description: This will create a new quote
+      tags:
+        - quote
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The quote data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/quote_writable'
+      responses:
+        '201':
+          $ref: '#/components/responses/quote'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
 
   /salesportal/quote/{id}:
     get:
@@ -1452,6 +1550,46 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/quote'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    patch:
+      summary: Update a quote
+      description: This will update an existing quote
+      tags:
+        - quote
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The quote data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/quote_writable'
+      responses:
+        '200':
+          $ref: '#/components/responses/quote'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    delete:
+      summary: Delete a quote
+      description: Searches the _id of an quote and deletes the record
+      tags:
+        - quote
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The quote was deleted
         '403':
           $ref: '#/components/responses/error_authentication_failed'
         '404':
@@ -1555,7 +1693,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/activity-contact_base'
+              $ref: '#/components/schemas/activity-contact_writable'
       responses:
         '201':
           $ref: '#/components/responses/activity-contact'
@@ -1629,7 +1767,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/activity-project_base'
+              $ref: '#/components/schemas/activity-project_writable'
       responses:
         '201':
           $ref: '#/components/responses/activity-project'
@@ -1703,7 +1841,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/company-person_base'
+              $ref: '#/components/schemas/company-person_writable'
       responses:
         '201':
           $ref: '#/components/responses/company-person'
@@ -1825,7 +1963,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/contact-project_base'
+              $ref: '#/components/schemas/contact-project_writable'
       responses:
         '201':
           $ref: '#/components/responses/contact-project'
@@ -1899,7 +2037,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/address-contact_base'
+              $ref: '#/components/schemas/address-contact_writable'
       responses:
         '201':
           $ref: '#/components/responses/address-contact'
@@ -2709,7 +2847,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/contact'
 
-    contact_base:
+    contact_writable:
       type: object
       properties:
         status:
@@ -2749,10 +2887,10 @@ components:
           description: Information about the current status of the contact
           example: New customer
 
-    company_base:
+    company_writable:
       type: object
       allOf:
-        - $ref: '#/components/schemas/contact_base'
+        - $ref: '#/components/schemas/contact_writable'
       properties:
         name:
           type: string
@@ -2764,7 +2902,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/object'
         - $ref: '#/components/schemas/system_fields'
-        - $ref: '#/components/schemas/company_base'
+        - $ref: '#/components/schemas/company_writable'
       properties:
         displayTitle:
           type: string
@@ -2826,10 +2964,10 @@ components:
           items:
             $ref: '#/components/schemas/company'
 
-    person_base:
+    person_writable:
       type: object
       allOf:
-        - $ref: '#/components/schemas/contact_base'
+        - $ref: '#/components/schemas/contact_writable'
       properties:
         salutation:
           type: string
@@ -2861,7 +2999,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/object'
         - $ref: '#/components/schemas/system_fields'
-        - $ref: '#/components/schemas/person_base'
+        - $ref: '#/components/schemas/person_writable'
       properties:
         name:
           type: string
@@ -2919,7 +3057,7 @@ components:
           items:
             $ref: '#/components/schemas/person'
 
-    address_base:
+    address_writable:
       description: address object
       type: object
       properties:
@@ -2949,7 +3087,7 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/object'
-        - $ref: '#/components/schemas/address_base'
+        - $ref: '#/components/schemas/address_writable'
 
     addresses:
       type: object
@@ -3205,12 +3343,8 @@ components:
           description: URL of the project
           example: https://www.tynacoon.com
 
-    salesproject:
+    salesproject_readonly:
       type: object
-      allOf:
-        - $ref: '#/components/schemas/object'
-        - $ref: '#/components/schemas/system_fields'
-        - $ref: '#/components/schemas/salesproject_writable'
       properties:
         displayTitle:
           type: string
@@ -3233,10 +3367,18 @@ components:
           description: Object link to the record in PisaSales
           example: https://crm.pisasales.com/psaobj?title=Tynacoon&rpsids=42&login=xb64xKBsb&psacbk=cHNhb2JqPX
 
+    opportunity_writable:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/salesproject_writable'
+
     opportunity:
       type: object
       allOf:
-        - $ref: '#/components/schemas/salesproject'
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/system_fields'
+        - $ref: '#/components/schemas/salesproject_readonly'
+        - $ref: '#/components/schemas/opportunity_writable'
 
     opportunities:
       type: object
@@ -3253,15 +3395,23 @@ components:
           items:
             $ref: '#/components/schemas/opportunity'
 
-    quote:
+    quote_writable:
       type: object
       allOf:
-        - $ref: '#/components/schemas/salesproject'
+        - $ref: '#/components/schemas/salesproject_writable'
       properties:
         validUntil:
           type: string
           description: ISO formatted date string until when the quote is valid
           example: 2024-07-30T12:00:00Z
+
+    quote:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/system_fields'
+        - $ref: '#/components/schemas/salesproject_readonly'
+        - $ref: '#/components/schemas/quote_writable'
 
     quotes:
       type: object
@@ -3286,7 +3436,10 @@ components:
     order:
       type: object
       allOf:
-        - $ref: '#/components/schemas/salesproject'
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/system_fields'
+        - $ref: '#/components/schemas/salesproject_readonly'
+        - $ref: '#/components/schemas/quote_writable'
 
     orders:
       type: object
@@ -3303,7 +3456,7 @@ components:
           items:
             $ref: '#/components/schemas/order'
 
-    activity_base:
+    activity_writable:
       type: object
       properties:
         subject:
@@ -3358,7 +3511,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/object'
         - $ref: '#/components/schemas/system_fields'
-        - $ref: '#/components/schemas/activity_base'
+        - $ref: '#/components/schemas/activity_writable'
       properties:
         activityType:
           type: string
@@ -3416,7 +3569,7 @@ components:
           items:
             $ref: '#/components/schemas/activity'
 
-    message_base:
+    message_writable:
       type: object
       properties:
         subjectId:
@@ -3436,7 +3589,7 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/object'
-        - $ref: '#/components/schemas/message_base'
+        - $ref: '#/components/schemas/message_writable'
       properties:
         createdAt:
           type: string
@@ -3455,7 +3608,7 @@ components:
     message_post:
       type: object
       allOf:
-        - $ref: '#/components/schemas/message_base'
+        - $ref: '#/components/schemas/message_writable'
       properties:
         attachments:
           type: array
@@ -3478,7 +3631,7 @@ components:
           items:
             $ref: '#/components/schemas/message'
 
-    questionnaire_base:
+    questionnaire_writable:
       type: object
       properties:
         title:
@@ -3515,7 +3668,7 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/object'
-        - $ref: '#/components/schemas/questionnaire_base'
+        - $ref: '#/components/schemas/questionnaire_writable'
       properties:
         pisaSalesLink:
           type: string
@@ -3537,7 +3690,7 @@ components:
           items:
             $ref: '#/components/schemas/questionnaire'
 
-    question_base:
+    question_writable:
       type: object
       properties:
         questionnaireId:
@@ -3594,7 +3747,7 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/object'
-        - $ref: '#/components/schemas/question_base'
+        - $ref: '#/components/schemas/question_writable'
 
     questions:
       type: object
@@ -3611,7 +3764,7 @@ components:
           items:
             $ref: '#/components/schemas/question'
 
-    question-option_base:
+    question-option_writable:
       type: object
       properties:
         questionId:
@@ -3639,7 +3792,7 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/object'
-        - $ref: '#/components/schemas/question-option_base'
+        - $ref: '#/components/schemas/question-option_writable'
 
     question-options:
       type: object
@@ -3677,7 +3830,7 @@ components:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/questionnaire-answer_base'
+            $ref: '#/components/schemas/questionnaire-answer_writable'
 
     questionnaire-answer_post_response:
       type: object
@@ -3691,7 +3844,7 @@ components:
           items:
             $ref: '#/components/schemas/questionnaire-answer'
 
-    questionnaire-answer_base:
+    questionnaire-answer_writable:
       type: object
       properties:
         questionId:
@@ -3719,7 +3872,7 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/object'
-        - $ref: '#/components/schemas/questionnaire-answer_base'
+        - $ref: '#/components/schemas/questionnaire-answer_writable'
       properties:
         questionnaireId:
           type: string
@@ -3873,7 +4026,7 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/object'
-        - $ref: '#/components/schemas/activity-contact_base'
+        - $ref: '#/components/schemas/activity-contact_writable'
       properties:
         updatedAt:
           type: string
@@ -3889,7 +4042,7 @@ components:
           enum: [Person, Company, Contact]
           example: Person
 
-    activity-contact_base:
+    activity-contact_writable:
       type: object
       properties:
         activity:
@@ -3934,7 +4087,7 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/object'
-        - $ref: '#/components/schemas/company-person_base'
+        - $ref: '#/components/schemas/company-person_writable'
       properties:
         updatedAt:
           type: string
@@ -3945,7 +4098,7 @@ components:
           description: Date when this record was created
           example: 2024-10-15T09:47:44Z
 
-    company-person_base:
+    company-person_writable:
       type: object
       properties:
         company:
@@ -3986,7 +4139,7 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/object'
-        - $ref: '#/components/schemas/address-contact_base'
+        - $ref: '#/components/schemas/address-contact_writable'
       properties:
         updatedAt:
           type: string
@@ -3997,7 +4150,7 @@ components:
           description: Date when this record was created
           example: 2024-10-15T09:47:44Z
 
-    address-contact_base:
+    address-contact_writable:
       type: object
       properties:
         address:
@@ -4013,7 +4166,7 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/object'
-        - $ref: '#/components/schemas/contact-project_base'
+        - $ref: '#/components/schemas/contact-project_writable'
       properties:
         updatedAt:
           type: string
@@ -4034,7 +4187,7 @@ components:
           enum: [Contact, Person, Company]
           example: Person
 
-    contact-project_base:
+    contact-project_writable:
       type: object
       properties:
         contact:
@@ -4069,7 +4222,7 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/object'
-        - $ref: '#/components/schemas/activity-project_base'
+        - $ref: '#/components/schemas/activity-project_writable'
       properties:
         updatedAt:
           type: string
@@ -4085,7 +4238,7 @@ components:
           enum: [Project, Ticket, Opportunity, Quote, Order]
           example: Order
 
-    activity-project_base:
+    activity-project_writable:
       type: object
       properties:
         activity:
