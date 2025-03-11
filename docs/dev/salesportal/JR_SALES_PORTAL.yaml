@@ -370,6 +370,12 @@ paths:
           example: DA8FA0F7483D467B905207A0CAB8D1DE
           schema:
             type: string
+        - name: includeDuplicates
+          in: query
+          description: Will company records, that are marked as duplicates, be included in the result? The default is false.
+          example: false
+          schema:
+            type: boolean
       responses:
         '200':
           $ref: '#/components/responses/companies'
@@ -655,6 +661,50 @@ paths:
                   - $ref: '#/components/schemas/error_missing_data'
         '403':
           $ref: '#/components/responses/error_authentication_failed'
+
+  /salesportal/lead:
+    get:
+      summary: Fetch all leads
+      description: Searches all companies and persons of the group "Lead".
+      tags:
+        - lead
+      parameters:
+        - $ref: '#/components/parameters/ids_query'
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+        - $ref: '#/components/parameters/filter_query'
+        - name: includeDuplicates
+          in: query
+          description: Will lead records, that are marked as duplicates, be included in the result? The default is false.
+          example: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          $ref: '#/components/responses/leads'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+
+  /salesportal/lead/{id}:
+    get:
+      summary: Fetch a single lead
+      description: Searches the _id of a lead
+      tags:
+        - lead
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/lead'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
 
   /salesportal/message:
     get:
@@ -949,6 +999,12 @@ paths:
           example: 44AB4B88EBD34608B0E4A81C1DA1D85B
           schema:
             type: string
+        - name: includeDuplicates
+          in: query
+          description: Will person records, that are marked as duplicates, be included in the result? The default is false.
+          example: false
+          schema:
+            type: boolean
       responses:
         '200':
           $ref: '#/components/responses/persons'
@@ -2352,6 +2408,20 @@ components:
           schema:
             $ref: '#/components/schemas/persons'
 
+    lead:
+      description: lead data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/lead'
+
+    leads:
+      description: a list of leads
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/leads'
+
     address:
       description: address data
       content:
@@ -2850,10 +2920,6 @@ components:
     contact_writable:
       type: object
       properties:
-        status:
-          type: string
-          description: The identifier of the current status
-          example: PSA_ORG_CST_PRC
         accountManager:
           type: string
           description: Id of the account manager
@@ -2896,6 +2962,10 @@ components:
           type: string
           description: The name of the company
           example: ACME Ltd.
+        status:
+          type: string
+          description: The identifier of the current status
+          example: PSA_ORG_CST_PRC
 
     company:
       type: object
@@ -2993,6 +3063,10 @@ components:
           type: string
           description: Name suffix
           example: jr.
+        status:
+          type: string
+          description: The identifier of the current status
+          example: PSA_PRS_CST_PRC
 
     person:
       type: object
@@ -3056,6 +3130,79 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/person'
+
+    lead_writable:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/contact_writable'
+      properties:
+        isPerson:
+          type: boolean
+          description: is the lead a person?
+          example: true
+        status:
+          type: string
+          description: The identifier of the current status
+          example: PSA_PRS_LEA_NQU
+
+    lead:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/system_fields'
+        - $ref: '#/components/schemas/lead_writable'
+      properties:
+        name:
+          type: string
+          description: Composed name (given name + family name or company name)
+          example: John Doe
+        displayTitle:
+          type: string
+          description: Title of the lead. Mainly used for references and titles
+          example: Doe, John (ACME Ltd)
+        number:
+          type: string
+          description: The internal number of the lead
+          example: C-20-000491
+        group:
+          type: string
+          description: The identifier of the group
+          example: PSA_PRS_LEA
+        parents:
+          type: array
+          description: The list of parent companies. The first index is the top company.
+          example: [DD0AB9752680C88BE030A8C029014E7E]
+          items:
+            type: string
+        duplicateOf:
+          type: string
+          description: ID of a lead that is the master in case this lead is a duplicate
+          example: 44AB4B88EBD34608B0E4A81C1DA1D85B
+        pisaSalesLink:
+          type: string
+          description: Object link to the record in PisaSales
+          example: https://crm.pisasales.com/psaobj?title=Tynacoon&rpsids=42&login=xb64xKBsb&psacbk=cHNhb2JqPX
+        image:
+          description: Image of the person
+          $ref: '#/components/schemas/binary'
+        imageThumbnail:
+          description: Thumbnail of the image
+          $ref: '#/components/schemas/binary'
+
+    leads:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/lead'
 
     address_writable:
       description: address object
@@ -4437,9 +4584,6 @@ components:
                   description: attributes and the query to be used when listing elements of the referenced object
                   additionalProperties:
                     type: string
-              hidden:
-                type: boolean
-                example: false
               maxLength:
                 type: integer
                 example: 32
