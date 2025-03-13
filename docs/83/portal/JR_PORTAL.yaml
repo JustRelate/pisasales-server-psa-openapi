@@ -1,0 +1,2936 @@
+openapi: 3.0.3
+
+info:
+  version: '8.3'
+  title: Portal API
+  description: Endpoints to be used by the Scrivito portal. All endpoints require an IAM authorization.
+
+paths:
+  /portal/binary-access-token/{id}:
+    get:
+      summary: Request a token for accessing binary data
+      description: Returns an URL containing a token that is valid for a limited time and grants access to a single record
+      tags:
+        - binary-access
+      parameters:
+        - name: id
+          in: path
+          description: binary ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/binary-access-token'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/binary-access/{token}:
+    get:
+      summary: Get the binary data for an access token
+      description: No IAM is needed for this endpoint
+      tags:
+        - binary-access
+      parameters:
+        - name: token
+          in: path
+          description: binary access token
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: binary data
+          content:
+            application/octet-stream: 
+              schema:
+                type: string
+                format: binary
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                description: MIME type
+                example: image/jpg
+            Content-Length:
+              schema:
+                type: integer
+                description: Length in bytes
+                example: 22192
+            Content-Disposition:
+              schema:
+                type: string
+                example: attachment; filename="screenshot.jpg"
+        '401':
+          description: the token is invalid or expired
+
+  /portal/callback-request:
+    get:
+      summary: Get the last callback request
+      description: Returns the most recent open request.
+      tags:
+        - callback-request
+      parameters:
+        - name: projectId
+          in: query
+          description: Search callback requests that are related to a project
+          example: DA8FA0F7483D467B905207A0CAB8D1DE
+          schema:
+            type: string
+        - name: serviceObjectId
+          in: query
+          description: Search callback requests that are related to a service object
+          example: F0A8F7FE7D354F8D832B934B2603480E
+          schema:
+            type: string
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/callback-request'
+        '403':
+          $ref: '#/components/responses/error_403'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    put:
+      summary: Create a new callback request.
+      description: This will create a new task with your message. All existing open requests will be canceled.
+      tags:
+        - callback-request
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The message
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/callback-request_upload'
+      responses:
+        '201':
+          $ref: '#/components/responses/callback-request'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/callback-request/{id}:
+    delete:
+      summary: Cancel an open callback request
+      description: Changes the status of the task if it is still open
+      tags:
+        - callback-request
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '204':
+          description: The callback request was canceled
+        '403':
+          $ref: '#/components/responses/error_403'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
+  /portal/contract:
+    get:
+      summary: Fetch all contracts
+      description: Searches all contracts that are related to the logged in user. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - contract
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contracts'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/contract/{id}:
+    get:
+      summary: Fetch a single contract
+      description: Searches the _id of a contract
+      tags:
+        - contract
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contract'
+        '403':
+          $ref: '#/components/responses/error_403'
+          
+  /portal/contract-item:
+    get:
+      summary: Fetch the scope of delivery for a contract
+      description: Searches all products that are assigned to a contract. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - contract
+      parameters:
+        - name: contractId
+          in: query
+          description: id of the contract. If this parameter is missing, the items of a random qcontractuote will be returned.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contract-items'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/contract-item/{id}:
+    get:
+      summary: Fetch a single product from the scope of delivery of a contract
+      description: Searches the _id of a product from the scope of delivery
+      tags:
+        - contract
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contract-item'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/contract-document:
+    get:
+      summary: Fetch all contract document relations
+      description: Searches all documents that are related to a contract
+      tags:
+        - contract
+      parameters:
+        - name: contractId
+          in: query
+          description: id of the contract. If this parameter is missing, the items of a random contract will be returned.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contract-documents'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/country:
+    get:
+      summary: Fetch all countries
+      description: Searches all available countries
+      tags:
+        - country
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/countries'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/country/{id}:
+    get:
+      summary: Get information about a single country
+      description: Returns country data
+      tags:
+        - country
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/country'
+        '400':
+          $ref: '#/components/responses/error_invalid_id'
+        '403':
+          $ref: '#/components/responses/error_403'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
+  /portal/document:
+    get:
+      summary: Fetch all documents
+      description: Searches all documents that are related to the logged in user
+      tags:
+        - document
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/documents'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/document/{id}:
+    get:
+      summary: Fetch a single document
+      description: Searches the document with the given id
+      tags:
+        - document
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/document'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/event:
+    get:
+      summary: Fetch all marketing events
+      description: Searches all events which are open for registration
+      tags:
+        - event
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/events'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/event/{id}:
+    get:
+      summary: Fetch a single marketing event
+      description: Searches the _id of an event which is open for registration
+      tags:
+        - event
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/event'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/event-registration:
+    get:
+      summary: Fetch all marketing events registrations
+      description: Searches all relations of the user to events
+      tags:
+        - event
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/event-registrations'
+        '403':
+          $ref: '#/components/responses/error_403'
+    post:
+      summary: Register for an event
+      description: adds a relation to an event for the user and sets the status to registered
+      tags:
+        - event
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The registration data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/event-registration_base'
+      responses:
+        '200':
+          $ref: '#/components/responses/event-registration'
+        '201':
+          $ref: '#/components/responses/event-registration'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/event-registration/{id}:
+    get:
+      summary: Fetch a single marketing event registration
+      description: Searches the _id of an event registration
+      tags:
+        - event
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/event-registration'
+        '403':
+          $ref: '#/components/responses/error_403'
+    delete:
+      summary: Unregister from an event
+      description: Sets the status to unregistered
+      tags:
+        - event
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/event-registration'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/event-document:
+    get:
+      summary: Fetch all event document relations
+      description: Searches all documents that are related to an event
+      tags:
+        - event
+      parameters:
+        - name: eventId
+          in: query
+          description: id of the event. If this parameter is missing, the documents of a random event will be returned.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/event-documents'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/gdpr:
+    get:
+      summary: Fetch all GDPR purpose of uses
+      description: Searches all purpose of use of the authenticated user.
+      tags:
+        - gdpr
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+        - $ref: '#/components/parameters/authorization_jwt_header'
+      responses:
+        '200':
+          $ref: '#/components/responses/gdprs'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/gdpr/{id}:
+    patch:
+      summary: Update a GDPR purpose of use
+      description: Updates the active flag
+      tags:
+        - gdpr
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/authorization_jwt_header'
+      requestBody:
+        description: The new data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/gdpr-update'
+      responses:
+        '201':
+          $ref: '#/components/responses/gdpr'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/global-document:
+    get:
+      summary: Fetch all documents that are globally available
+      description: Searches all documents with a "web flag"
+      tags:
+        - document
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/documents'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/global-result:
+    get:
+      summary: A global full text search
+      description: Searches all entites
+      tags:
+        - global-result
+      parameters:
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/count_query'
+        - name: entity
+          in: query
+          description: Comma separated list of entities. This limits the search results to this entities.
+          example: Ticket,ServiceObject
+          schema:
+            type: string
+            enum: ['Ticket', 'Opportunity', 'Quote', 'Order', 'Event', 'Contract', 'ServiceObject', 'Document']
+      responses:
+        '200':
+          $ref: '#/components/responses/global-results'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_data'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/message:
+    get:
+      summary: Fetch the messages of a project
+      description: The messages are ordered from oldest to newest
+      tags:
+        - message
+      parameters:
+        - name: subjectId
+          in: query
+          description: id of the project. If this parameter is missing, the messages of a random project will be returned.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+        - $ref: '#/components/parameters/limit_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/messages'
+        '403':
+          $ref: '#/components/responses/error_403'
+    post:
+      summary: Post a new message
+      description: Post a new message to a project
+      tags:
+        - message
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The message data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/message-upload'
+      responses:
+        '201':
+          $ref: '#/components/responses/message'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/message/{id}:
+    get:
+      summary: Fetch the message of a project
+      description: Returns a single project message
+      tags:
+        - message
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/message'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/opportunity:
+    get:
+      summary: Fetch all opportunities
+      description: Searches all opportunities that are related to the logged in user. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - opportunity
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/opportunity'
+        '403':
+          $ref: '#/components/responses/error_403'
+    post:
+      summary: Create a new opportunity
+      description: This will create a new opportunity with the scope of delivery in the description
+      tags:
+        - opportunity
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The opportunity data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/opportunity_upload'
+      responses:
+        '201':
+          $ref: '#/components/responses/opportunity'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/opportunity/{id}:
+    get:
+      summary: Fetch a single opportunity
+      description: Searches the _id of an opportunity
+      tags:
+        - opportunity
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/opportunity'
+        '403':
+          $ref: '#/components/responses/error_403'
+  
+  /portal/order:
+    get:
+      summary: Fetch all orders
+      description: Searches all orders that are related to the logged in user. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - order
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/orders'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/order/{id}:
+    get:
+      summary: Fetch a single order
+      description: Searches the _id of an order
+      tags:
+        - order
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/order'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/order-item:
+    get:
+      summary: Fetch the scope of delivery for an ordern
+      description: Searches all products that are assigned to an order. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - order
+      parameters:
+        - name: orderId
+          in: query
+          description: id of the order. If this parameter is missing, the items of a random order will be returned.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/order-items'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/order-item/{id}:
+    get:
+      summary: Fetch a single product from the scope of delivery of an order
+      description: Searches the _id of a product from the scope of delivery
+      tags:
+        - order
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/order-item'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/order-document:
+    get:
+      summary: Fetch all order document relations
+      description: Searches all documents that are related to a order
+      tags:
+        - order
+      parameters:
+        - name: orderId
+          in: query
+          description: id of the order. If this parameter is missing, the documents of a random order will be returned.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/order-documents'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/order-request:
+    post:
+      summary: Create a new order request.
+      description: This will create a new task which instructs the commercial agent to convert a quote into an order.
+      tags:
+        - order
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The quote id
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/order-request_upload'
+      responses:
+        '201':
+          $ref: '#/components/responses/order-request'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_403'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
+    get:
+      summary: Fetch all order requests
+      description: Searches order requests that were created by the logged in user. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - order
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/order-requests'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/order-request/{id}:
+    get:
+      summary: Fetch a single order request
+      description: Searches the _id of an order request
+      tags:
+        - order
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/order-request'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/quote:
+    get:
+      summary: Fetch all quotes
+      description: Searches all quotes that are related to the logged in user. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - quote
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/quotes'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/quote/{id}:
+    get:
+      summary: Fetch a single quote
+      description: Searches the _id of a quote
+      tags:
+        - quote
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/quote'
+        '403':
+          $ref: '#/components/responses/error_403'
+          
+  /portal/quote-item:
+    get:
+      summary: Fetch the scope of delivery for a quote
+      description: Searches all products that are assigned to a quote. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - quote
+      parameters:
+        - name: quoteId
+          in: query
+          description: id of the quote. If this parameter is missing, the items of a random quote will be returned.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/quote-items'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/quote-item/{id}:
+    get:
+      summary: Fetch a single product from the scope of delivery of a quote
+      description: Searches the _id of a product from the scope of delivery
+      tags:
+        - quote
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/quote-item'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/quote-document:
+    get:
+      summary: Fetch all quote document relations
+      description: Searches all documents that are related to a quote
+      tags:
+        - quote
+      parameters:
+        - name: quoteId
+          in: query
+          description: id of the quote. If this parameter is missing, the items of a random quote will be returned.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/quote-documents'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/quote-request:
+    post:
+      summary: Create a new quote request.
+      description: This will create a new task with your message. And also a quote is created.
+      tags:
+        - quote
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The message and quote data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/quote-request_upload'
+      responses:
+        '201':
+          description: A quote, if a quote was created. If only a task was created, the body is empty.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/quote-request'
+                  - $ref: '#/components/schemas/quote'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/service-object:
+    get:
+      summary: Fetch all service objects
+      description: Searches all service objects where the logged in user is customer, carrier or supplier
+      tags:
+        - service-object
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/service-objects'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/service-object/{id}:
+    get:
+      summary: Fetch a single service object
+      description: Searches the service object with the given id
+      tags:
+        - service-object
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/service-object'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/service-object-document:
+    get:
+      summary: Fetch all service object document relations
+      description: Searches all documents that are related to a service object
+      tags:
+        - service-object
+      parameters:
+        - name: serviceObjectId
+          in: query
+          description: id of the service object. If this parameter is missing, the documents of a random service object will be returned.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/service-object-documents'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/ticket:
+    get:
+      summary: Fetch all tickets
+      description: Searches all tickets that are related to the logged in user and were created in the portal. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - ticket
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/tickets'
+        '403':
+          $ref: '#/components/responses/error_403'
+    post:
+      summary: Create a new ticket
+      description: Creates new ticket
+      tags:
+        - ticket
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The ticket data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ticket-upload'
+      responses:
+        '201':
+          $ref: '#/components/responses/ticket'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/ticket/{id}:
+    get:
+      summary: Fetch a single ticket
+      description: Searches the _id of a ticket
+      tags:
+        - ticket
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/ticket'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/ticket-document:
+    get:
+      summary: Fetch all ticket document relations
+      description: Searches all documents that are related to a ticket
+      tags:
+        - ticket
+      parameters:
+        - name: ticketId
+          in: query
+          description: id of the ticket. If this parameter is missing, the documents of a random ticket will be returned.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/ticket-documents'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/user/{id}:
+    get:
+      summary: Get information about a single contact
+      description: Returns contact data. Only the data of internal contacts and the contacts that belong to the users organization are returned.
+      tags:
+        - user
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/user'
+        '400':
+          $ref: '#/components/responses/error_invalid_id'
+        '403':
+          $ref: '#/components/responses/error_403'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
+  /portal/whoami:
+    get:
+      summary: Get information about the authenticated user
+      description: Returns contact data of the user
+      tags:
+        - user
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/authorization_jwt_header'
+      responses:
+        '200':
+          $ref: '#/components/responses/whoami'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+components:
+  ########################################################################
+  # parameters
+  ########################################################################
+  parameters:
+    id_path:
+      in: path
+      name: id
+      description: if of the record
+      required: true
+      schema:
+        type: string
+
+    continuation_query:
+      in: query
+      name: _continuation
+      description: continuation key that was returned with the last result list
+      schema:
+        type: string
+
+    search_query:
+      in: query
+      name: _search
+      description: Full text (EUREKA) search term
+      schema:
+        type: string
+        
+    order_query:
+      in: query
+      name: _order
+      description: list of fields that should be used for ordering
+      example: createdAt.desc,name.asc
+      schema:
+        type: string
+        
+    limit_query:
+      in: query
+      name: _limit
+      description: maximum number of records to return. if the maximum is reached a continuation key will be in the response. the default value is 100
+      example: 10
+      schema:
+        type: number
+
+    language_query:
+      in: query
+      name: _language
+      description: Language to be used for the localized data fields (e.g. GER or ENG). Overwrites the Accept-Language header.
+      example: GER
+      schema:
+        type: string
+
+    count_query:
+      in: query
+      name: _count
+      description: count the total number of results available
+      example: false
+      schema:
+        type: boolean
+
+    authorization_jwt_header:
+      in: header
+      name: Authorization
+      description: Header can contain the IAM token or a generated JWT. The JWT needs a prefix JWT
+      schema:
+        type: string
+
+  ########################################################################
+  # responses
+  ########################################################################
+  responses:
+    opportunity:
+      description: opportunity data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/opportunity'
+
+    opportunities:
+      description: a list of opportunities
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/opportunities'
+
+    quote:
+      description: quote data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/quote'
+
+    quotes:
+      description: a list of quotes
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/quotes'
+            
+    quote-item:
+      description: quote item data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/quote-item'
+
+    quote-items:
+      description: a list of quote items
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/quote-items'
+
+    quote-document:
+      description: quote document relation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/quote-document'
+
+    quote-documents:
+      description: a list of quote document relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/quote-documents'
+
+    order:
+      description: order data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/order'
+
+    orders:
+      description: a list of orders
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/orders'
+            
+    order-item:
+      description: order item data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/order-item'
+
+    order-items:
+      description: a list of order items
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/order-items'
+
+    order-document:
+      description: order document relation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/order-document'
+
+    order-documents:
+      description: a list of order document relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/order-documents'
+
+    order-requests:
+      description: list of order requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/order-requests'
+
+    order-request:
+      description: order request data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/order-request'
+          
+    ticket:
+      description: ticket data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ticket'
+
+    tickets:
+      description: a list of tickets
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/tickets'
+
+    ticket-document:
+      description: ticket document relation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ticket-document'
+
+    ticket-documents:
+      description: a list of ticket document relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ticket-documents'
+
+    contract:
+      description: contract data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/contract'
+
+    contracts:
+      description: a list of contracts
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/contracts'
+            
+    contract-item:
+      description: contract item data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/contract-item'
+
+    contract-items:
+      description: a list of contract items
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/contract-items'
+
+    contract-document:
+      description: contract document relation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/contract-document'
+
+    contract-documents:
+      description: a list of contract document relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/contract-documents'
+
+    message:
+      description: message
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/message'
+
+    messages:
+      description: a list of messages
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/messages'
+
+    event:
+      description: event data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/event'
+
+    events:
+      description: a list of events
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/events'
+
+    event-registration:
+      description: event registration data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/event-registration'
+  
+    event-registrations:
+      description: a list of event registrations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/event-registrations'
+
+    event-document:
+      description: event document relation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/event-document'
+
+    event-documents:
+      description: a list of event document relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/event-documents'
+
+    document:
+      description: document data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/document'
+
+    documents:
+      description: a list of documents
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/documents'
+
+    service-object:
+      description: service object data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/service-object'
+
+    service-objects:
+      description: a list of service objects
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/service-objects'
+
+    service-object-document:
+      description: service object document relation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/service-object-document'
+
+    service-object-documents:
+      description: a list of service object document relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/service-object-documents'
+
+    callback-request:
+      description: a callback request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/callback-request'
+
+    gdpr:
+      description: GDPR purpose of use data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/gdpr'
+
+    gdprs:
+      description: a list of GDPR purpose of uses
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/gdprs'
+
+    country:
+      description: country data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/country'
+
+    countries:
+      description: a list of countries
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/countries'
+
+    global-results:
+      description: a list of global search results
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/global-results'
+
+    user:
+      description: user data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/user'
+            
+    whoami:
+      description: current user
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/whoami'
+    
+    binary-access-token:
+      description: token for accessing binary data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/binary-access-token'
+
+    empty:
+      description: An empty JSON
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/empty'
+
+    error_403:
+      description: The authentication has failed
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/error_user_unknown'
+              - $ref: '#/components/schemas/error_user_locked'
+
+    error_invalid_id:
+      description: The authenticated IAM user was not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+                example: 'invalid.id'
+              error:
+                type: string
+                example: 'The ID is invalid'
+              details:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 'XXX'
+
+    error_record_not_found:
+      description: The record was not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+                example: 'record.not_found'
+              error:
+                type: string
+                example: 'The record was not found'
+              details:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 'XXX'
+
+    error_missing_data:
+      description: Not all necessary data was submitted by the client
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+                example: 'missing.data'
+              error:
+                type: string
+                example: 'Some data is missing'
+              details:
+                type: object
+                properties:
+                  field:
+                    type: string
+                    description: name of the missing field
+                    example: 'title'
+
+  schemas:
+    ########################################################################
+    # objects
+    ########################################################################
+    object:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: identifier of the record
+          example: F9BB0AAA22C947BAE030A8C00C015B91
+
+    project:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        keyword:
+          type: string
+          description: keyword of the project
+          example: New filling line
+        number:
+          type: string
+          description: number of the project
+          example: P-23-055168
+        type:
+          type: string
+          description: identifier of the sub type of the project
+          example: PSA_ORG_STY_STD
+        customer:
+          type: string
+          description: the name of customer of the project
+          example: Tynacoon (Berlin)
+        commercialAgent:
+          type: string
+          description: the name of the commercial agent
+          example: Mustermann, Max (Sales department)
+        technicalAgent:
+          type: string
+          description: the name of the technical agent
+          example: Doe, Jane (Support))
+        salesPartner:
+          type: string
+          description: the name of the sales partner
+        status:
+          type: string
+          description: identifier of the current status
+          example: PSA_PRO_ORD_INC
+        mainStatus:
+          type: string
+          description: The identifier of the main status
+          example: PSA_SAP_MAI_QUO_QUO_GEN
+        open:
+          type: boolean
+          description: is the project currently in an open status?
+          example: true
+        quoteAt:
+          type: string
+          description: ISO formatted date string of the quote date
+          example: 2023-12-15T14:00:00Z
+        orderAt:
+          type: string
+          description: ISO formatted date string of the order date
+          example: 2024-01-10T10:00:00Z
+        deliveryAt:
+          type: string
+          description: ISO formatted date string of the order delivery date
+          example: 2024-02-01T17:00:00Z
+        termsOfDelivery:
+          type: string
+          description: the agreed terms of delivery
+          example: RFC_TOD_DDP
+        termsOfPayment:
+          type: string
+          description: the agreed terms of payment
+          example: PSA_TOP_10
+        totalPrice:
+          type: number
+          description: total price of the project
+          example: 73429.50
+        totalPriceCurrency:
+          type: string
+          description: ISO 4217 code of the currency
+          example: EUR
+        description:
+          type: string
+          description: description of the project
+          example: First offer
+        url:
+          type: string
+          description: URL of the project
+          example: https://www.justrelate.com
+
+    opportunity:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        keyword:
+          type: string
+          description: keyword of the opportunity
+          example: New filling line
+        description:
+          type: string
+          description: description of the opportunity
+          example: 1x filling line
+  
+    opportunities:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/opportunity'
+
+    opportunity_upload:
+      type: object
+      properties:
+        keyword:
+          type: string
+          description: The keyword for the new opportunity
+          example: New opportunity from the portal
+        description:
+          type: string
+          description: description containing the ordered items
+          example: "1x Filling line \"Brewery\"\n5x Plug-in nozzle 0.4mm"
+
+    quote:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project'
+      properties:
+        validUntil:
+          type: string
+          description: date until when the quote is valid
+          example: 2024-01-05T10:00:00Z
+  
+    quotes:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/quote'
+
+    quote-request_upload:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Text you want to submit to the recipient of the request. The message is stored at the task and the quote.
+          example: Please send me a quote
+        quoteData:
+          $ref: '#/components/schemas/quote-request-data'
+        attachments:
+          type: array
+          description: Files to attach to the new ticket
+          items:
+            $ref: '#/components/schemas/binary-upload'
+
+    quote-request-data:
+      type: object
+      description: If the quoteData is set, a quote will also be created with the provided data. This feature needs to be enabled with the variable 'PSA_RST_API_JR_QUO_REQ_CRE'
+      properties:
+        keyword: 
+          type: string
+          description: The keyword for the quote
+          example: Quote number 1
+        price:
+          type: number
+          description: total price of the quote
+          example: 120000.99 
+        url:
+          type: string
+          description: Link to the product configuration
+          example: https://www.justrelate.com/cpq
+
+    quote-request:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+
+    order:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project'
+
+    orders:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/order'
+
+    order-request:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/order-request_upload'
+
+    order-requests:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/order-request'
+
+    order-request_upload:
+      type: object
+      properties:
+        quoteId:
+          type: string
+          description: The id of the quote that should be transfered
+          example: 709A9335EA1A473E855F4FCA4A12A027
+
+    project-item:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        position:
+          type: string
+          description: position number of th eitem
+          example: 10
+        selected:
+          type: boolean
+          description: is the item selected?
+          example: true
+        optional:
+          type: boolean
+          description: if the item optional?
+          example: false
+        quantiy:
+          type: number
+          description: the number of sold items
+          example: 1.5
+        quantityUnit:
+          type: string
+          description: the identifier of the item unit
+          example: KGR
+        name:
+          type: string
+          description: name of the product
+          example: "Lubrication unit MAX10"
+        number:
+          type: string
+          description: number of the product
+          example: A-14-234575
+        category:
+          type: string
+          description: product category
+          example: PSA_ART_OPE
+        unitPrice:
+          type: number
+          description: price per unit
+          example: 450.99
+        totalPrice:
+          type: string
+          description: total price (quantity * unitPrice)
+          example: 38293.23
+          
+    quote-item:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project-item'
+      properties:
+        quoteId:
+          type: string
+          description: identifier of the quote
+          example: 8EB814C3FE71C302E040007F01004285
+        quoteKeyword:
+          type: string
+          description: keyword of the quote
+          example: Seconds filling line
+          
+    quote-items:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/quote-item'
+            
+    order-item:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project-item'
+      properties:
+        orderId:
+          type: string
+          description: identifier of the order
+          example: 26F9BFD88897B260E040A8C00F01662F
+        orderKeyword:
+          type: string
+          description: keyword of the order
+          example: Ventilation
+          
+    order-items:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/order-item'
+
+    binary:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Identifier that is used to request a binary access token
+          example: c231fa48df3ee393c92dccac4dba5e7dE308ED22299D449C97DB6B7642FA2CA9
+        filename:
+          type: string
+          description: filename
+          example: screenshot1.jpg
+        contentType:
+          type: string
+          description: MIME type
+          example: image/jpg
+        contentLength:
+          type: integer
+          description: estimated size of the binary data in bytes
+          example: 245120
+
+    binary-upload:
+      type: object
+      properties:
+        filename:
+          type: string
+          description: file name of the uploaded binary data
+          example: text.txt
+        dataBase64:
+          type: string
+          description: Base64 encoded data
+          example: SGVsbG8gd29ybGQ=
+
+    ticket_base:
+      type: object
+      properties:
+        title:
+          type: string
+          description: title of the ticket
+          example: Maschine not working
+        description:
+          type: string
+          description: A text descripting the issue
+          example: It is not working
+        type:
+          type: string
+          description: Type identifier of the ticket
+          enum: [PSA_SVC_TRB, PSA_SVC_CPL, PSA_SVC_CAL]
+        
+    ticket:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/ticket_base'
+      properties:
+        number:
+          type: string
+          example: TT-24-000346
+        referenceNumber:
+          type: string
+          description: Number that is used by the customer to reference this ticket
+          example: T-4711
+        status:
+          type: string
+          description: Current status identifier of the ticket
+          example: PSA_SVC_CAL_WRK
+        open:
+          type: boolean
+          description: is the ticket currently in an open status?
+          example: true
+        updatedAt:
+          type: string
+          description: date of the last update
+          example: 2023-12-13T14:10:55
+        responsibleAgent:
+          type: string
+          description: The person who is responsible for this ticket
+          example: Doe, John (Service)
+        createdBy:
+          type: string
+          description: The ID of the contact who has submitted this ticket
+          example: C30CF665CA354E7D869F7A195D5C1754
+        createdAt:
+          type: string
+          description: The date when the ticket was created
+          example: 2023-11-29T18:00:00
+        serviceObject:
+          type: string
+          description: the id of an associated service object
+          example: 42CF5C982C5240D29A1453040668D8DC
+        attachments:
+          type: array
+          description: Files that were attached when the ticket was created
+          items:
+            $ref: '#/components/schemas/binary'
+
+    ticket-upload:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ticket_base'
+      properties:
+        attachments:
+          type: array
+          description: Files to attach to the new ticket
+          items:
+            $ref: '#/components/schemas/binary-upload'
+
+    tickets:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ticket'
+
+    contract:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        keyword:
+          type: string
+          description: Keyword of the contract
+          example: Maintenance contract
+        number:
+          type: string
+          description: Number of the contract
+          example: C-24-002069
+        type:
+          type: string
+          description: Contract type
+          example: PSA_CTR_TYP_20
+        category:
+          type: string
+          description: Contract category
+          example: PSA_CTR_KND_10
+        partner:
+          type: string
+          description: Contract partner
+          example: ACME Ltd.
+        agent:
+          type: string
+          description: Contract agent
+          example: A0DF5579E90D4DC4B47393A69D71C827
+        internalDepartment:
+          type: string
+          description: Internal department
+          example: 6A71BBB6956E4F7B8220E15E6BB8D958
+        status:
+          type: string
+          description: Status
+          example: PSA_PRO_CTR_INI
+        startAt:
+          type: string
+          description: Begin date
+          example: 2024-06-18T10:04:36Z
+        endAt:
+          type: string
+          description: End date
+          example: 2024-06-18T10:04:36Z
+        minimumTerm:
+          type: integer
+          description: Minimum term length
+          example: 1
+        minimumTermUnit:
+          type: integer
+          description: Minimum term unit
+          example: PSA_CTR_CYC_YEA
+        cancelationEndAt:
+          type: string
+          description: Cancellation period ends on
+          example: 2024-06-18T10:04:36Z
+        termExtensionEndAt:
+          type: string
+          description: Term extension ends on
+          example: 2024-06-18T10:04:36Z
+        termExtensionYears:
+          type: integer
+          description: Term extension in years
+          example: 1
+        termExtensionMonths:
+          type: integer
+          description: Term extension in months
+          example: 0
+        termExtensionDays:
+          type: integer
+          description: Term extension in days
+          example: 0
+        totalPrice:
+          type: number
+          description: Total value of the contract
+          example: 12000.0
+
+    contracts:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/contract'
+
+    contract-item:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project-item'
+      properties:
+        contractId:
+          type: string
+          description: identifier of the contract
+          example: 53473550DE1D4C30850183583F3B1B9A
+        contractKeyword:
+          type: string
+          description: keyword of the contract
+          example: Service contract
+          
+    contract-items:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/contract-item'
+
+    contract-document:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project-document'
+      properties:
+        contractId:
+          type: string
+          description: Contract Id
+          example: 53473550DE1D4C30850183583F3B1B9A
+
+    contract-documents:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/contract-document'
+
+    message_base:
+      type: object
+      properties:
+        subjectId:
+          type: string
+          description: id of the associated project
+          example: E6F2DE085CE74697BE786438A3445993
+        text:
+          type: string
+          description: the message text
+          example: The red light is on
+
+    message:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/message_base'
+      properties:
+        _id:
+          type: string
+          description: identifier of the message
+          example: E6F2DE085CE74697BE786438A34459931
+        createdBy:
+          type: string
+          description: The ID of the contact who has posted this message
+          example: C30CF665CA354E7D869F7A195D5C1754
+        createdAt:
+          type: string
+          description: Timestamp when the message was posted
+          example: 2023-12-06T10:30:00
+        attachments:
+          type: array
+          description: Files that were attached to this message
+          items:
+            $ref: '#/components/schemas/binary'
+
+    message-upload:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/message_base'
+      properties:
+        attachments:
+          type: array
+          description: Files to attach to this message
+          items:
+            $ref: '#/components/schemas/binary-upload'
+
+    messages:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/message'
+
+    event:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        keyword:
+          type: string
+          description: Title of the event
+          example: User group meeting
+        number:
+          type: string
+          description: Number for identifying the event
+          example: P-24-055493
+        beginsAt:
+          type: string
+          description: start date
+          example: 2024-01-30T08:00:00
+        endsAt:
+          type: string
+          description: start date
+          example: 2024-01-30T16:00:00
+        location:
+          type: string
+          description: Were will the event take place?
+          example: Head quarter
+        organizer:
+          type: string
+          description: Name of the contact that is organizing the event
+          example: Event company (Berlin)
+        responsibleAgent:
+          type: string
+          description: The ID of the person who is responsible for this event
+          example: 6BB7A0BBFE5040138E82C10FFE746C61
+        status:
+          type: string
+          description: Identifier of the current status of the event
+          example: PSA_PRO_EVT_REG_OPN
+        url:
+          type: string
+          description: URL with more information about the event
+          example: https://www.justrelate.com
+        language:
+          type: string
+          description: Identifier of the language of the event
+          example: ENG
+        freeSeats:
+          type: number
+          description: How many registrations are still possible. null of the number ir unknown.
+          example: 12
+        attendanceFee:
+          type: number
+          description: The costs for a registration/attendance
+          example: 99.90
+        description:
+          type: string
+          description: Additional text that describes the event
+          example: News from out products
+
+    events:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/event'
+
+    event-registration_base:
+      type: object
+      properties:
+        eventId:
+          type: string
+          description: id of the event
+          example: 350D39F5380B4DF092A5E23F400D655A
+        
+    event-registration:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/event-registration_base'
+
+    event-registrations:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/event-registration'
+  
+    user:
+      description: user object
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        name:
+          type: string
+          description: name consisting of given and family name
+          example: John Doe
+        salutation:
+          type: string
+          description: identifier of the salutation of the person
+          example: M
+        givenName:
+          type: string
+          description: first name
+          example: John
+        familyName:
+          type: string
+          description: last name
+          example: Doe
+        email:
+          type: string
+          description: email address
+          example: john.doe@acme.com
+        position:
+          type: string
+          description: position inside of the organization
+          example: Sales manager
+        staff:
+          type: boolean
+          description: is the person an internal employee?
+          example: false
+        image:
+          description: Image of the user
+          $ref: '#/components/schemas/binary'
+
+    whoami:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/user'
+      properties:
+        salesUserId:
+          type: string
+          description: sales agent
+          example: A1CDE5E153264129BED9A1F8D64F74C7
+        serviceUserId:
+          type: string
+          description: service agent
+          example: 9BFC4D9331B84D2E8DB6C0BCAA851007
+
+    empty:
+      type: object
+
+    binary-access-token:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: URL for accessing the binary data
+          example: /binary-access/1649cff06611a6025da3dd511a97fb4328ABC5BC362145C0A6F308F116C6A7A5
+        maxAge:
+          type: integer
+          description: time in seconds how long the token is valid
+          example: 3600
+    
+    documents:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/document'
+
+    document:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        title:
+          type: string
+          description: title of the document
+          example: Quote 2024-01-01
+        number:
+          type: string
+          description: document number
+          example: D-24-005632
+        type:
+          type: string
+          description: identifier of the type of the document
+          example: PSA_OFF
+        format:
+          type: string
+          description: file format
+          example: pdf
+        createdAt:
+          type: string
+          description: Time when the document was created
+          example: 2024-01-01T15:06:00Z
+        language:
+          type: string
+          description: identifier of the language of the document
+          example: GER
+        size:
+          type: number
+          description: size in MB
+          example: 0.52
+        version:
+          type: string
+          description: version and revision
+          example: 1.0
+        body:
+            description: Binary data of the document
+            $ref: '#/components/schemas/binary'
+
+    project-document:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        documentId:
+          type: string
+          description: ''
+          example: B5BE88F61D8E4070875BCB263E48210F
+
+    quote-document:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project-document'
+      properties:
+        quoteId:
+          type: string
+          description: Quote Id
+          example: FC4D24E70FEF4CE2B2C68C9262F69C4C
+
+    quote-documents:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/quote-document'
+
+    order-document:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project-document'
+      properties:
+        orderId:
+          type: string
+          description: Order Id
+          example: DB5D9A088ED144509160EDFF573C8BE9
+
+    order-documents:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/order-document'
+
+    event-document:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project-document'
+      properties:
+        eventId:
+          type: string
+          description: Event Id
+          example: DB5D9A088ED144509160EDFF573C8BE9
+
+    event-documents:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/event-document'
+
+    ticket-document:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/project-document'
+      properties:
+        ticketId:
+          type: string
+          description: Ticket  Id
+          example: DB5D9A088ED144509160EDFF573C8BE9
+
+    ticket-documents:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ticket-document'
+
+    service-object:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        keyword:
+          type: string
+          description: Name of the service object
+          example: Wind turbine 6 MW
+        number:
+          type: string
+          description: Unique number
+          example: Wind turbine 6 MW
+        serialNumber:
+          type: string
+          description: Serial number
+          example: 492648238736292
+        modelNumber:
+          type: string
+          description: Model number
+          example: t.6.123
+        status:
+          type: string
+          description: Status identifier
+          example: PSA_ART_SVC_ACT
+        category:
+          type: string
+          description: Product category
+          example: PSA_ART_CAT_SVC_PCK
+        responsibleAgent:
+          type: string
+          description: Id of the user that is responsible for this object
+          example: 95156F23F9A347C79AE3B28008EA15FF
+        customer:
+          type: string
+          description: Name of the customer
+          example: Big customer
+        isCustomer:
+          type: boolean
+          description: Is the current user the customer of this object?
+          example: true
+        carrier:
+          type: string
+          description: Name of the carrier
+          example: ACME Ltd.
+        isCarrier:
+          type: boolean
+          description: Is the current user the carrier of this object?
+          example: false
+        supplier:
+          type: string
+          description: Name of the supplier
+          example: Deliverou
+        isSupplier:
+          type: boolean
+          description: Is the current user the supplier of this object?
+          example: false
+        product:
+          type: string
+          description: Name of the product that this object represents
+          example: Turbine 6 MW
+        installedAt:
+          type: string
+          description: ISO date time when the object was installed
+          example: 2024-01-31T11:42:58Z
+        warrantyEndsAt:
+          type: string
+          description: ISO date time when the warranty ends
+          example: 2024-01-31T11:42:58Z
+        productType:
+          type: string
+          description: Product type
+          example: PSA_MEN_ART_TYP_10
+        type:
+          type: string
+          description: Type
+          example: PSA_SVC_OBJ_TYP_MOD
+        parentId:
+          type: string
+          description: ID of the parent service object in the tree structure
+          example: 7EE9B4F3EAF2450384738C3667AE6956
+        information:
+          type: string
+          description: Description
+          example: Large land bases power plant
+        locationStreet:
+          type: string
+          description: Street where the object is installed
+          example: 28 Mill Road
+        locationPostalCode:
+          type: string
+          description: Postal code where the object is installed
+          example: IP12 4NP
+        locationCity:
+          type: string
+          description: City where the object is installed
+          example: Woodbridge
+        locationCountry:
+          type: string
+          description: Country identifier where the object is installed
+          example: GBR
+        picture:
+          description: Picture of the service object
+          $ref: '#/components/schemas/binary'
+
+    service-objects:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/service-object'
+
+    service-object-document:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        documentId:
+          type: string
+          description: ''
+          example: B5BE88F61D8E4070875BCB263E48210F
+        serviceObjectId:
+          type: string
+          description: Service object Id
+          example: DB5D9A088ED144509160EDFF573C8BE9
+
+    service-object-documents:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/service-object-document'
+
+    gdpr:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        name:
+          type: string
+          description: name of the purpose of use
+          example: Contact by telephone
+        description:
+          type: string
+          description: description of the purpose of use
+          example: I agree to be contacted by telephone.
+        active:
+          type: boolean
+          description: is the purpose of use active?
+          example: true
+
+    gdprs:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/gdpr'
+
+    gdpr-update:
+      type: object
+      properties:
+        active:
+          type: boolean
+          description: is the purpose of use active?
+          example: true
+
+    callback-request_upload:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Text you want to submit to the recipient of the request
+          example: Please call me
+        projectId: 
+          type: string
+          description: Optional ID of a project. The activity will have this project as main project.
+          example: DD5A4BB3B64E0B13E030A8C029013F22
+        serviceObjectId:
+          type: string
+          description: Optional ID of a service object. The activity will be assigned to this service object.
+          example: 4660FAE914FB4C9EAE7F0C968F845E8E
+        
+    callback-request:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/callback-request_upload'
+
+    country:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        name:
+          type: string
+          description: Country name
+          example: Germany
+        iso3166A3:
+          type: string
+          description: ISO-3166 Alpha 3 code
+          example: DEU
+        iso3166A2:
+          type: string
+          description: ISO-3166 Alpha 2 code
+          example: DE
+        iso3166Numeric:
+          type: string
+          description: ISO-3166 numeric code
+          example: 276
+        countryCode:
+          type: string
+          description: Telephone country code
+          example: '+49'
+    countries:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/country'
+
+    global-result:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        title:
+          type: string
+          description: Title of the found record
+          example: Tynacoon GmbH
+        entity:
+          type: string
+          description: End point to query for more details
+          example: company
+        snippet:
+          type: string
+          description: Text around the searched terms
+          example: Tynacoon GmbH - Customer - C-20-0028947
+        matches:
+          type: array
+          description: Starting an ending index of the matches. The starting index is included, the ending is excluded.
+          example: [[0,8]]
+          items:
+            type: array
+            items:
+              type: integer
+
+    global-results:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/global-result'
+
+    ########################################################################
+    # errors
+    ########################################################################
+
+    error_user_unknown:
+      description: The authenticated IAM user was not found
+      type: object
+      properties:
+        code:
+          type: string
+          example: 'user.unknown'
+        error:
+          type: string
+          example: 'The user was not found'
+        details:
+          type: object
+          properties:
+            email:
+              type: string
+              example: 'john.doe@acme.org'
+
+    error_user_locked:
+      description: The authenticated IAM user is not allowed to login because the contact is locked
+      type: object
+      properties:
+        code:
+          type: string
+          example: 'user.locked'
+        error:
+          type: string
+          example: 'The user is locked'
+        details:
+          type: object
+          properties:
+            email:
+              type: string
+              example: 'john.doe@acme.org'
+            status:
+              type: string
+              description: identifier of the current status
+              example: PSA_PRS_LEA_BLC
+
+    error_invalid_data:
+      description: The provided data was not valid
+      type: object
+      properties:
+        code:
+          type: string
+          example: 'invalid.data'
+        error:
+          type: string
+          example: The provided data is invalid
+        details:
+          type: object
+          properties:
+            field:
+              type: string
+              example: 'D07C1943E1929F83E030A8C0290112EB'
+
+    error_missing_data:
+      description: Not all necessary data was submitted by the client
+      type: object
+      properties:
+        code:
+          type: string
+          example: 'missing.data'
+        error:
+          type: string
+          example: 'Some data is missing'
+        details:
+          type: object
+          properties:
+            field:
+              type: string
+              description: name of the missing field
+              example: 'title'
