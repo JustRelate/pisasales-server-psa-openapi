@@ -688,6 +688,35 @@ paths:
           $ref: '#/components/responses/leads'
         '403':
           $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Create a lead
+      description: This will create a new lead
+      tags:
+        - lead
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The lead data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/lead_writable'
+      responses:
+        '201':
+          $ref: '#/components/responses/lead'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
 
   /salesportal/lead/{id}:
     get:
@@ -705,6 +734,68 @@ paths:
           $ref: '#/components/responses/error_authentication_failed'
         '404':
           $ref: '#/components/responses/error_record_not_found'
+    patch:
+      summary: Update a lead
+      description: This will update an existing lead
+      tags:
+        - lead
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The lead data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/lead_writable'
+      responses:
+        '200':
+          $ref: '#/components/responses/lead'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    delete:
+      summary: Delete a lead
+      description: Searches the _id of a lead and deletes the record
+      tags:
+        - lead
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The lead was deleted
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+        '409':
+          description: The person could not be deleted due to a conflict        
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 'relation.check_failed'
+                  error:
+                    type: string
+                    example: 'relation count exceeds delete check'
+                  details:
+                    type: object
+                    properties:
+                      count:
+                        type: string
+                        example: '1'
+                      relation:
+                        type: string
+                        example: 'quote'
 
   /salesportal/message:
     get:
@@ -3146,11 +3237,11 @@ components:
       properties:
         isPerson:
           type: boolean
-          description: is the lead a person?
+          description: Is the lead a person? During creation this defines if the lead is a person or a company.
           example: true
         status:
           type: string
-          description: The identifier of the current status
+          description: The identifier of the current status. During an insert this overwrites the isPerson flag.
           example: PSA_PRS_LEA_NQU
 
     lead:
