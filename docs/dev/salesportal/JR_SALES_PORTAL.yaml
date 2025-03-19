@@ -3128,12 +3128,10 @@ components:
           type: boolean
           description: is the contact external?
           example: true
-        parents:
-          type: array
-          description: The list of parent companies. The first index is the top company.
-          example: [DD0AB9752680C88BE030A8C029014E7E]
-          items:
-            type: string
+        parent:
+          type: string
+          description: The id of the superordinated company
+          example: DD0AB9752680C88BE030A8C029014E7E
         duplicateOf:
           type: string
           description: ID of a company that is the master in case this company is a duplicate
@@ -3225,12 +3223,10 @@ components:
           type: boolean
           description: is the contact external?
           example: true
-        parents:
-          type: array
-          description: The list of parent companies. The first index is the top company.
-          example: [DD0AB9752680C88BE030A8C029014E7E]
-          items:
-            type: string
+        parent:
+          type: string
+          description: The id of the superordinated company
+          example: DD0AB9752680C88BE030A8C029014E7E
         duplicateOf:
           type: string
           description: ID of a person that is the master in case this person is a duplicate
@@ -3298,12 +3294,10 @@ components:
           type: string
           description: The identifier of the group
           example: PSA_PRS_LEA
-        parents:
-          type: array
-          description: The list of parent companies. The first index is the top company.
-          example: [DD0AB9752680C88BE030A8C029014E7E]
-          items:
-            type: string
+        parent:
+          type: string
+          description: The id of the superordinated company
+          example: DD0AB9752680C88BE030A8C029014E7E
         duplicateOf:
           type: string
           description: ID of a lead that is the master in case this lead is a duplicate
