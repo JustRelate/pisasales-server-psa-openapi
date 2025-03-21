@@ -693,6 +693,42 @@ paths:
         '403':
           $ref: '#/components/responses/error_authentication_failed'
 
+  /salesportal/industry:
+    get:
+      summary: Get all defined industries
+      description: Returns a list of industries
+      tags:
+        - industry
+      parameters:
+        - $ref: '#/components/parameters/ids_query'
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/industries'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+
+  /salesportal/industry/{id}:
+    get:
+      summary: Fetch a single industry
+      description: Searches the _id of an industry
+      tags:
+        - industry
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/industry'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
   /salesportal/lead:
     get:
       summary: Fetch all leads
@@ -1773,6 +1809,42 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
+  /salesportal/region:
+    get:
+      summary: Get all defined regions
+      description: Returns a list of regions
+      tags:
+        - region
+      parameters:
+        - $ref: '#/components/parameters/ids_query'
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/regions'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+
+  /salesportal/region/{id}:
+    get:
+      summary: Fetch a single region
+      description: Searches the _id of an region
+      tags:
+        - region
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/region'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
   /salesportal/activity-contact:
     get:
       summary: Fetch all activity-contact-relations
@@ -2838,6 +2910,34 @@ components:
           schema:
             $ref: '#/components/schemas/global-results'
 
+    industry:
+      description: industry data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/industry'
+
+    industries:
+      description: a list of industries
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/industries'
+
+    region:
+      description: region data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/region'
+
+    regions:
+      description: a list of regions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/regions'
+
     binary-access-token:
       description: token for accessing binary data
       content:
@@ -3074,6 +3174,10 @@ components:
           type: string
           description: Web site
           example: https://www.acme.org
+        communicationLanguage:
+          type: string
+          description: Preferred language for the communication with this contact
+          example: ENG
         description:
           type: string
           description: Description of the contact
@@ -3096,6 +3200,14 @@ components:
           type: string
           description: The identifier of the current status
           example: PSA_ORG_CST_PRC
+        industry:
+          type: string
+          description: Identifier of the main industry the company
+          example: 22CBAA9FC1C544B39F735F893803CCC7
+        region:
+          type: string
+          description: Identifier of the region where the company is located
+          example: 6FB1542B8D354B55B43B60EBD479E762
 
     company:
       type: object
@@ -3116,14 +3228,6 @@ components:
           type: string
           description: The identifier of the group
           example: PSA_ORG_CST
-        branch:
-          type: string
-          description: Name of the main branch the company
-          example: Manufacture of chemicals and chemical products
-        region:
-          type: string
-          description: Name of the region where the company is located
-          example: North Germany
         isExternal:
           type: boolean
           description: is the contact external?
@@ -3390,6 +3494,86 @@ components:
           items:
             $ref: '#/components/schemas/address'
 
+    industry:
+      description: industry object
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        name:
+          type: string
+          description: Name of the industry
+          example: Manufacture of metal forming machinery and machine tools
+        displayTitle:
+          type: string
+          description: Name of the industry
+          example: Manufacture of metal forming machinery and machine tools
+
+    industries:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/industry'
+
+    region:
+      description: region object
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        name:
+          type: string
+          description: Name of the region
+          example: North Germany
+        displayTitle:
+          type: string
+          description: Name of the region
+          example: North Germany
+        key:
+          type: string
+          description: Key used to identify the region (human readable)
+          example: GER-N
+        country:
+          type: string
+          description: Country identifier
+          example: DEU
+        geoCode:
+          type: string
+          description: Geo code to define this region (NUTS or FIPS)
+          example: DE3
+        postalCode:
+          type: string
+          description: Postal code to define this region
+          example: 12-14
+        parent:
+          type: string
+          description: The id of the superordinated region
+          example: 9E4C2C5A8C47454FB7A42EF3C57DE81E
+
+    regions:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/region'
+
     project_writable:
       type: object
       properties:
@@ -3535,6 +3719,10 @@ components:
           type: boolean
           description: Is the ticket currently in an open status?
           example: true
+        statusInformation:
+          type: string
+          description: Status information
+          example: Solution was sent to the customer 
         pisaSalesLink:
           type: string
           description: Object link to the record in PisaSales
@@ -4233,8 +4421,12 @@ components:
         type:
           type: string
           description: The type of the cockpit
-          enum: [sales, marketing, service]
+          enum: [sales, marketing, service, user]
           example: sales
+        group:
+          type: string
+          description: Title of the group this element is in
+          example: Current trading
 
     cockpit-elements:
       type: object
