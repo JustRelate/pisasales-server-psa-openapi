@@ -1857,7 +1857,7 @@ paths:
         - $ref: '#/components/parameters/count_query'
         - name: _order
           in: query
-          description: List of fields that should be used for ordering. Beside all fields of the response it can also cotnains the query parameter starting with activity_
+          description: List of fields that should be used for ordering. Beside all fields of the response it can also contain the query parameter starting with activity_
           example: activity_beginAt.desc
           schema:
             type: string
@@ -2139,6 +2139,98 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
+  /salesportal/contact-contact:
+    get:
+      summary: Fetch all contact-contact-relations
+      description: Searches all relations
+      tags:
+        - relation
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/count_query'
+        - name: _order
+          in: query
+          description: List of fields that should be used for ordering. Beside all fields of the response it can also contain the query parameter starting with contact_
+          example: contact_name.asc
+          schema:
+            type: string
+        - name: contact_name
+          in: query
+          description: Search for the contact name
+          example: A%
+          schema: 
+            type: string
+        - name: contact_isExternal
+          in: query
+          description: Search if the contact is external or internal
+          example: true
+          schema: 
+            type: boolean
+      responses:
+        '200':
+          $ref: '#/components/responses/contact-contacts'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Create a new contact-contact-relation
+      description: This will create a new relation between two contacts
+      tags:
+        - relation
+      requestBody:
+        description: The relation data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/contact-contact_writable'
+      responses:
+        '201':
+          $ref: '#/components/responses/contact-contact'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    
+  /salesportal/contact-contact/{id}:
+    get:
+      summary: Fetch a contact-contact-relation
+      description: Searches the _id of a relation
+      tags:
+        - relation
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contact-contact'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    delete:
+      summary: Delete a contact-contact-relation
+      description: Searches the _id of a relation and deletes the record
+      tags:
+        - relation
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The relation was deleted
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
   /salesportal/contact-project:
     get:
       summary: Fetch all contact-project-relations
@@ -2151,7 +2243,7 @@ paths:
         - $ref: '#/components/parameters/count_query'
         - name: _order
           in: query
-          description: List of fields that should be used for ordering. Beside all fields of the response it can also cotnains the query parameter starting with project_
+          description: List of fields that should be used for ordering. Beside all fields of the response it can also contains the query parameter starting with project_
           example: project_createdAt.desc
           schema:
             type: string
@@ -2860,6 +2952,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/address-contact'
+
+    contact-contact:
+      description: contact-contact-relation data for fetching
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/contact-contact'
+
+    contact-contacts:
+      description: a list of contact-project-relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/contact-contacts'
 
     contact-project:
       description: contact-project-relation data for fetching
@@ -4427,6 +4533,11 @@ components:
           type: string
           description: Title of the group this element is in
           example: Current trading
+        style:
+          type: string
+          description: The style of the element (list or diagram)
+          enum: [diagram, list]
+          example: diagram
 
     cockpit-elements:
       type: object
@@ -4525,16 +4636,9 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/system_fields'
         - $ref: '#/components/schemas/activity-contact_writable'
       properties:
-        updatedAt:
-          type: string
-          description: Date of the last update of this record
-          example: 2024-10-15T09:47:44Z
-        createdAt:
-          type: string
-          description: Date when this record was created
-          example: 2024-10-15T09:47:44Z
         contactType:
           type: string
           description: Type of the contact.  Defines the endpoint to fetch for more information.
@@ -4586,16 +4690,8 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/system_fields'
         - $ref: '#/components/schemas/company-person_writable'
-      properties:
-        updatedAt:
-          type: string
-          description: Date of the last update of this record
-          example: 2024-10-15T09:47:44Z
-        createdAt:
-          type: string
-          description: Date when this record was created
-          example: 2024-10-15T09:47:44Z
 
     company-person_writable:
       type: object
@@ -4638,16 +4734,8 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/system_fields'
         - $ref: '#/components/schemas/address-contact_writable'
-      properties:
-        updatedAt:
-          type: string
-          description: Date of the last update of this record
-          example: 2024-10-15T09:47:44Z
-        createdAt:
-          type: string
-          description: Date when this record was created
-          example: 2024-10-15T09:47:44Z
 
     address-contact_writable:
       type: object
@@ -4661,20 +4749,61 @@ components:
           description: ID of the associated contact
           example: 21F28013E5A24B85BEEF56C8A2423898
 
+    contact-contact:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/system_fields'
+        - $ref: '#/components/schemas/contact-contact_writable'
+      properties:
+        contactType:
+          type: string
+          description: Type of the contact. Defines the endpoint to fetch for more information.
+          enum: [Contact, Person, Company]
+          example: Company
+
+    contact-contact_writable:
+      type: object
+      properties:
+        father:
+          type: string
+          description: ID of the associated father contact
+          example: E7EA38DA7F1140839FE0A0CD07189C11
+        contact:
+          type: string
+          description: ID of the associated contact
+          example: 941EE7F739604A948A7FE1BBE10F4855
+        role:
+          type: string
+          description: role of the contact
+          example: CON_CON_REL_CPT
+        note:
+          type: string
+          description: note for this relation
+          example: Some text...
+
+    contact-contacts:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/contact-contact'
+
     contact-project:
       type: object
       allOf:
         - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/system_fields'
         - $ref: '#/components/schemas/contact-project_writable'
       properties:
-        updatedAt:
-          type: string
-          description: Date of the last update of this record
-          example: 2024-10-15T09:47:44Z
-        createdAt:
-          type: string
-          description: Date when this record was created
-          example: 2024-10-15T09:47:44Z
         projectType:
           type: string
           description: Type of the project. Defines the endpoint to fetch for more information.
@@ -4721,16 +4850,9 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/system_fields'
         - $ref: '#/components/schemas/activity-project_writable'
       properties:
-        updatedAt:
-          type: string
-          description: Date of the last update of this record
-          example: 2024-10-15T09:47:44Z
-        createdAt:
-          type: string
-          description: Date when this record was created
-          example: 2024-10-15T09:47:44Z
         projectType:
           type: string
           description: Type of the project. Defines the endpoint to fetch for more information.
