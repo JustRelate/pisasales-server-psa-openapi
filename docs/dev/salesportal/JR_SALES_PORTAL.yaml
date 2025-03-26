@@ -547,8 +547,7 @@ paths:
     get:
       summary: Get filters
       description: Returns a list of filters that a are available for an entity and the current user
-      tags:
-        - filter
+      tags: [filter]
       parameters:
         - name: entity
           in: query
@@ -615,8 +614,7 @@ paths:
     get:
       summary: Get single filter
       description: Returns the information for a single filter.
-      tags:
-        - filter
+      tags: [filter]
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
@@ -629,6 +627,30 @@ paths:
           $ref: '#/components/responses/error_authentication_failed'
         '404':
           $ref: '#/components/responses/error_record_not_found'
+    patch:
+      summary: Update a filter
+      description: This will update an existing filter
+      tags: [filter]
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      requestBody:
+        description: The filter data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/filter_writable'
+      responses:
+        '200':
+          $ref: '#/components/responses/filter'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
 
   /salesportal/follow-up:
     post:
@@ -2565,6 +2587,15 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/version'
+      
+  /salesportal/webhook/sync:
+    post:
+      summary: Endpoint for synchronizing data
+      tags:
+        - webhook
+      responses:
+        '204':
+          description: no content
 
 components:
   ########################################################################
@@ -4123,20 +4154,6 @@ components:
           description: A list of IDs with the associated companies
           items:
             $ref: '#/components/schemas/activity-contact_contact'
-        projects:
-          type: array
-          description: The list of projects this activity is related to. The first index is the main project.
-          items:
-            type: object
-            properties:
-              _id:
-                type: string
-                description: id of the relation
-                example: 3FFA18DD83BF44F09DA1D863A67DEC90
-              project: 
-                type: string
-                description: id of the project
-                example: 045700FD66CD3BE9E040A8C00D015F8E
 
     activities:
       type: object
@@ -4947,15 +4964,12 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/filter_writable'
       properties:
         title:
           type: string
           description: Title of the filter
           example: My tickets
-        favorite:
-          type: boolean
-          description: Is this filter a favorite of the user?
-          example: false
         entity:
           type: string
           description: Entity this filter is for
@@ -4976,6 +4990,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/filter'
+
+    filter_writable:
+      type: object
+      properties:
+        favorite:
+          type: boolean
+          description: Is this filter a favorite of the user?
+          example: false
 
     schema-list:
       type: object
