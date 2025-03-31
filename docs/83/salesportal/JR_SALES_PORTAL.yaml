@@ -3,7 +3,11 @@ openapi: 3.0.3
 info:
   version: '8.3'
   title: Sales portal API
-  description: Endpoints to be used by the Scrivito sales portal. All endpoints require an IAM authorization.
+  description: |
+    Endpoints to be used by the Scrivito sales portal.  
+    All endpoints require an IAM authorization.  
+    The header `Accept-Language` defines the language that is used for the request.
+    The value of the header is a language identifier like `en` or `en-US`.
 
 paths:
   /salesportal/activity:
@@ -543,6 +547,248 @@ paths:
         '403':
           $ref: '#/components/responses/error_authentication_failed'
 
+  /salesportal/document:
+    get:
+      summary: Get all defined documents
+      description: Returns a list of documents
+      tags: [document]
+      parameters:
+        - $ref: '#/components/parameters/ids_query'
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/filter_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/documents'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Create a document
+      description: This will create a new document
+      tags: [document]
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The document data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/document_upload'
+      responses:
+        '201':
+          $ref: '#/components/responses/document'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+
+  /salesportal/document/{id}:
+    get:
+      summary: Fetch a single document
+      description: Searches the _id of an document
+      tags: [document]
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/document'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    patch:
+      summary: Update a document
+      description: This will update an existing document
+      tags: [document]
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The document data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/document_upload'
+      responses:
+        '200':
+          $ref: '#/components/responses/document'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    delete:
+      summary: Delete a document
+      description: Searches the _id of an document and deletes the record
+      tags: [document]
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The document was deleted
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
+  /salesportal/document-project:
+    get:
+      summary: Fetch all document-project-relations
+      description: Searches all relations
+      tags: [relation]
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/document-projects'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Create a new document-project-relation
+      description: This will create a new relation between a project and a document
+      tags: [relation]
+      requestBody:
+        description: The relation data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/document-project_writable'
+      responses:
+        '201':
+          $ref: '#/components/responses/document-project'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    
+  /salesportal/document-project/{id}:
+    get:
+      summary: Fetch a document-project-relation
+      description: Searches the _id of a relation
+      tags: [relation]
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/document-project'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    delete:
+      summary: Delete a document-project-relation
+      description: Searches the _id of a relation and deletes the record
+      tags: [relation]
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The relation was deleted
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
+  /salesportal/document-document:
+    get:
+      summary: Fetch all document-document-relations
+      description: Searches all relations
+      tags: [relation]
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/document-documents'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Create a new document-document-relation
+      description: This will create a new relation between two documents
+      tags: [relation]
+      requestBody:
+        description: The relation data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/document-document_writable'
+      responses:
+        '201':
+          $ref: '#/components/responses/document-document'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    
+  /salesportal/document-document/{id}:
+    get:
+      summary: Fetch a document-document-relation
+      description: Searches the _id of a relation
+      tags: [relation]
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/document-document'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    delete:
+      summary: Delete a document-document-relation
+      description: Searches the _id of a relation and deletes the record
+      tags: [relation]
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The relation was deleted
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
   /salesportal/filter:
     get:
       summary: Get filters
@@ -556,7 +802,7 @@ paths:
           example: Ticket
           schema:
             type: string
-            enum: [Activity, Company, Person, Opportunity, Quote, Order, Ticket]
+            enum: [Activity, Company, Person, Opportunity, Quote, Order, Ticket, Document]
         - $ref: '#/components/parameters/ids_query'
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/order_query'
@@ -728,6 +974,11 @@ paths:
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
         - $ref: '#/components/parameters/count_query'
+        - name: _search
+          in: query
+          description: Search for the name of an industry
+          schema:
+            type: string
       responses:
         '200':
           $ref: '#/components/responses/industries'
@@ -1833,7 +2084,7 @@ paths:
 
   /salesportal/region:
     get:
-      summary: Get all defined regions
+      summary: Get all regions
       description: Returns a list of regions
       tags:
         - region
@@ -1844,6 +2095,11 @@ paths:
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
         - $ref: '#/components/parameters/count_query'
+        - name: _search
+          in: query
+          description: Search for the name of a region
+          schema:
+            type: string
       responses:
         '200':
           $ref: '#/components/responses/regions'
@@ -2003,6 +2259,76 @@ paths:
       description: Searches the _id of a relation and deletes the record
       tags:
         - relation
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The relation was deleted
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
+  /salesportal/activity-document:
+    get:
+      summary: Fetch all activity-document-relations
+      description: Searches all relations
+      tags: [relation]
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/activity-documents'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Create a new activity-document-relation
+      description: This will create a new relation between an activity and a document
+      tags: [relation]
+      requestBody:
+        description: The relation data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/activity-document_writable'
+      responses:
+        '201':
+          $ref: '#/components/responses/activity-document'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    
+  /salesportal/activity-document/{id}:
+    get:
+      summary: Fetch a activity-document-relation
+      description: Searches the _id of a relation
+      tags: [relation]
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/activity-document'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    delete:
+      summary: Delete an activity-document-relation
+      description: Searches the _id of a relation and deletes the record
+      tags: [relation]
       parameters:
         - $ref: '#/components/parameters/id_path'
       responses:
@@ -2243,6 +2569,76 @@ paths:
       description: Searches the _id of a relation and deletes the record
       tags:
         - relation
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The relation was deleted
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
+  /salesportal/contact-document:
+    get:
+      summary: Fetch all contact-document-relations
+      description: Searches all relations
+      tags: [relation]
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contact-documents'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Create a new contact-document-relation
+      description: This will create a new relation between an contact and a document
+      tags: [relation]
+      requestBody:
+        description: The relation data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/contact-document_writable'
+      responses:
+        '201':
+          $ref: '#/components/responses/contact-document'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    
+  /salesportal/contact-document/{id}:
+    get:
+      summary: Fetch a contact-document-relation
+      description: Searches the _id of a relation
+      tags: [relation]
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contact-document'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    delete:
+      summary: Delete an contact-document-relation
+      description: Searches the _id of a relation and deletes the record
+      tags: [relation]
       parameters:
         - $ref: '#/components/parameters/id_path'
       responses:
@@ -2711,6 +3107,48 @@ components:
           schema:
             $ref: '#/components/schemas/companies'
 
+    document:
+      description: document data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/document'
+
+    documents:
+      description: a list of documents
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/documents'
+
+    document-project:
+      description: document-project-relation data for fetching
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/document-project'
+
+    document-projects:
+      description: a list of document-project-relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/document-projects'
+
+    document-document:
+      description: document-document-relation data for fetching
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/document-document'
+
+    document-documents:
+      description: a list of document-project-relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/document-documents'
+
     person:
       description: person data
       content:
@@ -2998,6 +3436,20 @@ components:
           schema:
             $ref: '#/components/schemas/contact-contacts'
 
+    contact-document:
+      description: contact-document-relation data for fetching
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/contact-document'
+
+    contact-documents:
+      description: a list of contact-project-relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/contact-documents'
+
     contact-project:
       description: contact-project-relation data for fetching
       content:
@@ -3025,6 +3477,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/activity-projects'
+
+    activity-document:
+      description: activity-document-relation data for fetching
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/activity-document'
+
+    activity-documents:
+      description: a list of activity-project-relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/activity-documents'
 
     filter:
       description: filter data
@@ -3568,6 +4034,175 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/lead'
+
+    documents:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/document'
+
+    document:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/system_fields'
+        - $ref: '#/components/schemas/document_writable'
+      properties:
+        displayTitle:
+          type: string
+          description: title of the document
+          example: Quote 2024-01-01
+        number:
+          type: string
+          description: document number
+          example: D-24-005632
+        format:
+          type: string
+          description: file format
+          example: pdf
+        size:
+          type: number
+          description: size in MB
+          example: 0.52
+        body:
+          description: Binary data of the document
+          $ref: '#/components/schemas/binary'
+
+    document_upload:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/document_writable'
+      properties:
+        body:
+          description: binary data of this document
+          $ref: '#/components/schemas/binary-upload'
+
+    document_writable:
+      properties:
+        title:
+          type: string
+          description: title of the document
+          example: Quote 2024-01-01
+        type:
+          type: string
+          description: identifier of the type of the document
+          example: PSA_OFF
+        folder:
+          type: boolean
+          description: Is this document a folder? (Only writbale on insert.)
+          example: false
+        language:
+          type: string
+          description: identifier of the language of the document
+          example: GER
+        version:
+          type: string
+          description: version and revision
+          example: '1.0'
+        status:
+          type: string
+          description: Status of the document
+          enum: [PSA_DOC_EDT, PSA_DOC_DEV, PSA_DOC_RLS, PSA_DOC_CLS, PSA_DOC_ARC, PSA_DOC_DIR_ACT, PSA_DOC_DIR_INA]
+          example: PSA_DOC_RLS
+        validFrom:
+          type: string
+          description: Document is valid starting with this date
+          example: 2025-01-01T01:00:00Z
+        validUntil:
+          type: string
+          description: Document is isvalid starting with this date
+          example: 2025-03-31T21:59:59Z
+        author:
+          type: string
+          description: Author of the document
+          example: 24C6B4911BED02B4E040A8C00F0107F6
+        comment:
+          type: string
+          description: Comment about the document
+          example: First draft
+
+    document-document:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/system_fields'
+        - $ref: '#/components/schemas/document-document_writable'
+
+    document-document_writable:
+      type: object
+      properties:
+        father:
+          type: string
+          description: ID of the associated father document
+          example: 1E3039CE384EF294E040A8C00F0177E3
+        child:
+          type: string
+          description: ID of the associated child document
+          example: 76C0CDEDBF034E288E645E393D6D78DE
+
+    document-documents:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/document-document'
+
+    document-project:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/system_fields'
+        - $ref: '#/components/schemas/document-project_writable'
+      properties:
+        projectType:
+          type: string
+          description: Type of the project. Defines the endpoint to fetch for more information.
+          enum: [Project, Ticket, Opportunity, Quote, Order]
+          example: Order
+
+    document-project_writable:
+      type: object
+      properties:
+        project:
+          type: string
+          description: ID of the associated project
+          example: AF9AB468B8FE4E7AA760CCA2F58EB6A9
+        document:
+          type: string
+          description: ID of the associated document
+          example: 76C0CDEDBF034E288E645E393D6D78DE
+
+    document-projects:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/document-project'
 
     address_writable:
       description: address object
@@ -4814,6 +5449,46 @@ components:
           items:
             $ref: '#/components/schemas/contact-contact'
 
+    contact-document:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/system_fields'
+        - $ref: '#/components/schemas/contact-document_writable'
+      properties:
+        contactType:
+          type: string
+          description: Type of the contact.  Defines the endpoint to fetch for more information.
+          enum: [Person, Company, Contact]
+          example: Person
+
+    contact-document_writable:
+      type: object
+      properties:
+        contact:
+          type: string
+          description: ID of the associated contact
+          example: 21F28013E5A24B85BEEF56C8A2423898
+        document:
+          type: string
+          description: ID of the associated document
+          example: 76C0CDEDBF034E288E645E393D6D78DE
+
+    contact-documents:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/contact-document'
+
     contact-project:
       type: object
       allOf:
@@ -4903,6 +5578,40 @@ components:
           items:
             $ref: '#/components/schemas/activity-project'
 
+    activity-document:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/system_fields'
+        - $ref: '#/components/schemas/activity-document_writable'
+
+    activity-document_writable:
+      type: object
+      properties:
+        activity:
+          type: string
+          description: ID of the associated activity
+          example: 5C660CA5A362411F8C4FFF384C0B411E
+        document:
+          type: string
+          description: ID of the associated document
+          example: 76C0CDEDBF034E288E645E393D6D78DE
+
+    activity-documents:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/activity-document'
+
     binary-access-token:
       type: object
       properties:
@@ -4972,8 +5681,8 @@ components:
           example: My tickets
         entity:
           type: string
-          description: Entity this filter is for
-          enum: [Activity, Company, Person, Opportunity, Quote, Order, Ticket]
+          description: Entity this filter is defined for
+          enum: [Activity, Company, Person, Opportunity, Quote, Order, Ticket, Document]
           example: Ticket
 
     filters:
