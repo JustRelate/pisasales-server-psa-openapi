@@ -649,146 +649,6 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
-  /salesportal/document-project:
-    get:
-      summary: Fetch all document-project-relations
-      description: Searches all relations
-      tags: [relation]
-      parameters:
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/count_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/document-projects'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-    post:
-      summary: Create a new document-project-relation
-      description: This will create a new relation between a project and a document
-      tags: [relation]
-      requestBody:
-        description: The relation data
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/document-project_writable'
-      responses:
-        '201':
-          $ref: '#/components/responses/document-project'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-        '422':
-          $ref: '#/components/responses/error_data_validation_failed'
-    
-  /salesportal/document-project/{id}:
-    get:
-      summary: Fetch a document-project-relation
-      description: Searches the _id of a relation
-      tags: [relation]
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-        - $ref: '#/components/parameters/language_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/document-project'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-        '404':
-          $ref: '#/components/responses/error_record_not_found'
-    delete:
-      summary: Delete a document-project-relation
-      description: Searches the _id of a relation and deletes the record
-      tags: [relation]
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-      responses:
-        '204':
-          description: The relation was deleted
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-        '404':
-          $ref: '#/components/responses/error_record_not_found'
-
-  /salesportal/document-document:
-    get:
-      summary: Fetch all document-document-relations
-      description: Searches all relations
-      tags: [relation]
-      parameters:
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/count_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/document-documents'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-    post:
-      summary: Create a new document-document-relation
-      description: This will create a new relation between two documents
-      tags: [relation]
-      requestBody:
-        description: The relation data
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/document-document_writable'
-      responses:
-        '201':
-          $ref: '#/components/responses/document-document'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-        '422':
-          $ref: '#/components/responses/error_data_validation_failed'
-    
-  /salesportal/document-document/{id}:
-    get:
-      summary: Fetch a document-document-relation
-      description: Searches the _id of a relation
-      tags: [relation]
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-        - $ref: '#/components/parameters/language_query'
-      responses:
-        '200':
-          $ref: '#/components/responses/document-document'
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-        '404':
-          $ref: '#/components/responses/error_record_not_found'
-    delete:
-      summary: Delete a document-document-relation
-      description: Searches the _id of a relation and deletes the record
-      tags: [relation]
-      parameters:
-        - $ref: '#/components/parameters/id_path'
-      responses:
-        '204':
-          description: The relation was deleted
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
-        '404':
-          $ref: '#/components/responses/error_record_not_found'
-
   /salesportal/filter:
     get:
       summary: Get filters
@@ -2845,6 +2705,146 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
+  /salesportal/document-project:
+    get:
+      summary: Fetch all document-project-relations
+      description: Searches all relations
+      tags: [relation]
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/document-projects'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Create a new document-project-relation
+      description: This will create a new relation between a project and a document
+      tags: [relation]
+      requestBody:
+        description: The relation data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/document-project_writable'
+      responses:
+        '201':
+          $ref: '#/components/responses/document-project'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    
+  /salesportal/document-project/{id}:
+    get:
+      summary: Fetch a document-project-relation
+      description: Searches the _id of a relation
+      tags: [relation]
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/document-project'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    delete:
+      summary: Delete a document-project-relation
+      description: Searches the _id of a relation and deletes the record
+      tags: [relation]
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The relation was deleted
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
+  /salesportal/document-document:
+    get:
+      summary: Fetch all document-document-relations
+      description: Searches all relations
+      tags: [relation]
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/document-documents'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Create a new document-document-relation
+      description: This will create a new relation between two documents
+      tags: [relation]
+      requestBody:
+        description: The relation data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/document-document_writable'
+      responses:
+        '201':
+          $ref: '#/components/responses/document-document'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    
+  /salesportal/document-document/{id}:
+    get:
+      summary: Fetch a document-document-relation
+      description: Searches the _id of a relation
+      tags: [relation]
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/document-document'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    delete:
+      summary: Delete a document-document-relation
+      description: Searches the _id of a relation and deletes the record
+      tags: [relation]
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The relation was deleted
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
   /salesportal/schema:
     get:
       summary: Fetch schemas
@@ -4211,6 +4211,7 @@ components:
         type:
           type: string
           description: address type
+          enum: [MAIN_ADDRESS, PRIVAT, DELIVERY_ADDRESS, VISIT_ADDRESS, INVOICE_ADDRESS, CORRESPONDENCE, OTHER]
           example: MAIN_ADDRESS
         street:
           type: string
