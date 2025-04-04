@@ -4217,6 +4217,10 @@ components:
           type: string
           description: Street and house number
           example: Bundesallee 1
+        additionalStreetInformation:
+          type: string
+          description: additional street information
+          example: First rear building
         postalCode:
           type: string
           description: Postal code
@@ -4244,6 +4248,14 @@ components:
         subRegion:
           type: string
           description: county / area
+        latitude:
+          type: number
+          description: Latitude of the address
+          example: 52.432650
+        longitude:
+          type: number
+          description: Longitude of the address
+          example: 13.373550
 
     address:
       description: address object
@@ -4408,10 +4420,6 @@ components:
           type: string
           description: 'Status'
           example: PSA_SVC_CAL_ACQ
-        openSince:
-          type: integer
-          description: Number of days the ticket is open
-          example: 15
         dueAt:
           type: string
           description: Date when the ticket should be closed
@@ -4492,6 +4500,10 @@ components:
           type: boolean
           description: Is the ticket currently in an open status?
           example: true
+        openSince:
+          type: integer
+          description: Number of days the ticket is open
+          example: 15
         statusInformation:
           type: string
           description: Status information
@@ -4573,10 +4585,6 @@ components:
           type: number
           description: Total price of the project
           example: 100499
-        totalPriceCurrency:
-          type: string
-          description: ISO 4217 code of the currency
-          example: EUR
         statusInformation:
           type: string
           description: Status information
@@ -4609,6 +4617,10 @@ components:
           type: boolean
           description: Is the project currently in an open status?
           example: true
+        totalPriceCurrency:
+          type: string
+          description: ISO 4217 code of the currency
+          example: EUR
         pisaSalesLink:
           type: string
           description: Object link to the record in PisaSales
