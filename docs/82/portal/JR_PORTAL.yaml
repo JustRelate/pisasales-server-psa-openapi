@@ -491,7 +491,6 @@ paths:
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/count_query'
         - name: entity
           in: query
           description: Comma separated list of entities. This limits the search results to this entities.

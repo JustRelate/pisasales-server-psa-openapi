@@ -368,18 +368,13 @@ paths:
         - $ref: '#/components/parameters/language_query'
         - $ref: '#/components/parameters/count_query'
         - $ref: '#/components/parameters/filter_query'
+        - $ref: '#/components/parameters/contact_labels_query'
         - name: persons
           in: query
           description: Comma separated list of person IDs. Finds all companies which are associated to the given persons.
           example: DA8FA0F7483D467B905207A0CAB8D1DE
           schema:
             type: string
-        - name: includeDuplicates
-          in: query
-          description: Will company records, that are marked as duplicates, be included in the result? The default is false.
-          example: false
-          schema:
-            type: boolean
       responses:
         '200':
           $ref: '#/components/responses/companies'
@@ -877,6 +872,7 @@ paths:
         - $ref: '#/components/parameters/language_query'
         - $ref: '#/components/parameters/count_query'
         - $ref: '#/components/parameters/filter_query'
+        - $ref: '#/components/parameters/contact_labels_query'
         - name: includeDuplicates
           in: query
           description: Will lead records, that are marked as duplicates, be included in the result? The default is false.
@@ -1284,6 +1280,7 @@ paths:
         - $ref: '#/components/parameters/language_query'
         - $ref: '#/components/parameters/count_query'
         - $ref: '#/components/parameters/filter_query'
+        - $ref: '#/components/parameters/contact_labels_query'
         - name: companies
           in: query
           description: Comma separated list of company IDs. Finds all persons which are associated to the given companies.
@@ -3006,6 +3003,20 @@ components:
       schema:
         type: string
 
+    contact_labels_query:
+      name: labels
+      in: query
+      description: |
+        Filters for the label.  
+        The label can be mandatory, included or excluded from the search result.  
+        The default is to exclude duplicates and imported contacts (-duplicate,-imported).
+      example: +imported
+      schema:
+        type: array
+        items:
+          type: string
+          enum: [duplicate, +duplicate, -duplicate, imported, +imported, -imported]
+
     id_path:
       in: path
       name: id
@@ -3843,6 +3854,13 @@ components:
           type: string
           description: ID of a company that is the master in case this company is a duplicate
           example: 44AB4B88EBD34608B0E4A81C1DA1D85B
+        labels:
+          type: array
+          description: A label for the company that for example show if the contact is a duplicate or of the status imported
+          example: [duplicate]
+          items:
+            type: string            
+            enum: [duplicate, imported]
         pisaSalesLink:
           type: string
           description: Object link to the record in PisaSales
@@ -3938,6 +3956,13 @@ components:
           type: string
           description: ID of a person that is the master in case this person is a duplicate
           example: 44AB4B88EBD34608B0E4A81C1DA1D85B
+        labels:
+          type: array
+          description: A label for the person that for example show if the contact is a duplicate or of the status imported
+          example: [duplicate]
+          items:
+            type: string            
+            enum: [duplicate, imported]
         pisaSalesLink:
           type: string
           description: Object link to the record in PisaSales
@@ -4009,6 +4034,13 @@ components:
           type: string
           description: ID of a lead that is the master in case this lead is a duplicate
           example: 44AB4B88EBD34608B0E4A81C1DA1D85B
+        labels:
+          type: array
+          description: A label for the lead that for example show if the contact is a duplicate or of the status imported
+          example: [duplicate]
+          items:
+            type: string            
+            enum: [duplicate, imported]
         pisaSalesLink:
           type: string
           description: Object link to the record in PisaSales
@@ -4217,10 +4249,6 @@ components:
           type: string
           description: Street and house number
           example: Bundesallee 1
-        additionalStreetInformation:
-          type: string
-          description: additional street information
-          example: First rear building
         postalCode:
           type: string
           description: Postal code
@@ -4585,6 +4613,18 @@ components:
           type: number
           description: Total price of the project
           example: 100499
+        weightedPrice:
+          type: number
+          description: total price weighted with the go and get probability
+          example: 48239.52
+        goProbability:
+          type: number
+          description: probability in percent that the project will start
+          example: 80
+        getProbability:
+          type: number
+          description: probability in percent that we will win the project
+          example: 60
         statusInformation:
           type: string
           description: Status information
