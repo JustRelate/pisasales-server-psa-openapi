@@ -1996,6 +1996,12 @@ paths:
           example: activity_beginAt.desc
           schema:
             type: string
+        - name: agent
+          in: query
+          description: Will the request load client or agent relations. The default is false which means that client relations are loaded.
+          example: false
+          schema:
+            type: boolean
         - name: activity_createdAt
           in: query
           description: Search for the creation date of the activity
@@ -2062,6 +2068,12 @@ paths:
           example: PSA_NRM
           schema: 
             type: string
+        - name: activity_released
+          in: query
+          description: Is the activity planned and released?
+          example: true
+          schema:
+            type: boolean
       responses:
         '200':
           $ref: '#/components/responses/activity-contacts'
@@ -2372,6 +2384,12 @@ paths:
           example: true
           schema: 
             type: boolean
+        - name: contact_group
+          in: query
+          description: Search for the group of the contact
+          example: PSA_ORG_LEA
+          schema: 
+            type: string
       responses:
         '200':
           $ref: '#/components/responses/contact-contacts'
@@ -4001,7 +4019,7 @@ components:
         status:
           type: string
           description: The identifier of the current status. During an insert this overwrites the isPerson flag.
-          example: PSA_PRS_LEA_NQU
+          example: NQU
 
     lead:
       type: object
@@ -4832,6 +4850,10 @@ components:
           type: string
           description: Id of the origin activity (if this is a follow-up activity)
           example: E0E88DE2032844B2B51495F046FD3FE1
+        released:
+          type: string
+          description: Is the activity planned and released?
+          example: true
         persons:
           type: array
           description: A list of IDs with the associated persons
@@ -5365,6 +5387,14 @@ components:
           type: string
           description: email address of the contact specific to this relation
           example: foo@bar.com
+        role:
+          type: string
+          description: the role of the contact for this activity
+          example: CON_ACT_NCO
+        status:
+          type: string
+          description: the status of the contact for this activity
+          example: PSA_ACT_CON_STA_ACC
 
     activity-contact_contact:
       type: object
