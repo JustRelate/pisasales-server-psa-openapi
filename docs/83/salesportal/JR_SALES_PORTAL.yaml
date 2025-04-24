@@ -3694,10 +3694,15 @@ components:
           example: D1E9954702698E6BE030A8C029015B96
 
     contact:
-      description: user object
+      description: contact object
       type: object
       allOf:
         - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/contact_attributes'
+    
+    contact_attributes:
+      description: contact object
+      type: object
       properties:
         name:
           type: string
@@ -3769,7 +3774,12 @@ components:
     whoami:
       type: object
       allOf:
-        - $ref: '#/components/schemas/contact'
+        - $ref: '#/components/schemas/contact_attributes'
+      properties:
+        contactId:
+          type: string
+          description: ID of the contact
+          example: 8B37B5EBB3664A8AB23D66A66B7A34C6
 
     contact_writable:
       type: object
