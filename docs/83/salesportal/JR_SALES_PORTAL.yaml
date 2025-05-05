@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.0.4
 
 info:
   version: '8.3'
@@ -657,7 +657,7 @@ paths:
           example: Ticket
           schema:
             type: string
-            enum: [Activity, Company, Person, Opportunity, Quote, Order, Ticket, Document]
+            enum: [Activity, Company, Person, Opportunity, Quote, Order, Ticket, Document, List]
         - $ref: '#/components/parameters/ids_query'
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/order_query'
@@ -757,8 +757,7 @@ paths:
     post:
       summary: Create a new follow-up activity
       description: This will create a new activity that has another activity as origin
-      tags:
-        - follow-up
+      tags: [activity]
       parameters:
         - $ref: '#/components/parameters/language_query'
       requestBody:
@@ -801,7 +800,7 @@ paths:
           example: Person,Company
           schema:
             type: string
-            enum: ['Activity', 'Person', 'Company', 'Ticket', 'Opportunity', 'Quote', 'Order', 'Document']
+            enum: ['Activity', 'Person', 'Company', 'Ticket', 'Opportunity', 'Quote', 'Order', 'Document', 'List']
       responses:
         '200':
           $ref: '#/components/responses/global-results'
@@ -986,6 +985,108 @@ paths:
                       relation:
                         type: string
                         example: 'quote'
+
+  /salesportal/list:
+    get:
+      summary: Fetch all list
+      description: Searches all contact lists. Additional queries can be set by simply adding the field name as query parameter.
+      tags: [list]
+      parameters:
+        - $ref: '#/components/parameters/ids_query'
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+        - $ref: '#/components/parameters/filter_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/lists'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Create a  list
+      description: This will create a new list
+      tags: [list]
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The list data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/list_writable'
+      responses:
+        '201':
+          $ref: '#/components/responses/list'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+
+  /salesportal/list/{id}:
+    get:
+      summary: Fetch a single list
+      description: Searches the _id of a contact list
+      tags: [list]
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/list'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    patch:
+      summary: Update a list
+      description: This will update an existing contact list
+      tags: [list]
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The list data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/list_writable'
+      responses:
+        '200':
+          $ref: '#/components/responses/list'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    delete:
+      summary: Delete a list
+      description: Searches the _id of a contact list and deletes the record
+      tags: [list]
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The list was deleted
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
 
   /salesportal/message:
     get:
@@ -2347,6 +2448,24 @@ paths:
           example: false
           schema:
             type: boolean
+        - name: _order
+          in: query
+          description: List of fields that should be used for ordering. Beside all fields of the response it can also contain the query parameter starting with person_
+          example: person_name.asc
+          schema:
+            type: string
+        - name: person_name
+          in: query
+          description: Search for the name of the person
+          example: John Doe
+          schema: 
+            type: string
+        - name: person_email
+          in: query
+          description: Search for the email address of the person
+          example: john.doe
+          schema: 
+            type: string
       responses:
         '200':
           $ref: '#/components/responses/company-persons'
@@ -2562,6 +2681,102 @@ paths:
       summary: Delete an contact-document-relation
       description: Searches the _id of a relation and deletes the record
       tags: [relation - contact-document]
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The relation was deleted
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
+  /salesportal/contact-list:
+    get:
+      summary: Fetch all contact-list-relations
+      description: Searches all relations
+      tags: [relation - contact-list]
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/count_query'
+        - $ref: '#/components/parameters/order_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contact-lists'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Create a new contact-list-relation
+      description: This will create a new relation between a contact and a list
+      tags: [relation - contact-list]
+      requestBody:
+        description: The relation data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/contact-list_writable'
+      responses:
+        '201':
+          $ref: '#/components/responses/contact-list'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    
+  /salesportal/contact-list/{id}:
+    get:
+      summary: Fetch a contact-list-relation
+      description: Searches the _id of a relation
+      tags: [relation - contact-list]
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/contact-list'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    patch:
+      summary: Update a contact-list-relation
+      description: This will update an existing company
+      tags: [relation - contact-list]
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The relation data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/contact-list_writable'
+      responses:
+        '200':
+          $ref: '#/components/responses/contact-list'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    delete:
+      summary: Delete a contact-list-relation
+      description: Searches the _id of a relation and deletes the record
+      tags: [relation - contact-list]
       parameters:
         - $ref: '#/components/parameters/id_path'
       responses:
@@ -3176,6 +3391,20 @@ components:
           schema:
             $ref: '#/components/schemas/leads'
 
+    list:
+      description: contact list data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/list'
+
+    lists:
+      description: a list of contact lists
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/lists'
+
     address:
       description: address data
       content:
@@ -3448,6 +3677,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/contact-documents'
+
+    contact-list:
+      description: contact-list-relation data for fetching
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/contact-list'
+
+    contact-lists:
+      description: a list of contact-list-relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/contact-lists'
 
     contact-project:
       description: contact-project-relation data for fetching
@@ -4064,6 +4307,73 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/lead'
+
+    list_writable:
+      type: object
+      properties:
+        title:
+          type: string
+          description: title of the list
+          example: New leads
+        status:
+          type: string
+          description: ID of the lists current status
+          example: PSA_PRO_CMP_WRK
+        type:
+          type: string
+          description: ID of the projects current status
+          example: PSA_CMP_STY_STD
+        responsible:
+          type: string
+          description: ID of the responsible person
+          example: 2634A10A901B454B8A7B406572E81A2E
+        beginAt:
+          type: string
+          description: ISO formatted date string of the start date
+          example: 2025-04-29T12:32:31Z
+        endAt:
+          type: string
+          description: ISO formatted date string of the end date
+          example: 2025-04-29T12:32:31Z
+
+    list:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/system_fields'
+        - $ref: '#/components/schemas/list_writable'
+      properties:
+        displayTitle:
+          type: string
+          description: title of the list
+          example: New leads
+        number:
+          type: string
+          description: number of the list
+          example: P-25-000123
+        open:
+          type: boolean
+          description: Is the list currently in an open status?
+          example: true
+        description:
+          type: string
+          description: Description of the list
+          example: Enrich the contact data
+
+    lists:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/list'
 
     documents:
       type: object
@@ -5605,6 +5915,50 @@ components:
           items:
             $ref: '#/components/schemas/contact-project'
 
+    contact-list:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/system_fields'
+        - $ref: '#/components/schemas/contact-list_writable'
+      properties:
+        contactType:
+          type: string
+          description: Type of the contact. Defines the endpoint to fetch for more information.
+          enum: [Contact, Person, Company]
+          example: Person
+
+    contact-list_writable:
+      type: object
+      properties:
+        contact:
+          type: string
+          description: ID of the associated contact
+          example: 8830238D81214394A18D65DFEE655ADB
+        list:
+          type: string
+          description: ID of the associated list
+          example: 812B6D2BC220411B8F177974AB50F468
+        status:
+          type: string
+          description: ID of the relation status
+          example: 49A74CCDDBA047A6A6D20444FEEEED5B
+
+    contact-lists:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/contact-list'
+
     activity-project:
       type: object
       allOf:
@@ -5749,7 +6103,7 @@ components:
         entity:
           type: string
           description: Entity this filter is defined for
-          enum: [Activity, Company, Person, Opportunity, Quote, Order, Ticket, Document]
+          enum: [Activity, Company, Person, Opportunity, Quote, Order, Ticket, Document, List]
           example: Ticket
 
     filters:
