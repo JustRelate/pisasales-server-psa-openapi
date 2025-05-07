@@ -2087,9 +2087,15 @@ paths:
         - name: agent
           in: query
           description: Will the request load client or agent relations. The default is false which means that client relations are loaded.
-          example: false
+          example: 'false'
           schema:
             type: boolean
+        - name: activity_search
+          in: query
+          description: Search for the subject of the activity
+          example: Demonstration
+          schema: 
+            type: string
         - name: activity_createdAt
           in: query
           description: Search for the creation date of the activity
@@ -2162,6 +2168,24 @@ paths:
           example: true
           schema:
             type: boolean
+        - name: contact_search
+          in: query
+          description: Search for the name or emaila address of the contact
+          example: John Doe
+          schema: 
+            type: string
+        - name: contact_name
+          in: query
+          description: Search for the name of the contact
+          example: John Doe
+          schema: 
+            type: string
+        - name: contact_email
+          in: query
+          description: Search for the email address of the contact
+          example: john.doe
+          schema: 
+            type: string
       responses:
         '200':
           $ref: '#/components/responses/activity-contacts'
@@ -2445,7 +2469,7 @@ paths:
         - name: includeInactive
           in: query
           description: Will inactive persons be included in the result? The default is false.
-          example: false
+          example: 'false'
           schema:
             type: boolean
         - name: _order
@@ -2453,6 +2477,12 @@ paths:
           description: List of fields that should be used for ordering. Beside all fields of the response it can also contain the query parameter starting with person_
           example: person_name.asc
           schema:
+            type: string
+        - name: person_search
+          in: query
+          description: Search for the name or email address of the person
+          example: John Doe
+          schema: 
             type: string
         - name: person_name
           in: query
@@ -2464,6 +2494,24 @@ paths:
           in: query
           description: Search for the email address of the person
           example: john.doe
+          schema: 
+            type: string
+        - name: company_search
+          in: query
+          description: Search for the name or email address of the company
+          example: ACME
+          schema: 
+            type: string
+        - name: company_name
+          in: query
+          description: Search for the name of the company
+          example: ACME
+          schema: 
+            type: string
+        - name: company_email
+          in: query
+          description: Search for the email address of the company
+          example: acme.com
           schema: 
             type: string
       responses:
@@ -2802,6 +2850,12 @@ paths:
           example: project_createdAt.desc
           schema:
             type: string
+        - name: project_search
+          in: query
+          description: Search for the keyword or number of a project
+          example: Demo
+          schema: 
+            type: string
         - name: project_createdAt
           in: query
           description: Search for the creation date of the project
@@ -2844,6 +2898,24 @@ paths:
           example: true
           schema: 
             type: boolean
+        - name: contact_search
+          in: query
+          description: Search for the name or email address of the contact
+          example: john
+          schema: 
+            type: string
+        - name: contact_name
+          in: query
+          description: Search for the contact name
+          example: A%
+          schema: 
+            type: string
+        - name: contact_email
+          in: query
+          description: Search for the email address of the contact
+          example: acme.com
+          schema: 
+            type: string
       responses:
         '200':
           $ref: '#/components/responses/contact-projects'
@@ -3058,6 +3130,50 @@ paths:
           example: company
           schema:
             type: string
+            enum:
+              - activity
+              - activity-contact
+              - activity-document
+              - activity-project
+              - address
+              - address-contact
+              - cockpit-data
+              - cockpit-element
+              - company
+              - company-person
+              - contact
+              - contact-contact
+              - contact-document
+              - contact-list
+              - contact-project
+              - document
+              - document-document
+              - document-project
+              - filter
+              - follow-up
+              - global-result
+              - industry
+              - lead
+              - list
+              - message
+              - opportunity
+              - order
+              - person
+              - project
+              - question
+              - question-option
+              - questionnaire
+              - questionnaire-answer
+              - quote
+              - region
+              - ticket
+              - whoami
+        - name: extended
+          in: query
+          description: Generate an extended schema. Mainly used for relational entities to include father and child attributes.
+          example: 'false'
+          schema:
+            type: boolean
         - $ref: '#/components/parameters/language_query'
       responses:
         '200':
@@ -3270,7 +3386,7 @@ components:
       in: query
       name: _count
       description: Count the total number of results available
-      example: false
+      example: 'false'
       schema:
         type: boolean
 
