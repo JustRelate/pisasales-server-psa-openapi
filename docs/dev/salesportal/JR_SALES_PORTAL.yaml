@@ -6,7 +6,7 @@ info:
   description: |
     Endpoints to be used by the Scrivito sales portal.  
     All endpoints require an IAM authorization.  
-    The header `Accept-Language` defines the language that is used for the request.
+    The header `Accept-Language` defines the language that is used for the request. 
     The value of the header is a language identifier like `en` or `en-US`.
 
 paths:
@@ -1087,6 +1087,150 @@ paths:
           $ref: '#/components/responses/error_authentication_failed'
         '404':
           $ref: '#/components/responses/error_record_not_found'
+
+  /salesportal/list-contact-status:
+    get:
+      summary: Fetch all contact status for a list
+      description: Searches all status. Additional queries can be set by simply adding the field name as query parameter.
+      tags: [list]
+      parameters:
+        - name: list
+          in: query
+          description: |
+            ID of the list to get the contact status for.  
+            (Either list or stanadrd is required)
+          example: E2C5832E55A745C7AC11F0007DFA239A
+          schema:
+            type: string
+        - name: standard
+          in: query
+          description: |
+            If true, fetch only standard status and not the ones of a list.  
+            (Either list or stanadrd is required)
+          example: false
+          schema:
+            type: boolean
+        - $ref: '#/components/parameters/ids_query'
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/list-contact-statuses'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+    post:
+      summary: Create a new contact status for a list
+      description: This will create a new contact status
+      tags: [list]
+      parameters:
+        - name: source
+          in: query
+          description: |
+            ID of a list contact status that should be copied.  
+            Attributes in the JSON payload will overwrite the data of the copy.  
+            If the source is not set, a new status will be created.
+          example: A681D80056294A33B0CFFDD0286050F2
+          schema: 
+            type: string
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The status data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/list-contact-status_writable'
+      responses:
+        '201':
+          $ref: '#/components/responses/list-contact-status'
+        '400':
+          description: The submitted data had errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_invalid_id'
+                  - $ref: '#/components/schemas/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+
+  /salesportal/list-contact-status/{id}:
+    get:
+      summary: Fetch a single contact status of a list
+      description: Searches the _id of a contact status
+      tags: [list]
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/list-contact-status'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    patch:
+      summary: Update a contact status of a list
+      description: This will update an existing contact status
+      tags: [list]
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The list data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/list-contact-status_writable'
+      responses:
+        '200':
+          $ref: '#/components/responses/list-contact-status'
+        '400':
+          $ref: '#/components/responses/error_missing_data'
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+        '422':
+          $ref: '#/components/responses/error_data_validation_failed'
+    delete:
+      summary: Delete a contact status from a list
+      description: Searches the _id of a contact status and deletes the record
+      tags: [list]
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The list was deleted
+        '403':
+          $ref: '#/components/responses/error_authentication_failed'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+        '409':
+          description: The status could not be deleted because it is used        
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 'relation.check_failed'
+                  details:
+                    type: object
+                    properties:
+                      count:
+                        type: string
+                        example: '1'
+                      title:
+                        type: string
+                        example: 'First contact'
 
   /salesportal/message:
     get:
@@ -3521,6 +3665,20 @@ components:
           schema:
             $ref: '#/components/schemas/lists'
 
+    list-contact-status:
+      description: contact status data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/list-contact-status'
+
+    list-contact-statuses:
+      description: a list of contact statuses
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/list-contact-statuses'
+
     address:
       description: address data
       content:
@@ -4490,6 +4648,60 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/list'
+
+    list-contact-status_writable:
+      type: object
+      properties:
+        list:
+          type: string
+          description: ID of the associated list
+          example: E1E8843793DF465DAB403C1233151725
+        title:
+          type: string
+          description: Title of the status
+          example: First contact
+        position:
+          type: integer
+          description: Position used for ordering the status
+          example: 10
+        target:
+          type: integer
+          description: Targeted number of contacts with this status
+          example: 30
+        progress:
+          type: integer
+          description: Degree of completion for this contact
+          example: 10
+        open:
+          type: boolean
+          description: Is this status considered open/active?
+          example: true
+
+    list-contact-status:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/list-contact-status_writable'
+      properties:
+        standard:
+          type: boolean
+          description: Is this status a standard status? If false it is a list specific status.
+          example: false
+
+    list-contact-statuses:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/list-contact-status'
 
     documents:
       type: object
