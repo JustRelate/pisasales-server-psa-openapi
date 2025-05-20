@@ -40,8 +40,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/activities'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create a new activity
       description: This will create a new activity
@@ -59,18 +61,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/activity'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
 
   /salesportal/activity/{id}:
     get:
@@ -84,8 +80,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/activity'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     patch:
@@ -106,14 +104,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/activity'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     delete:
       summary: Delete an activity
       description: Searches the _id of an activity and deletes the record
@@ -124,8 +122,10 @@ paths:
       responses:
         '204':
           description: The activity was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -145,8 +145,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/addresses'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create an address
       description: This will create a new address
@@ -164,18 +166,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/address'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
 
   /salesportal/address/{id}:
     get:
@@ -189,8 +185,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/address'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     patch:
@@ -211,14 +209,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/address'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     delete:
       summary: Delete an address
       description: Searches the _id of an address and deletes the record
@@ -229,8 +227,10 @@ paths:
       responses:
         '204':
           description: The address was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -250,8 +250,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/binary-access-token'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
 
   /salesportal/binary-access/{token}:
     get:
@@ -310,8 +312,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/cockpit-elements'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
 
   /salesportal/cockpit-element/{id}:
     get:
@@ -325,8 +329,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/cockpit-element'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -348,8 +354,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/cockpit-data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -378,8 +386,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/companies'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create a company
       description: This will create a new company
@@ -397,18 +407,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/company'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
 
   /salesportal/company/{id}:
     get:
@@ -422,8 +426,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/company'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     patch:
@@ -444,14 +450,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/company'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     delete:
       summary: Delete a company
       description: Searches the _id of a company and deletes the record
@@ -462,8 +468,10 @@ paths:
       responses:
         '204':
           description: The company was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
         '409':
@@ -506,8 +514,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/contacts'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
 
   /salesportal/contact/{id}:
     get:
@@ -521,10 +531,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/contact'
-        '400':
-          $ref: '#/components/responses/error_invalid_id'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -539,12 +549,23 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/whoami'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          description: No access granted
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/error_user_unknown'
+                  - $ref: '#/components/schemas/error_user_locked'
+                  - $ref: '#/components/schemas/error_no_read_access'
+                  - $ref: '#/components/schemas/error_no_write_access'
+                  - $ref: '#/components/schemas/error_no_delete_access'
 
   /salesportal/document:
     get:
-      summary: Get all defined documents
+      summary: Get all documents
       description: Returns a list of documents
       tags: [document]
       parameters:
@@ -559,8 +580,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/documents'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create a document
       description: This will create a new document
@@ -577,18 +600,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/document'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
 
   /salesportal/document/{id}:
     get:
@@ -601,8 +618,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/document'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     patch:
@@ -622,14 +641,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/document'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     delete:
       summary: Delete a document
       description: Searches the _id of an document and deletes the record
@@ -639,8 +658,10 @@ paths:
       responses:
         '204':
           description: The document was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -672,44 +693,18 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/filters'
-        '400':
+        '403':
+          $ref: '#/components/responses/error_no_access'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+        '422':
           description: The submitted data had errors
           content:
             application/json:
               schema:
                 oneOf:
-                  - description: The entity was not specified
-                    type: object
-                    properties:
-                      code:
-                        type: string
-                        example: 'missing.data'
-                      error:
-                        type: string
-                        example: 'Some data is missing'
-                      details:
-                        type: object
-                        properties:
-                          cause:
-                            type: string
-                            example: "query parameter 'entity' is missing or empty"
-                  - description: The entity provided entity is not supported
-                    type: object
-                    properties:
-                      code:
-                        type: string
-                        example: 'invalid.data'
-                      error:
-                        type: string
-                        example: 'The provided data is invalid'
-                      details:
-                        type: object
-                        properties:
-                          entiy:
-                            type: string
-                            example: "Foobar"
-        '403':
-          $ref: '#/components/responses/error_authentication_failed'
+                  - $ref: '#/components/schemas/error_filter_missing_entity'
+                  - $ref: '#/components/schemas/error_filter_invalid_entity'
 
   /salesportal/filter/{id}:
     get:
@@ -722,10 +717,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/filter'
-        '400':
-          $ref: '#/components/responses/error_invalid_id'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     patch:
@@ -744,14 +739,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/filter'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
 
   /salesportal/follow-up:
     post:
@@ -770,18 +765,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/activity'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
 
   /salesportal/global-result:
     get:
@@ -812,12 +801,14 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/error_invalid_data'
                   - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
 
   /salesportal/industry:
     get:
-      summary: Get all defined industries
+      summary: Get all industries
       description: Returns a list of industries
       tags:
         - industry
@@ -836,8 +827,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/industries'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
 
   /salesportal/industry/{id}:
     get:
@@ -851,8 +844,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/industry'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -875,8 +870,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/leads'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create a lead
       description: This will create a new lead
@@ -894,18 +891,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/lead'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
 
   /salesportal/lead/{id}:
     get:
@@ -920,7 +911,7 @@ paths:
         '200':
           $ref: '#/components/responses/lead'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     patch:
@@ -941,14 +932,12 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/lead'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     delete:
       summary: Delete a lead
       description: Searches the _id of a lead and deletes the record
@@ -959,8 +948,10 @@ paths:
       responses:
         '204':
           description: The lead was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
         '409':
@@ -1003,8 +994,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/lists'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create a  list
       description: This will create a new list
@@ -1021,18 +1014,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/list'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
 
   /salesportal/list/{id}:
     get:
@@ -1045,8 +1032,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/list'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     patch:
@@ -1066,14 +1055,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/list'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     delete:
       summary: Delete a list
       description: Searches the _id of a contact list and deletes the record
@@ -1083,8 +1072,10 @@ paths:
       responses:
         '204':
           description: The list was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -1119,8 +1110,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/list-contact-statuses'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create a new contact status for a list
       description: This will create a new contact status
@@ -1146,18 +1139,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/list-contact-status'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
 
   /salesportal/list-contact-status/{id}:
     get:
@@ -1170,8 +1157,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/list-contact-status'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     patch:
@@ -1191,14 +1180,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/list-contact-status'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     delete:
       summary: Delete a contact status from a list
       description: Searches the _id of a contact status and deletes the record
@@ -1208,8 +1197,10 @@ paths:
       responses:
         '204':
           description: The list was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
         '409':
@@ -1253,8 +1244,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/messages'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Post a new message
       description: Post a new message
@@ -1270,10 +1263,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/message'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
+        '422':
+          $ref: '#/components/responses/error_validation'
   /salesportal/message/{id}:
     get:
       summary: Fetch a single message
@@ -1285,8 +1280,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/message'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
   
@@ -1308,8 +1305,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/opportunities'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create an opportunity
       description: This will create a new opportunity
@@ -1327,18 +1326,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/opportunity'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
 
   /salesportal/opportunity/{id}:
     get:
@@ -1352,8 +1345,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/opportunity'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     patch:
@@ -1374,14 +1369,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/opportunity'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     delete:
       summary: Delete a quote
       description: Searches the _id of an quote and deletes the record
@@ -1392,8 +1387,10 @@ paths:
       responses:
         '204':
           description: The quote was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -1415,8 +1412,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/orders'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create an order
       description: This will create a new order
@@ -1434,18 +1433,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/order'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
 
   /salesportal/order/{id}:
     get:
@@ -1459,8 +1452,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/order'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     patch:
@@ -1481,14 +1476,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/order'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     delete:
       summary: Delete an order
       description: Searches the _id of an order and deletes the record
@@ -1499,8 +1494,10 @@ paths:
       responses:
         '204':
           description: The order was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -1529,8 +1526,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/persons'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create a person
       description: This will create a new person
@@ -1548,18 +1547,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/person'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
 
   /salesportal/person/{id}:
     get:
@@ -1573,8 +1566,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/person'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     patch:
@@ -1595,14 +1590,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/person'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     delete:
       summary: Delete a person
       description: Searches the _id of a person and deletes the record
@@ -1613,8 +1608,10 @@ paths:
       responses:
         '204':
           description: The person was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
         '409':
@@ -1657,8 +1654,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/projects'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
 
   /salesportal/project/{id}:
     get:
@@ -1672,10 +1671,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/project'
-        '400':
-          $ref: '#/components/responses/error_invalid_id'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -1701,8 +1700,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/questionnaires'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create a new questionnaire
       description: This will create a new questionnaire
@@ -1720,18 +1721,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/questionnaire'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
 
   /salesportal/questionnaire/{id}:
     get:
@@ -1746,7 +1741,7 @@ paths:
         '200':
           $ref: '#/components/responses/questionnaire'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     patch:
@@ -1767,14 +1762,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/questionnaire'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
 
   /salesportal/question:
     get:
@@ -1798,8 +1793,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/questions'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create a new question
       description: This will add a new question to a questionnaire
@@ -1817,18 +1814,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/question'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
 
   /salesportal/question/{id}:
     get:
@@ -1842,8 +1833,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/question'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     patch:
@@ -1864,14 +1857,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/question'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     delete:
       summary: Delete a question
       description: Searches the _id of a question and deletes the record
@@ -1882,8 +1875,10 @@ paths:
       responses:
         '204':
           description: The question was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -1909,8 +1904,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/question-options'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create a new option for a question question
       description: This will add a new option to a question
@@ -1928,18 +1925,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/question-option'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
 
   /salesportal/question-option/{id}:
     get:
@@ -1953,8 +1944,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/question-option'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     patch:
@@ -1975,14 +1968,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/question-option'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     delete:
       summary: Delete an option of a question
       description: Searches the _id of an option and deletes the record
@@ -1993,8 +1986,10 @@ paths:
       responses:
         '204':
           description: The option was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -2010,8 +2005,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/questionnaire-answer'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -2031,8 +2028,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/questionnaire-answers'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Submit a new set of questionnaire answers
       description: This will store the answers and run the actions based on the questionnaire configuration.
@@ -2052,18 +2051,12 @@ paths:
           $ref: '#/components/responses/questionnaire-answer_update'
         '201':
           $ref: '#/components/responses/questionnaire-answer_insert'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
 
   /salesportal/quote:
     get:
@@ -2083,8 +2076,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/quotes'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create a quote
       description: This will create a new quote
@@ -2102,18 +2097,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/quote'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
 
   /salesportal/quote/{id}:
     get:
@@ -2127,8 +2116,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/quote'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     patch:
@@ -2149,14 +2140,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/quote'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     delete:
       summary: Delete a quote
       description: Searches the _id of an quote and deletes the record
@@ -2167,8 +2158,10 @@ paths:
       responses:
         '204':
           description: The quote was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -2193,8 +2186,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/regions'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
 
   /salesportal/region/{id}:
     get:
@@ -2208,8 +2203,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/region'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -2333,8 +2330,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/activity-contacts'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create a new activity-contact-relation
       description: This will create a new relation between an activity and a contact (person or company)
@@ -2349,18 +2348,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/activity-contact'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     
   /salesportal/activity-contact/{id}:
     get:
@@ -2374,7 +2367,7 @@ paths:
         '200':
           $ref: '#/components/responses/activity-contact'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     delete:
@@ -2386,8 +2379,10 @@ paths:
       responses:
         '204':
           description: The relation was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -2403,8 +2398,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/activity-documents'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create a new activity-document-relation
       description: This will create a new relation between an activity and a document
@@ -2419,18 +2416,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/activity-document'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     
   /salesportal/activity-document/{id}:
     get:
@@ -2444,7 +2435,7 @@ paths:
         '200':
           $ref: '#/components/responses/activity-document'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     delete:
@@ -2456,8 +2447,10 @@ paths:
       responses:
         '204':
           description: The relation was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -2473,8 +2466,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/activity-projects'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create a new activity-project-relation
       description: This will create a new relation between a activity and a project
@@ -2489,18 +2484,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/activity-project'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     
   /salesportal/activity-project/{id}:
     get:
@@ -2513,8 +2502,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/activity-project'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     delete:
@@ -2526,8 +2517,10 @@ paths:
       responses:
         '204':
           description: The relation was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -2543,8 +2536,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/address-contacts'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create a new address-contact-relation
       description: This will create a new relation between an address and a contact
@@ -2559,18 +2554,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/address-contact'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     
   /salesportal/address-contact/{id}:
     get:
@@ -2583,8 +2572,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/address-contact'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     delete:
@@ -2596,8 +2587,10 @@ paths:
       responses:
         '204':
           description: The relation was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -2661,8 +2654,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/company-persons'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create a new company-person-relation
       description: This will create a new relation between a company and a person (employee)
@@ -2677,18 +2672,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/company-person'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     
   /salesportal/company-person/{id}:
     get:
@@ -2701,8 +2690,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/company-person'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     delete:
@@ -2714,8 +2705,10 @@ paths:
       responses:
         '204':
           description: The relation was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -2755,8 +2748,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/contact-contacts'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create a new contact-contact-relation
       description: This will create a new relation between two contacts
@@ -2771,18 +2766,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/contact-contact'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     
   /salesportal/contact-contact/{id}:
     get:
@@ -2795,8 +2784,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/contact-contact'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     delete:
@@ -2808,8 +2799,10 @@ paths:
       responses:
         '204':
           description: The relation was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -2825,8 +2818,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/contact-documents'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create a new contact-document-relation
       description: This will create a new relation between an contact and a document
@@ -2841,18 +2836,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/contact-document'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     
   /salesportal/contact-document/{id}:
     get:
@@ -2865,8 +2854,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/contact-document'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     delete:
@@ -2878,8 +2869,10 @@ paths:
       responses:
         '204':
           description: The relation was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -2896,8 +2889,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/contact-lists'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create a new contact-list-relation
       description: This will create a new relation between a contact and a list
@@ -2912,18 +2907,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/contact-list'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     
   /salesportal/contact-list/{id}:
     get:
@@ -2936,8 +2925,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/contact-list'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     patch:
@@ -2957,14 +2948,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/contact-list'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     delete:
       summary: Delete a contact-list-relation
       description: Searches the _id of a relation and deletes the record
@@ -2974,8 +2965,10 @@ paths:
       responses:
         '204':
           description: The relation was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -3063,8 +3056,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/contact-projects'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create a new contact-project-relation
       description: This will create a new relation between a contact and a project
@@ -3079,18 +3074,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/contact-project'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     
   /salesportal/contact-project/{id}:
     get:
@@ -3103,8 +3092,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/contact-project'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     delete:
@@ -3116,8 +3107,10 @@ paths:
       responses:
         '204':
           description: The relation was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -3133,8 +3126,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/document-documents'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create a new document-document-relation
       description: This will create a new relation between two documents
@@ -3149,18 +3144,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/document-document'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     
   /salesportal/document-document/{id}:
     get:
@@ -3173,8 +3162,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/document-document'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     delete:
@@ -3186,8 +3177,10 @@ paths:
       responses:
         '204':
           description: The relation was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -3203,8 +3196,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/document-projects'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create a new document-project-relation
       description: This will create a new relation between a project and a document
@@ -3219,18 +3214,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/document-project'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     
   /salesportal/document-project/{id}:
     get:
@@ -3243,8 +3232,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/document-project'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     delete:
@@ -3256,8 +3247,10 @@ paths:
       responses:
         '204':
           description: The relation was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -3322,8 +3315,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/schema-list'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
 
   /salesportal/ticket:
     get:
@@ -3344,7 +3339,7 @@ paths:
         '200':
           $ref: '#/components/responses/tickets'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
     post:
       summary: Create a ticket
       description: This will create a new ticket
@@ -3362,18 +3357,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/ticket'
-        '400':
-          description: The submitted data had errors
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/error_invalid_id'
-                  - $ref: '#/components/schemas/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
 
   /salesportal/ticket/{id}:
     get:
@@ -3387,10 +3376,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ticket'
-        '400':
-          $ref: '#/components/responses/error_invalid_id'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
     patch:
@@ -3411,14 +3400,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ticket'
-        '400':
-          $ref: '#/components/responses/error_missing_data'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
         '422':
-          $ref: '#/components/responses/error_data_validation_failed'
+          $ref: '#/components/responses/error_validation'
     delete:
       summary: Delete a ticket
       description: Searches the _id of a ticket and deletes the record
@@ -3429,8 +3418,10 @@ paths:
       responses:
         '204':
           description: The ticket was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
         '403':
-          $ref: '#/components/responses/error_authentication_failed'
+          $ref: '#/components/responses/error_no_access'
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
@@ -4078,75 +4069,43 @@ components:
           schema:
             $ref: '#/components/schemas/version'
 
-    error_authentication_failed:
-      description: The authentication has failed
+    error_no_access:
+      description: No access granted
       content:
         application/json:
           schema:
             oneOf:
               - $ref: '#/components/schemas/error_user_unknown'
-              - $ref: '#/components/schemas/error_user_locked'
+              - $ref: '#/components/schemas/error_no_read_access'
+              - $ref: '#/components/schemas/error_no_write_access'
+              - $ref: '#/components/schemas/error_no_delete_access'
 
-    error_invalid_id:
-      description: The authenticated IAM user was not found
+    error_validation:
+      description: The submitted data had errors
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/error_invalid_id'
+            oneOf:
+              - $ref: '#/components/schemas/error_invalid_data'
+              - $ref: '#/components/schemas/error_missing_data'
+              - $ref: '#/components/schemas/error_unexpected_validation_failed'
 
-    error_invalid_data:
-      description: The provided data was not valid
+    error_unauthorized:
+      description: The authenticated failed
       content:
         application/json:
           schema:
-             $ref: '#/components/schemas/error_invalid_data'
+            oneOf:
+              - $ref: '#/components/schemas/error_unauthorized'
+              - $ref: '#/components/schemas/error_credentials_invalid'
+              - $ref: '#/components/schemas/error_credentials_ambiguous'
 
     error_record_not_found:
       description: The record was not found
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              code:
-                type: string
-                example: 'record.not_found'
-              error:
-                type: string
-                example: 'The record was not found'
-              details:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    example: 'XXX'
-
-    error_missing_data:
-      description: Not all necessary data was submitted by the client
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/error_missing_data'
-
-    error_data_validation_failed:
-      description: The provided data failed a validation
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              code:
-                type: string
-                example: 'validation.failed'
-              error:
-                type: string
-                example: The provided data failed a validation
-              details:
-                type: object
-                properties:
-                  cause:
-                    type: string
-                    example: data size too long for field!
+            $ref: '#/components/schemas/error_record_not_found'
 
   schemas:
     ########################################################################
@@ -6629,6 +6588,75 @@ components:
               type: string
               example: 'john.doe@acme.org'
 
+    error_no_read_access:
+      description: The user has no read access to a record
+      type: object
+      properties:
+        code:
+          type: string
+          example: 'record.access.no_read'
+        error:
+          type: string
+          example: 'No read access on the record'
+        details:
+          type: object
+          properties:
+            id:
+              type: string
+              example: 'E899284D92502DB3E030A8C00C01133D'
+            dto:
+              type: string
+              example: PSA_ORG
+            title: 
+              type: string
+              example: ACME Ltd.
+
+    error_no_write_access:
+      description: The user has no write access to a record
+      type: object
+      properties:
+        code:
+          type: string
+          example: 'record.access.no_write'
+        error:
+          type: string
+          example: 'No write access on the record'
+        details:
+          type: object
+          properties:
+            id:
+              type: string
+              example: 'E899284D92502DB3E030A8C00C01133D'
+            dto:
+              type: string
+              example: PSA_ORG
+            title: 
+              type: string
+              example: ACME Ltd.
+
+    error_no_delete_access:
+      description: The user has no delete access to a record
+      type: object
+      properties:
+        code:
+          type: string
+          example: 'record.access.no_delete'
+        error:
+          type: string
+          example: 'No delete access on the record'
+        details:
+          type: object
+          properties:
+            id:
+              type: string
+              example: 'E899284D92502DB3E030A8C00C01133D'
+            dto:
+              type: string
+              example: PSA_ORG
+            title: 
+              type: string
+              example: ACME Ltd.
+            
     error_user_locked:
       description: The authenticated IAM user is not allowed to login because the contact is locked
       type: object
@@ -6650,16 +6678,54 @@ components:
               description: identifier of the current status
               example: PSA_PRS_LEA_BLC
 
-    error_invalid_id:
+    error_unauthorized:
       description: The authenticated IAM user was not found
       type: object
       properties:
         code:
           type: string
-          example: 'invalid.id'
+          example: 'credentials.unknown_user'
         error:
           type: string
-          example: 'The ID is invalid'
+          example: 'The provided credentials belong to an unknown user'
+        details:
+          type: object
+          properties:
+            email:
+              type: string
+              example: 'john.doe@acme.com'
+
+    error_credentials_invalid:
+      description: The provided credentials are invalid
+      type: object
+      properties:
+        code:
+          type: string
+          example: credentials.invalid
+        error:
+          type: string
+          example: The provided credentials are invalid
+
+    error_credentials_ambiguous:
+      description: The provided credentials are ambiguous
+      type: object
+      properties:
+        code:
+          type: string
+          example: credentials.ambiguous
+        error:
+          type: string
+          example: The provided credentials are ambiguous
+
+    error_record_not_found:
+      description: The record was not found
+      properties:
+        code:
+          type: string
+          example: 'record.not_found'
+        error:
+          type: string
+          example: 'The record was not found'
         details:
           type: object
           properties:
@@ -6673,16 +6739,25 @@ components:
       properties:
         code:
           type: string
-          example: 'invalid.data'
+          example: 'validation.invalid_values'
         error:
           type: string
-          example: The provided data is invalid
+          example: 'A validation has failed'
         details:
           type: object
           properties:
-            field:
-              type: string
-              example: 'D07C1943E1929F83E030A8C0290112EB'
+            validation_errors:
+              type: object
+              properties:
+                field:
+                  type: string
+                  example: agent
+                reason:
+                  type: string
+                  example: invalid_value
+                message:
+                  type: string
+                  example: "The field 'entity' contains the invalid value 'D07C1943E1929F83E030A8C0290112EB'"
 
     error_missing_data:
       description: Not all necessary data was submitted by the client
@@ -6690,14 +6765,91 @@ components:
       properties:
         code:
           type: string
-          example: 'missing.data'
+          example: 'validation.invalid_values'
         error:
           type: string
-          example: 'Some data is missing'
+          example: 'A validation has failed'
         details:
           type: object
           properties:
-            field:
+            validation_errors:
+              type: object
+              properties:
+                field:
+                  type: string
+                  example: title
+                reason:
+                  type: string
+                  example: missing
+                message:
+                  type: string
+                  example: "The field 'title' is missing or empty"
+
+    error_unexpected_validation_failed:
+      description: The provided data failed a validation
+      type: object
+      properties:
+        code:
+          type: string
+          example: 'validation.failed'
+        error:
+          type: string
+          example: The provided data failed a validation
+        details:
+          type: object
+          properties:
+            cause:
               type: string
-              description: name of the missing field
-              example: 'title'
+              example: data size too long for field!
+
+    error_filter_missing_entity:
+      description: The entity was not specified
+      type: object
+      properties:
+        code:
+          type: string
+          example: 'validation.invalid_values'
+        error:
+          type: string
+          example: 'A validation has failed'
+        details:
+          type: object
+          properties:
+            validation_errors:
+              type: object
+              properties:
+                field:
+                  type: string
+                  example: entity
+                reason:
+                  type: string
+                  example: missing
+                message:
+                  type: string
+                  example: "The field 'entity' is missing or empty"
+
+    error_filter_invalid_entity:
+      description: The entity provided entity is not supported
+      type: object
+      properties:
+        code:
+          type: string
+          example: 'validation.invalid_values'
+        error:
+          type: string
+          example: 'A validation has failed'
+        details:
+          type: object
+          properties:
+            validation_errors:
+              type: object
+              properties:
+                field:
+                  type: string
+                  example: entity
+                reason:
+                  type: string
+                  example: invalid_value
+                message:
+                  type: string
+                  example: "The field 'entity' contains the invalid value 'xxx'"
