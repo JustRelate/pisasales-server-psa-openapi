@@ -573,6 +573,12 @@ paths:
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/count_query'
+        - name: father
+          in: query
+          description: Id of the contact for whom the contacts should be fetched
+          example: A18EC1B0C09E4AE2BE8E5680969EBC91
+          schema: 
+            type: string
         - name: contactGroup
           in: query
           description: Search for the group of the contact
@@ -4327,6 +4333,10 @@ components:
       allOf:
         - $ref: '#/components/schemas/object'
       properties:
+        father:
+          type: string
+          description: Id of the contact for whom the contacts should be fetched
+          example: A18EC1B0C09E4AE2BE8E5680969EBC91
         contact:
           type: string
           description: ID of the related contact
