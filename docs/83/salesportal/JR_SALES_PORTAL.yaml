@@ -2251,7 +2251,7 @@ paths:
         - $ref: '#/components/parameters/count_query'
         - name: _order
           in: query
-          description: List of fields that should be used for ordering. Beside all fields of the response it can also contain the query parameter starting with activity_
+          description: List of fields that should be used for ordering. Beside all fields of the response it can also contain the query parameter starting with activity_ or contact_
           example: activity_beginAt.desc
           schema:
             type: string
@@ -2425,6 +2425,48 @@ paths:
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/count_query'
+        - name: _order
+          in: query
+          description: List of fields that should be used for ordering. Beside all fields of the response it can also contain the query parameter starting with document_
+          example: document_type.asc
+          schema:
+            type: string
+        - name: document_search
+          in: query
+          description: Search for the title of the document
+          example: Demonstration
+          schema: 
+            type: string
+        - name: document_createdAt
+          in: query
+          description: Search for the creation date of the document
+          example: 2025-02-03T15:11:58Z
+          schema: 
+            type: string
+        - name: document_updatedAt
+          in: query
+          description: Search for the update date of the document
+          example: 2025-02-03T15:11:58Z
+          schema: 
+            type: string
+        - name: document_title
+          in: query
+          description: Search for the title of the document
+          example: '%demo%'
+          schema: 
+            type: string
+        - name: document_type
+          in: query
+          description: Search for the type of the document
+          example: PSA_AGB
+          schema: 
+            type: string
+        - name: document_folder
+          in: query
+          description: Search for folders
+          example: false
+          schema: 
+            type: boolean
       responses:
         '200':
           $ref: '#/components/responses/activity-documents'
@@ -2845,6 +2887,48 @@ paths:
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/count_query'
+        - name: _order
+          in: query
+          description: List of fields that should be used for ordering. Beside all fields of the response it can also contain the query parameter starting with document_
+          example: document_type.asc
+          schema:
+            type: string
+        - name: document_search
+          in: query
+          description: Search for the title of the document
+          example: Demonstration
+          schema: 
+            type: string
+        - name: document_createdAt
+          in: query
+          description: Search for the creation date of the document
+          example: 2025-02-03T15:11:58Z
+          schema: 
+            type: string
+        - name: document_updatedAt
+          in: query
+          description: Search for the update date of the document
+          example: 2025-02-03T15:11:58Z
+          schema: 
+            type: string
+        - name: document_title
+          in: query
+          description: Search for the title of the document
+          example: '%demo%'
+          schema: 
+            type: string
+        - name: document_type
+          in: query
+          description: Search for the type of the document
+          example: PSA_AGB
+          schema: 
+            type: string
+        - name: document_folder
+          in: query
+          description: Search for folders
+          example: false
+          schema: 
+            type: boolean
       responses:
         '200':
           $ref: '#/components/responses/contact-documents'
@@ -3153,6 +3237,48 @@ paths:
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/count_query'
+        - name: _order
+          in: query
+          description: List of fields that should be used for ordering. Beside all fields of the response it can also contain the query parameter starting with document_
+          example: document_type.asc
+          schema:
+            type: string
+        - name: document_search
+          in: query
+          description: Search for the title of the document
+          example: Demonstration
+          schema: 
+            type: string
+        - name: document_createdAt
+          in: query
+          description: Search for the creation date of the document
+          example: 2025-02-03T15:11:58Z
+          schema: 
+            type: string
+        - name: document_updatedAt
+          in: query
+          description: Search for the update date of the document
+          example: 2025-02-03T15:11:58Z
+          schema: 
+            type: string
+        - name: document_title
+          in: query
+          description: Search for the title of the document
+          example: '%demo%'
+          schema: 
+            type: string
+        - name: document_type
+          in: query
+          description: Search for the type of the document
+          example: PSA_AGB
+          schema: 
+            type: string
+        - name: document_folder
+          in: query
+          description: Search for folders
+          example: false
+          schema: 
+            type: boolean
       responses:
         '200':
           $ref: '#/components/responses/document-documents'
@@ -3223,6 +3349,48 @@ paths:
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/count_query'
+        - name: _order
+          in: query
+          description: List of fields that should be used for ordering. Beside all fields of the response it can also contain the query parameter starting with document_
+          example: document_type.asc
+          schema:
+            type: string
+        - name: document_search
+          in: query
+          description: Search for the title of the document
+          example: Demonstration
+          schema: 
+            type: string
+        - name: document_createdAt
+          in: query
+          description: Search for the creation date of the document
+          example: 2025-02-03T15:11:58Z
+          schema: 
+            type: string
+        - name: document_updatedAt
+          in: query
+          description: Search for the update date of the document
+          example: 2025-02-03T15:11:58Z
+          schema: 
+            type: string
+        - name: document_title
+          in: query
+          description: Search for the title of the document
+          example: '%demo%'
+          schema: 
+            type: string
+        - name: document_type
+          in: query
+          description: Search for the type of the document
+          example: PSA_AGB
+          schema: 
+            type: string
+        - name: document_folder
+          in: query
+          description: Search for folders
+          example: false
+          schema: 
+            type: boolean
       responses:
         '200':
           $ref: '#/components/responses/document-projects'
@@ -4596,6 +4764,11 @@ components:
           type: string
           description: ID of a lead that is the master in case this lead is a duplicate
           example: 44AB4B88EBD34608B0E4A81C1DA1D85B
+        entity:
+          type: string
+          description: Type of the contact.  Defines the endpoint to fetch for more information.
+          enum: [Person, Company, Contact]
+          example: Person
         labels:
           type: array
           description: A label for the lead that for example show if the contact is a duplicate or of the status imported
@@ -4791,6 +4964,9 @@ components:
         body:
           description: Binary data of the document
           $ref: '#/components/schemas/binary'
+        bodyThumbnail:
+          description: Small image of the content
+          $ref: '#/components/schemas/binary'
 
     document_upload:
       type: object
@@ -4886,7 +5062,7 @@ components:
         - $ref: '#/components/schemas/system_fields'
         - $ref: '#/components/schemas/document-project_writable'
       properties:
-        projectType:
+        projectEntity:
           type: string
           description: Type of the project. Defines the endpoint to fetch for more information.
           enum: [Project, Ticket, Opportunity, Quote, Order]
@@ -6031,7 +6207,7 @@ components:
         - $ref: '#/components/schemas/system_fields'
         - $ref: '#/components/schemas/activity-contact_writable'
       properties:
-        contactType:
+        contactEntity:
           type: string
           description: Type of the contact.  Defines the endpoint to fetch for more information.
           enum: [Person, Company, Contact]
@@ -6160,7 +6336,7 @@ components:
         - $ref: '#/components/schemas/system_fields'
         - $ref: '#/components/schemas/contact-contact_writable'
       properties:
-        contactType:
+        contactEntity:
           type: string
           description: Type of the contact. Defines the endpoint to fetch for more information.
           enum: [Contact, Person, Company]
@@ -6208,7 +6384,7 @@ components:
         - $ref: '#/components/schemas/system_fields'
         - $ref: '#/components/schemas/contact-document_writable'
       properties:
-        contactType:
+        contactEntity:
           type: string
           description: Type of the contact.  Defines the endpoint to fetch for more information.
           enum: [Person, Company, Contact]
@@ -6248,12 +6424,12 @@ components:
         - $ref: '#/components/schemas/system_fields'
         - $ref: '#/components/schemas/contact-project_writable'
       properties:
-        projectType:
+        projectEntity:
           type: string
           description: Type of the project. Defines the endpoint to fetch for more information.
           enum: [Project, Ticket, Opportunity, Quote, Order]
           example: Order
-        contactType:
+        contactEntity:
           type: string
           description: Type of the contact. Defines the endpoint to fetch for more information.
           enum: [Contact, Person, Company]
@@ -6297,7 +6473,7 @@ components:
         - $ref: '#/components/schemas/system_fields'
         - $ref: '#/components/schemas/contact-list_writable'
       properties:
-        contactType:
+        contactEntity:
           type: string
           description: Type of the contact. Defines the endpoint to fetch for more information.
           enum: [Contact, Person, Company]
@@ -6341,7 +6517,7 @@ components:
         - $ref: '#/components/schemas/system_fields'
         - $ref: '#/components/schemas/activity-project_writable'
       properties:
-        projectType:
+        projectEntity:
           type: string
           description: Type of the project. Defines the endpoint to fetch for more information.
           enum: [Project, Ticket, Opportunity, Quote, Order]
