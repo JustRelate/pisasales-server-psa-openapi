@@ -573,6 +573,12 @@ paths:
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/count_query'
+        - name: _search
+          in: query
+          description: Search for the name of a assigned contact
+          example: Tynacoon
+          schema: 
+            type: string
         - name: father
           in: query
           description: Id of the contact for whom the contacts should be fetched
