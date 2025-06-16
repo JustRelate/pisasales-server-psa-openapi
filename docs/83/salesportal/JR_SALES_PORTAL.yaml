@@ -588,7 +588,7 @@ paths:
         - name: contactGroup
           in: query
           description: Search for the group of the contact
-          example: PSA_ORG_CST
+          example: CST
           schema: 
             type: string
       responses:
@@ -598,6 +598,115 @@ paths:
           $ref: '#/components/responses/error_unauthorized'
         '403':
           $ref: '#/components/responses/error_no_access'
+
+  /salesportal/social-network:
+    get:
+      summary: Get all social networks
+      description: Returns a list of socal networks assigned to a contact
+      tags:
+        - contact
+      parameters:
+        - $ref: '#/components/parameters/ids_query'
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/count_query'
+        - name: contact
+          in: query
+          description: ID of a contact
+          example: 8E7B40C8706143AF9A3A5A86840854D2
+          required: true
+          schema: 
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/social-networks'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+        '403':
+          $ref: '#/components/responses/error_no_access'
+    post:
+      summary: Create a social network
+      description: |
+        This will add a new social network to a contact.  
+        If the network or profile are not set, they are extracted from the url .
+      tags:
+        - contact
+      parameters:
+        - $ref: '#/components/parameters/language_query'
+      requestBody:
+        description: The company data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/social-network_writable'
+      responses:
+        '201':
+          $ref: '#/components/responses/social-network'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+        '403':
+          $ref: '#/components/responses/error_no_access'
+        '422':
+          $ref: '#/components/responses/error_validation'
+
+  /salesportal/social-network/{id}:
+    get:
+      summary: Get a single social network
+      description: Returns a social network of a contact
+      tags:
+        - contact
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/social-network'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+        '403':
+          $ref: '#/components/responses/error_no_access'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+    patch:
+      summary: Update a social network
+      description: This will update an existing record
+      tags:
+        - contact
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      requestBody:
+        description: The social network data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/social-network_writable'
+      responses:
+        '200':
+          $ref: '#/components/responses/social-network'
+        '403':
+          $ref: '#/components/responses/error_no_access'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+        '422':
+          $ref: '#/components/responses/error_validation'
+    delete:
+      summary: Delete a social network
+      description: Searches the _id of a social network and deletes the record
+      tags:
+        - contact
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '204':
+          description: The social network was deleted
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+        '403':
+          $ref: '#/components/responses/error_no_access'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
 
   /salesportal/document:
     get:
@@ -3769,6 +3878,21 @@ components:
           schema:
             $ref: '#/components/schemas/my-work-contacts'
 
+    social-network:
+      description: social network data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/social-network'
+
+    social-networks:
+      description: a list of social networks
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/social-networks'
+            
+
     company:
       description: company data
       content:
@@ -4523,7 +4647,7 @@ components:
         contactGroup:
           type: string
           description: Identifier of the contact group
-          example: PSA_ORG_CST
+          example: CST
         role:
           type: string
           description: Identifier of the role to the contact
@@ -4536,6 +4660,54 @@ components:
           type: string
           description: ID of the next activity that is a "customer communication"
           example: D71E9426A7EA468188897FA7056C8CD9
+
+    social-network_writable:
+      description: writable fields of a socail network
+      type: object
+      properties:
+        contact:
+          type: string
+          description: ID of the associated contact
+          example: 8E7B40C8706143AF9A3A5A86840854D2
+        network:
+          type: string
+          description: Identifier of the social network
+          example: PSA_MEN_SOC_NET_LNK
+        profile:
+          type: string
+          description: profile name of the contact
+          example: justrelate-group
+        url:
+          type: string
+          description: URL to the social network or profile
+          example: https://www.linkedin.com/company/justrelate-group
+
+    social-network:
+      description: contact object
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+        - $ref: '#/components/schemas/social-network_writable'
+      properties:
+        displayTitle:
+          type: string
+          description: Title of this network
+          example: justrelate-group
+
+    social-networks:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/social-network'
 
     company_writable:
       type: object
