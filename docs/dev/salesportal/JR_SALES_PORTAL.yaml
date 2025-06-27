@@ -996,6 +996,48 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
+  /salesportal/invoice:
+    get:
+      summary: Get all invoices
+      description: This endpoint is a dummy implementation that needs to be implemented in the customer application.
+      tags:
+        - invoice
+      parameters:
+        - $ref: '#/components/parameters/ids_query'
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/invoices'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+        '403':
+          $ref: '#/components/responses/error_no_access'
+
+  /salesportal/invoice/{id}:
+    get:
+      summary: Fetch a single invoice
+      description: |
+        Searches the _id of an invoice.  
+        This endpoint is a dummy implementation that needs to be implemented in the customer application.
+      tags:
+        - invoice
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/invoice'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+        '403':
+          $ref: '#/components/responses/error_no_access'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
   /salesportal/lead:
     get:
       summary: Fetch all leads
@@ -3753,6 +3795,13 @@ paths:
       summary: Endpoint for synchronizing data
       tags:
         - webhook
+      requestBody:
+        description: The data to be synchronized
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/webhook-sync'
       responses:
         '204':
           description: no content
@@ -4368,6 +4417,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/industries'
+
+    invoice:
+      description: invoice data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/invoice'
+
+    invoices:
+      description: a list of invoices
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/invoices'
 
     region:
       description: region data
@@ -5373,6 +5436,32 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/industry'
+
+    invoice:
+      description: invoice object
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        pisaSalesLink:
+          type: string
+          description: Object link to the record in PisaSales
+          example: https://crm.pisasales.com/psaobj?title=Tynacoon&rpsids=42&login=xb64xKBsb&psacbk=cHNhb2JqPX
+
+    invoices:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/invoice'
 
     region:
       description: region object
@@ -6761,6 +6850,33 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/activity-document'
+
+    webhook-sync:
+      type: object
+      required:
+        - entityName
+        - operation
+        - data
+      properties:
+        entityName:
+          type: string
+          description: Name of the entity that was changed
+          example: person
+        operation:
+          type: string
+          enum: [create, update, delete]
+          description: What was done with the record
+          example: update
+        data:
+          type: object
+          required:
+            - _id
+          description: The new data. In case of a delete only the _id needs to be provided.
+          properties:
+            _id:
+              type: string
+              description: Identifier of the record
+              example: AE8DF767814C4F8693768BCE99A9C311
 
     binary-access-token:
       type: object
