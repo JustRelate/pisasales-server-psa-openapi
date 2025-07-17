@@ -2418,102 +2418,22 @@ paths:
           example: 'false'
           schema:
             type: boolean
-        - name: activity_search
-          in: query
-          description: Search for the subject of the activity
-          example: Demonstration
-          schema: 
-            type: string
-        - name: activity_createdAt
-          in: query
-          description: Search for the creation date of the activity
-          example: 2025-02-03T15:11:58Z
-          schema: 
-            type: string
-        - name: activity_updatedAt
-          in: query
-          description: Search for the update date of the activity
-          example: 2025-02-03T15:11:58Z
-          schema: 
-            type: string
-        - name: activity_beginAt
-          in: query
-          description: Search for the start of the activity
-          example: 2025-02-03T15:11:58Z
-          schema: 
-            type: string
-        - name: activity_endAt
-          in: query
-          description: Search for the end of the activity
-          example: 2025-02-03T15:11:58Z
-          schema: 
-            type: string
-        - name: activity_subject
-          in: query
-          description: Search for the subject of the activity
-          example: Demonstration
-          schema: 
-            type: string
-        - name: activity_type
-          in: query
-          description: Search for the type of the activity
-          example: APPOINTMENT
-          schema: 
-            type: string
-        - name: activity_subType
-          in: query
-          description: Search for the sub type of the activity
-          example: DATE
-          schema: 
-            type: string
-        - name: activity_status
-          in: query
-          description: Search for the status of the activity
-          example: PSA_STA_APM_OPN
-          schema: 
-            type: string
-        - name: activity_classification
-          in: query
-          description: Search for the classification of the activity
-          example: PSA_ACT_CLA_PRO_SAL
-          schema: 
-            type: string
-        - name: activity_open
-          in: query
-          description: Search for the open status of the activity
-          example: true
-          schema: 
-            type: boolean
-        - name: activity_priority
-          in: query
-          description: Search for the priority of the activity
-          example: PSA_NRM
-          schema: 
-            type: string
-        - name: activity_released
-          in: query
-          description: Is the activity planned and released?
-          example: true
-          schema:
-            type: boolean
-        - name: contact_search
-          in: query
-          description: Search for the name or emaila address of the contact
-          example: John Doe
-          schema: 
-            type: string
-        - name: contact_name
-          in: query
-          description: Search for the name of the contact
-          example: John Doe
-          schema: 
-            type: string
-        - name: contact_email
-          in: query
-          description: Search for the email address of the contact
-          example: john.doe
-          schema: 
-            type: string
+        - $ref: '#/components/parameters/activity_search_query'
+        - $ref: '#/components/parameters/activity_createdAt_query'
+        - $ref: '#/components/parameters/activity_updatedAt_query'
+        - $ref: '#/components/parameters/activity_beginAt_query'
+        - $ref: '#/components/parameters/activity_endAt_query'
+        - $ref: '#/components/parameters/activity_subject_query'
+        - $ref: '#/components/parameters/activity_type_query'
+        - $ref: '#/components/parameters/activity_subType_query'
+        - $ref: '#/components/parameters/activity_status_query'
+        - $ref: '#/components/parameters/activity_classification_query'
+        - $ref: '#/components/parameters/activity_open_query'
+        - $ref: '#/components/parameters/activity_priority_query'
+        - $ref: '#/components/parameters/activity_released_query'
+        - $ref: '#/components/parameters/contact_search_query'
+        - $ref: '#/components/parameters/contact_name_query'
+        - $ref: '#/components/parameters/contact_email_query'
       responses:
         '200':
           $ref: '#/components/responses/activity-contacts'
@@ -2692,6 +2612,29 @@ paths:
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/count_query'
+        - name: _order
+          in: query
+          description: List of fields that should be used for ordering. Beside all fields of the response it can also contain the query parameter starting with activity_ or project_
+          example: activity_beginAt.desc
+          schema:
+            type: string
+        - $ref: '#/components/parameters/activity_search_query'
+        - $ref: '#/components/parameters/activity_createdAt_query'
+        - $ref: '#/components/parameters/activity_updatedAt_query'
+        - $ref: '#/components/parameters/activity_beginAt_query'
+        - $ref: '#/components/parameters/activity_endAt_query'
+        - $ref: '#/components/parameters/activity_subject_query'
+        - $ref: '#/components/parameters/activity_type_query'
+        - $ref: '#/components/parameters/activity_subType_query'
+        - $ref: '#/components/parameters/activity_status_query'
+        - $ref: '#/components/parameters/activity_classification_query'
+        - $ref: '#/components/parameters/activity_open_query'
+        - $ref: '#/components/parameters/activity_priority_query'
+        - $ref: '#/components/parameters/activity_released_query'
+        - $ref: '#/components/parameters/project_search_query'
+        - $ref: '#/components/parameters/project_createdAt_query'
+        - $ref: '#/components/parameters/project_updatedAt_query'
+        - $ref: '#/components/parameters/project_keyword_query'
       responses:
         '200':
           $ref: '#/components/responses/activity-projects'
@@ -2956,24 +2899,9 @@ paths:
           example: contact_name.asc
           schema:
             type: string
-        - name: contact_name
-          in: query
-          description: Search for the contact name
-          example: A%
-          schema: 
-            type: string
-        - name: contact_isExternal
-          in: query
-          description: Search if the contact is external or internal
-          example: true
-          schema: 
-            type: boolean
-        - name: contact_group
-          in: query
-          description: Search for the group of the contact
-          example: PSA_ORG_LEA
-          schema: 
-            type: string
+        - $ref: '#/components/parameters/contact_name_query'
+        - $ref: '#/components/parameters/contact_isExternal_query'
+        - $ref: '#/components/parameters/contact_group_query'
       responses:
         '200':
           $ref: '#/components/responses/contact-contacts'
@@ -3258,72 +3186,17 @@ paths:
           example: project_createdAt.desc
           schema:
             type: string
-        - name: project_search
-          in: query
-          description: Search for the keyword or number of a project
-          example: Demo
-          schema: 
-            type: string
-        - name: project_createdAt
-          in: query
-          description: Search for the creation date of the project
-          example: 2025-02-03T15:11:58Z
-          schema: 
-            type: string
-        - name: project_updatedAt
-          in: query
-          description: Search for the update date of a project
-          example: 2025-02-03T15:11:58Z
-          schema: 
-            type: string
-        - name: project_keyword
-          in: query
-          description: Search for the keyword of a project
-          example: Demo
-          schema: 
-            type: string
-        - name: project_number
-          in: query
-          description: Search for the number of a project
-          example: CP-25-007247
-          schema: 
-            type: string 
-        - name: project_status
-          in: query
-          description: Search for the status of a project
-          example: PSA_SVC_CPL_ACQ
-          schema: 
-            type: string
-        - name: project_type
-          in: query
-          description: Search for the type of a project
-          example: PSA_SVC_CPL
-          schema: 
-            type: string
-        - name: project_open
-          in: query
-          description: Search for an open status of a project
-          example: true
-          schema: 
-            type: boolean
-        - name: contact_search
-          in: query
-          description: Search for the name or email address of the contact
-          example: john
-          schema: 
-            type: string
-        - name: contact_name
-          in: query
-          description: Search for the contact name
-          example: A%
-          schema: 
-            type: string
-        - name: contact_email
-          in: query
-          description: Search for the email address of the contact
-          example: acme.com
-          schema: 
-            type: string
+        - $ref: '#/components/parameters/project_search_query'
+        - $ref: '#/components/parameters/project_createdAt_query'
+        - $ref: '#/components/parameters/project_updatedAt_query'
+        - $ref: '#/components/parameters/project_keyword_query'
+        - $ref: '#/components/parameters/project_number_query'
+        - $ref: '#/components/parameters/project_status_query'
+        - $ref: '#/components/parameters/project_type_query'
+        - $ref: '#/components/parameters/project_open_query'
+        - $ref: '#/components/parameters/contact_search_query'
+        - $ref: '#/components/parameters/contact_name_query'
+        - $ref: '#/components/parameters/contact_email_query'
       responses:
         '200':
           $ref: '#/components/responses/contact-projects'
@@ -3895,6 +3768,214 @@ components:
       schema:
         type: string
 
+    activity_search_query:
+      name: activity_search
+      in: query
+      description: Search for the subject of the activity
+      example: Demonstration
+      schema: 
+        type: string
+
+    activity_createdAt_query:
+      name: activity_createdAt
+      in: query
+      description: Search for the creation date of the activity
+      example: 2025-02-03T15:11:58Z
+      schema: 
+        type: string
+
+    activity_updatedAt_query:
+      name: activity_updatedAt
+      in: query
+      description: Search for the update date of the activity
+      example: 2025-02-03T15:11:58Z
+      schema: 
+        type: string
+
+    activity_beginAt_query:
+      name: activity_beginAt
+      in: query
+      description: Search for the start of the activity
+      example: 2025-02-03T15:11:58Z
+      schema: 
+        type: string
+
+    activity_endAt_query:
+      name: activity_endAt
+      in: query
+      description: Search for the end of the activity
+      example: 2025-02-03T15:11:58Z
+      schema: 
+        type: string
+
+    activity_subject_query:
+      name: activity_subject
+      in: query
+      description: Search for the subject of the activity
+      example: Demonstration
+      schema: 
+        type: string
+
+    activity_type_query:
+      name: activity_type
+      in: query
+      description: Search for the type of the activity
+      example: APPOINTMENT
+      schema: 
+        type: string
+
+    activity_subType_query:
+      name: activity_subType
+      in: query
+      description: Search for the sub type of the activity
+      example: DATE
+      schema: 
+        type: string
+
+    activity_status_query:
+      name: activity_status
+      in: query
+      description: Search for the status of the activity
+      example: PSA_STA_APM_OPN
+      schema: 
+        type: string
+
+    activity_classification_query:
+      name: activity_classification
+      in: query
+      description: Search for the classification of the activity
+      example: PSA_ACT_CLA_PRO_SAL
+      schema: 
+        type: string
+
+    activity_open_query:
+      name: activity_open
+      in: query
+      description: Search for the open status of the activity
+      example: true
+      schema: 
+        type: boolean
+
+    activity_priority_query:
+      name: activity_priority
+      in: query
+      description: Search for the priority of the activity
+      example: PSA_NRM
+      schema: 
+        type: string
+
+    activity_released_query:
+      name: activity_released
+      in: query
+      description: Is the activity planned and released?
+      example: true
+      schema:
+        type: boolean
+
+    project_search_query:
+      name: project_search
+      in: query
+      description: Search for the keyword or number of a project
+      example: Demo
+      schema: 
+        type: string
+
+    project_createdAt_query:
+      name: project_createdAt
+      in: query
+      description: Search for the creation date of the project
+      example: 2025-02-03T15:11:58Z
+      schema: 
+        type: string
+
+    project_updatedAt_query:
+      name: project_updatedAt
+      in: query
+      description: Search for the update date of a project
+      example: 2025-02-03T15:11:58Z
+      schema: 
+        type: string
+
+    project_keyword_query:
+      name: project_keyword
+      in: query
+      description: Search for the keyword of a project
+      example: Demo
+      schema: 
+        type: string
+
+    project_number_query:
+      name: project_number
+      in: query
+      description: Search for the number of a project
+      example: CP-25-007247
+      schema: 
+        type: string 
+
+    project_status_query:
+      name: project_status
+      in: query
+      description: Search for the status of a project
+      example: PSA_SVC_CPL_ACQ
+      schema: 
+        type: string
+
+    project_type_query:
+      name: project_type
+      in: query
+      description: Search for the type of a project
+      example: PSA_SVC_CPL
+      schema: 
+        type: string
+
+    project_open_query:
+      name: project_open
+      in: query
+      description: Search for an open status of a project
+      example: true
+      schema: 
+        type: boolean
+
+    contact_search_query:  
+      name: contact_search
+      in: query
+      description: Search for the name or emaila address of the contact
+      example: John Doe
+      schema: 
+        type: string
+
+    contact_name_query:
+      name: contact_name
+      in: query
+      description: Search for the name of the contact
+      example: John Doe
+      schema: 
+        type: string
+
+    contact_email_query:
+      name: contact_email
+      in: query
+      description: Search for the email address of the contact
+      example: john.doe
+      schema: 
+        type: string
+
+    contact_isExternal_query:
+      name: contact_isExternal
+      in: query
+      description: Search if the contact is external or internal
+      example: true
+      schema: 
+        type: boolean
+
+    contact_group_query:
+      name: contact_group
+      in: query
+      description: Search for the group of the contact
+      example: PSA_ORG_LEA
+      schema: 
+        type: string
+          
   ########################################################################
   # responses
   ########################################################################
