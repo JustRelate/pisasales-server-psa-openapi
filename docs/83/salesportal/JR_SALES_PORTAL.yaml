@@ -847,7 +847,7 @@ paths:
         '401':
           $ref: '#/components/responses/error_unauthorized'
         '400':
-          description: The provided data is invalid
+          description: The provided data is invalid.
           content:
             application/json:
               schema:
@@ -856,7 +856,7 @@ paths:
                   error: 
                     type: string
                     description: Error text
-                    example: 'The provided data is invalid'
+                    example: 'The provided data is invalid.'
                   code:
                     type: string
                     description: Machine readable error code
@@ -7289,18 +7289,18 @@ components:
       properties:
         itemId:
           type: string
-          description: groupware Id (Exchange item Id)
+          description: Groupware Id (Exchange item Id)
           example: 'AAMkADM0NzE1NGM4LWI4NWMtNGZkYS05MTUzLWUzZGVmYmNlODQxYQBGAAAA...'
         messageId:
           type: string
-          description: Interne message Id
+          description: Internet message Id
           example: '<64D2A7A9-81DC-4FEC-BB38-E535F1264E91@justrelate.com>'
         eml:
           type: string
-          description: whole e-mail data in EML format
+          description: Whole e-mail data in EML format
         base64:
           type: boolean
-          description: indicates whether EML data is BASE64 encoded
+          description: Indicates whether EML data is BASE64 encoded
           example: true
 
     dxpimport_response:
@@ -7308,19 +7308,19 @@ components:
       properties:
         success:
           type: boolean
-          description: indicates success or failure of the requested operation
+          description: Indicates success or failure of the requested operation
           example: true
         itemId:
           type: string
-          description: groupware Id (Exchange item Id) - will match the item Id sent with the request
+          description: Groupware Id (Exchange item Id) - will match the item Id sent with the request
           example: 'AAMkADM0NzE1NGM4LWI4NWMtNGZkYS05MTUzLWUzZGVmYmNlODQxYQBGAAAA...'
         messageId:
           type: string
-          description: Interne message Id - will match the item Id sent with the request
+          description: Internet message Id - will match the internet message Id sent with the request
           example: '<64D2A7A9-81DC-4FEC-BB38-E535F1264E91@justrelate.com>'
         crmId:
           type: string
-          description: item Id in the CRM system
+          description: Item Id in the CRM system
           example: 9EDE0862CC3C43F6A98DEB5024FE76BA
         crmUrl:
           type: string
@@ -7330,7 +7330,7 @@ components:
           type: array
           items:
             type: string
-          description: Item categories to be added to the groupware item
+          description: Categories to be added to the groupware item
           example: ['JustRelate CRM', 'PisaSales CRM']
 
 
