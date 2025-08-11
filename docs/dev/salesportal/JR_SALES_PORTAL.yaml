@@ -370,7 +370,11 @@ paths:
       parameters:
         - $ref: '#/components/parameters/ids_query'
         - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/search_query'
+        - name: _search
+          in: query
+          description: search on the name and email
+          schema:
+            type: string
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
@@ -810,6 +814,65 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
+  /salesportal/dxpimport:
+    post:
+      summary: Import external data
+      description: Imports e-mails from external groupware
+      tags: [dxpimport]
+      parameters:
+        - name: action
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [import, check]
+          example: import
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [email]
+          example: email
+      requestBody:
+        description: Import data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dxpimport_request'
+      responses:
+        '200':
+          $ref: '#/components/responses/dxpimport'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+        '400':
+          description: The provided data is invalid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: 
+                    type: string
+                    description: Error text
+                    example: 'The provided data is invalid'
+                  code:
+                    type: string
+                    description: Machine readable error code
+                    example: 'invalid.data'
+                  details:
+                    type: object
+                    properties:
+                      parameters:
+                        type: string
+                        description: Faulty request parameters
+                        example: "{ ... faulty parameters ... }"
+                      body:
+                        type: string
+                        description: Faulty request body
+                        example: '{ ... faulty body ... }'
+
   /salesportal/filter:
     get:
       summary: Get filters
@@ -1047,7 +1110,11 @@ paths:
       parameters:
         - $ref: '#/components/parameters/ids_query'
         - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/search_query'
+        - name: _search
+          in: query
+          description: search on the name and email
+          schema:
+            type: string
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
@@ -1697,7 +1764,11 @@ paths:
       parameters:
         - $ref: '#/components/parameters/ids_query'
         - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/search_query'
+        - name: _search
+          in: query
+          description: search on the name and email
+          schema:
+            type: string
         - $ref: '#/components/parameters/order_query'
         - $ref: '#/components/parameters/limit_query'
         - $ref: '#/components/parameters/language_query'
@@ -4548,6 +4619,13 @@ components:
           schema:
             $ref: '#/components/schemas/version'
 
+    dxpimport:
+      description: E-Mail import
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/dxpimport_response'
+
     error_no_access:
       description: No access granted
       content:
@@ -7205,6 +7283,56 @@ components:
           type: string
           description: Current patch level of the DXHub jar
           example: '7'
+
+    dxpimport_request:
+      type: object
+      properties:
+        itemId:
+          type: string
+          description: groupware Id (Exchange item Id)
+          example: 'AAMkADM0NzE1NGM4LWI4NWMtNGZkYS05MTUzLWUzZGVmYmNlODQxYQBGAAAA...'
+        messageId:
+          type: string
+          description: Interne message Id
+          example: '<64D2A7A9-81DC-4FEC-BB38-E535F1264E91@justrelate.com>'
+        eml:
+          type: string
+          description: whole e-mail data in EML format
+        base64:
+          type: boolean
+          description: indicates whether EML data is BASE64 encoded
+          example: true
+
+    dxpimport_response:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: indicates success or failure of the requested operation
+          example: true
+        itemId:
+          type: string
+          description: groupware Id (Exchange item Id) - will match the item Id sent with the request
+          example: 'AAMkADM0NzE1NGM4LWI4NWMtNGZkYS05MTUzLWUzZGVmYmNlODQxYQBGAAAA...'
+        messageId:
+          type: string
+          description: Interne message Id - will match the item Id sent with the request
+          example: '<64D2A7A9-81DC-4FEC-BB38-E535F1264E91@justrelate.com>'
+        crmId:
+          type: string
+          description: item Id in the CRM system
+          example: 9EDE0862CC3C43F6A98DEB5024FE76BA
+        crmUrl:
+          type: string
+          description: Link to the item in the CRM system
+          example: 'https://crm.tynacoon.com/pisasales/psaobj?title=...'
+        categories:
+          type: array
+          items:
+            type: string
+          description: Item categories to be added to the groupware item
+          example: ['JustRelate CRM', 'PisaSales CRM']
+
 
     ########################################################################
     # errors
