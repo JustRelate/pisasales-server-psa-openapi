@@ -5,9 +5,13 @@ info:
   title: Sales portal API
   description: |
     Endpoints to be used by the Scrivito sales portal.  
+    
     All endpoints require an IAM authorization.  
-    The header `Accept-Language` defines the language that is used for the request. 
-    The value of the header is a language identifier like `en` or `en-US`.
+    Some endpoints also accept a JWT for authorization. The JWT needs to be send in the `Authorization` header with a `JWT` prefix.  
+    Example: `Authorization`: `JWT {token}`  
+
+servers: 
+  - url: '###server###'
 
 paths:
   /salesportal/activity:
@@ -545,7 +549,9 @@ paths:
   /salesportal/whoami:
     get:
       summary: Get the authenticated user
-      description: Returns contact data of the user
+      description: |
+        Returns contact data of the user  
+        This endpoint support an authorization by a JWT.
       tags:
         - contact
       parameters:
@@ -2273,7 +2279,9 @@ paths:
   /salesportal/questionnaire-answer:
     get:
       summary: Fetch all questionnaire answers
-      description: Searches all answers. Additional queries can be set by simply adding the field name as query parameter.
+      description: |
+        Searches all answers. Additional queries can be set by simply adding the field name as query parameter.  
+        This endpoint support an authorization by a JWT.
       tags:
         - questionnaire-answer
       parameters:
@@ -2292,7 +2300,9 @@ paths:
           $ref: '#/components/responses/error_no_access'
     post:
       summary: Submit a new set of questionnaire answers
-      description: This will store the answers and run the actions based on the questionnaire configuration.
+      description: |
+        This will store the answers and run the actions based on the questionnaire configuration.  
+        This endpoint support an authorization by a JWT.
       tags:
         - questionnaire-answer
       parameters:
@@ -3268,6 +3278,7 @@ paths:
         - $ref: '#/components/parameters/contact_search_query'
         - $ref: '#/components/parameters/contact_name_query'
         - $ref: '#/components/parameters/contact_email_query'
+        - $ref: '#/components/parameters/contact_status_query'
       responses:
         '200':
           $ref: '#/components/responses/contact-projects'
@@ -4046,6 +4057,14 @@ components:
       example: PSA_ORG_LEA
       schema: 
         type: string
+
+    contact_status_query:
+      name: contact_status
+      in: query
+      description: Search for the status identiifer of the contact
+      example: PSA_ORG_CST_WRK
+      schema:
+        type: string
           
   ########################################################################
   # responses
@@ -4803,6 +4822,10 @@ components:
           type: string
           description: Telephone number
           example: +49 30 23125641
+        fax:
+          type: string
+          description: Fax number
+          example: +49 30 23125699
         email:
           type: string
           description: Email address
@@ -5042,6 +5065,14 @@ components:
           type: string
           description: additional given name
           example: Jones
+        phoneMobile:
+          type: string
+          description: Mobile number
+          example: +49 172 8361039
+        phonePrivate:
+          type: string
+          description: Private phone number
+          example: +49 30 83720
         nameSuffix:
           type: string
           description: Name suffix
@@ -5061,11 +5092,11 @@ components:
         name:
           type: string
           description: Composed name (given name + family name)
-          example: John Doe
+          example: Mr. John Doe
         displayTitle:
           type: string
-          description: Title of the person. Mainly used for references and titles
-          example: Doe, John (ACME Ltd)
+          description: Title of the person.
+          example: Mr. John Doe
         number:
           type: string
           description: The internal number of the person
@@ -5124,6 +5155,10 @@ components:
       allOf:
         - $ref: '#/components/schemas/contact_writable'
       properties:
+        name:
+          type: string
+          description: Composed name (given name + family name or company name)
+          example: Mr. John Doe
         isPerson:
           type: boolean
           description: Is the lead a person? During creation this defines if the lead is a person or a company.
@@ -5140,14 +5175,10 @@ components:
         - $ref: '#/components/schemas/system_fields'
         - $ref: '#/components/schemas/lead_writable'
       properties:
-        name:
-          type: string
-          description: Composed name (given name + family name or company name)
-          example: John Doe
         displayTitle:
           type: string
           description: Title of the lead. Mainly used for references and titles
-          example: Doe, John (ACME Ltd)
+          example: Mr. John Doe
         number:
           type: string
           description: The internal number of the lead
@@ -6089,10 +6120,6 @@ components:
           example: [PSA_ACT_CLA_CST_COM]
           items:
             type: string
-        origin:
-          type: string
-          description: Id of the origin activity (if this is a follow-up activity). Set an empty string if you want to remove the connection.
-          example: E0E88DE2032844B2B51495F046FD3FE1
 
     activity:
       type: object
@@ -6121,16 +6148,10 @@ components:
           type: string
           description: Is the activity planned and released?
           example: true
-        persons:
-          type: array
-          description: A list of IDs with the associated persons
-          items:
-            $ref: '#/components/schemas/activity-contact_contact'
-        companies:
-          type: array
-          description: A list of IDs with the associated companies
-          items:
-            $ref: '#/components/schemas/activity-contact_contact'
+        origin:
+          type: string
+          description: Id of the origin activity (if this is a follow-up activity).
+          example: E0E88DE2032844B2B51495F046FD3FE1
 
     activities:
       type: object
@@ -6233,6 +6254,10 @@ components:
           type: string
           description: Title of the questionnaire
           example: Fair report
+        keyword:
+          type: string
+          description: Neutral keyword of the questionnaire
+          example: Fair report
         externalId:
           type: string
           description: External identifier used by external systems to find the questionnaire later
@@ -6258,6 +6283,10 @@ components:
           type: string
           description: Origin of this questionnaire (who has created it)
           example: Scrivito questionnaire builder
+        url:
+          type: string
+          description: External URL where this questionnaire can be opened
+          example: https://justrelate.com/questionnaire/0000
 
     questionnaire:
       type: object
@@ -6662,16 +6691,6 @@ components:
           type: string
           description: the status of the contact for this activity
           example: PSA_ACT_CON_STA_ACC
-
-    activity-contact_contact:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/object'
-      properties:
-        contact:
-          type: string
-          description: ID of the associated contact
-          example: 862166B3FFEE4D30B45B4EC63FFEE78B
 
     company-persons:
       type: object

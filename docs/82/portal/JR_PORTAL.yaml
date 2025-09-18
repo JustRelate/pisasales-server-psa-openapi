@@ -3,7 +3,15 @@ openapi: 3.0.3
 info:
   version: '8.2'
   title: Portal API
-  description: Endpoints to be used by the Scrivito portal. All endpoints require an IAM authorization.
+  description: |
+    Endpoints to be used by the Scrivito portal.  
+    Example: `Authorization`: `JWT {token}`  
+
+    The header `Accept-Language` defines the language that is used for the request. 
+    The value of the header is a language identifier like `en` or `en-US`.
+
+servers: 
+  - url: '###server###'
 
 paths:
   /portal/binary-access-token/{id}:
@@ -424,7 +432,9 @@ paths:
   /portal/gdpr:
     get:
       summary: Fetch all GDPR purpose of uses
-      description: Searches all purpose of use of the authenticated user.
+      description: |
+        Searches all purpose of use of the authenticated user.  
+        This endpoint support an authorization by a JWT.
       tags:
         - gdpr
       parameters:
@@ -440,7 +450,9 @@ paths:
   /portal/gdpr/{id}:
     patch:
       summary: Update a GDPR purpose of use
-      description: Updates the active flag
+      description: |
+        Updates the active flag  
+        This endpoint support an authorization by a JWT.
       tags:
         - gdpr
       parameters:
@@ -1056,7 +1068,9 @@ paths:
   /portal/whoami:
     get:
       summary: Get information about the authenticated user
-      description: Returns contact data of the user
+      description: |
+        Returns contact data of the user  
+        This endpoint support an authorization by a JWT.
       tags:
         - user
       parameters:
