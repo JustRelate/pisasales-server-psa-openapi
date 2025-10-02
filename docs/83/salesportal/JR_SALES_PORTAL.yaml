@@ -1945,7 +1945,9 @@ paths:
   /salesportal/questionnaire:
     get:
       summary: Fetch all questionnaires
-      description: Searches all questionnaires. Additional queries can be set by simply adding the field name as query parameter.
+      description: |
+        Searches all questionnaires. Additional queries can be set by simply adding the field name as query parameter.  
+        This endpoint support an authorization by a JWT.
       tags:
         - questionnaire
       parameters:
@@ -2515,6 +2517,7 @@ paths:
         - $ref: '#/components/parameters/contact_search_query'
         - $ref: '#/components/parameters/contact_name_query'
         - $ref: '#/components/parameters/contact_email_query'
+        - $ref: '#/components/parameters/contact_group_query'
       responses:
         '200':
           $ref: '#/components/responses/activity-contacts'
@@ -3279,6 +3282,7 @@ paths:
         - $ref: '#/components/parameters/contact_name_query'
         - $ref: '#/components/parameters/contact_email_query'
         - $ref: '#/components/parameters/contact_status_query'
+        - $ref: '#/components/parameters/contact_group_query'
       responses:
         '200':
           $ref: '#/components/responses/contact-projects'
@@ -4021,7 +4025,7 @@ components:
     contact_search_query:  
       name: contact_search
       in: query
-      description: Search for the name or emaila address of the contact
+      description: Search for the name or email address of the contact
       example: John Doe
       schema: 
         type: string
@@ -4746,6 +4750,10 @@ components:
           type: string
           description: last name
           example: Doe
+        initials:
+          type: string
+          description: Initials based on the given and family name
+          example: JD
         email:
           type: string
           description: email address
@@ -4974,7 +4982,11 @@ components:
         region:
           type: string
           description: Identifier of the region where the company is located
-          example: 6FB1542B8D354B55B43B60EBD479E762
+          example: 6FB1542B8D354B55B43B60EBD479E762,
+        category:
+          type: string
+          description: The importance of the contact
+          example: A
 
     company:
       type: object
@@ -5065,6 +5077,10 @@ components:
           type: string
           description: additional given name
           example: Jones
+        initials:
+          type: string
+          description: Initials based on the given and family name
+          example: JD
         phoneMobile:
           type: string
           description: Mobile number
@@ -5159,6 +5175,10 @@ components:
           type: string
           description: Composed name (given name + family name or company name)
           example: Mr. John Doe
+        initials:
+          type: string
+          description: Initials based on the given and family name
+          example: JD
         isPerson:
           type: boolean
           description: Is the lead a person? During creation this defines if the lead is a person or a company.
@@ -6287,6 +6307,10 @@ components:
           type: string
           description: External URL where this questionnaire can be opened
           example: https://justrelate.com/questionnaire/0000
+        anonymous:
+          type: boolean
+          description: The answers are stored without any contact information
+          example: false
 
     questionnaire:
       type: object
