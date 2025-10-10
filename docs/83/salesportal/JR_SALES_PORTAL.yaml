@@ -2,9 +2,9 @@ openapi: 3.0.4
 
 info:
   version: '8.3'
-  title: Sales portal API
+  title: PisaSales NeoDXP API
   description: |
-    Endpoints to be used by the Scrivito sales portal.  
+    Endpoints to be used by NeoDXP.  
     
     All endpoints require an IAM authorization.  
     Some endpoints also accept a JWT for authorization. The JWT needs to be send in the `Authorization` header with a `JWT` prefix.  
@@ -3604,9 +3604,12 @@ paths:
               - follow-up
               - global-result
               - industry
+              - invoice
               - lead
               - list
+              - list-contact-status
               - message
+              - my-work-contact
               - opportunity
               - order
               - person
@@ -3617,14 +3620,9 @@ paths:
               - questionnaire-answer
               - quote
               - region
+              - social-network
               - ticket
               - whoami
-        - name: extended
-          in: query
-          description: Generate an extended schema. Mainly used for relational entities to include father and child attributes.
-          example: 'false'
-          schema:
-            type: boolean
         - $ref: '#/components/parameters/language_query'
       responses:
         '200':
@@ -7197,6 +7195,10 @@ components:
           type: string
           description: Title of the schema. Mainly used for references and titles
           example: company
+        language:
+          type: string
+          description: Language identifier as defined by the Accept-Language header
+          example: en-US
         general:
           type: object
           properties:
