@@ -2328,6 +2328,50 @@ paths:
         '422':
           $ref: '#/components/responses/error_validation'
 
+  /salesportal/questionnaire-document:
+    post:
+      summary: Submit a new document to be referenced by a questionnaire answers
+      description: |
+        This endpoint will store the document data in a temporary table.  
+        As soon as an answer references this document, a "real" document is created.  
+        This endpoint support an authorization by a JWT.
+      tags:
+        - questionnaire-document
+      requestBody:
+        description: The document data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/questionnaire-document_request'
+      responses:
+        '201':
+          $ref: '#/components/responses/questionnaire-document_response'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+        '422':
+          $ref: '#/components/responses/error_validation'
+
+  /salesportal/questionnaire-document/{id}:
+    get:
+      summary: Fetch a single questionnaire document
+      description: |
+        Searches the _id of a document  
+        This endpoint support an authorization by a JWT.
+      tags:
+        - questionnaire-document
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/questionnaire-document_response'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+        '403':
+          $ref: '#/components/responses/error_no_access'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
   /salesportal/quote:
     get:
       summary: Fetch all quotes
@@ -4409,6 +4453,13 @@ components:
           schema:
             $ref: '#/components/schemas/questionnaire-answer'
 
+    questionnaire-document_response:
+      description: a questionnaire document
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/questionnaire-document_response'
+
     cockpit-element:
       description: A cockpit element
       content:
@@ -4694,7 +4745,7 @@ components:
       properties:
         _id:
           type: string
-          description: identifier of the record
+          description: Identifier of the record
           example: F9BB0AAA22C947BAE030A8C00C015B91
   
     system_fields:
@@ -6349,7 +6400,7 @@ components:
           example: FZmouxAtG2vRf_EiF6yq
         type:
           type: string
-          enum: [string_single_line, string_multi_line, string_dropdown, string_radio, string_checkboxes, floating_point, date_time, date, integer, logic, logic_tristate]
+          enum: [string_single_line, string_multi_line, string_dropdown, string_radio, string_checkboxes, floating_point, date_time, date, integer, logic, logic_tristate, document_single, document_multi]
           description: >
             The data type and format the question:
               * string_single_line - A single line string
@@ -6363,6 +6414,8 @@ components:
               * integer -  An integer type
               * logic - A boolean type (true / false)
               * logic_tristate - A boolean type with a third unset state (true / false / unset)
+              * document_single - A file picker for a single file
+              * document_multi - A file picker for multiple files
           example: string_single_line
         text:
           type: string
@@ -6555,7 +6608,44 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/questionnaire-answer'
-        
+    
+    questionnaire-document_request:
+      type: object
+      required:
+        - filename
+        - dataBase64
+      properties:
+        filename:
+          type: string
+          description: Name of the file
+          example: FooBar.txt
+        dataBase64:
+          type: string
+          description: Base64 encoded content of the file
+          example: SGVsbG8gd29ybGQ=
+
+    questionnaire-document_response:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        filename:
+          type: string
+          description: Name of the file
+          example: FooBar.txt
+        contentType:
+          type: string
+          description: MIME type
+          example: text/plain
+        contentLength:
+          type: integer
+          description: Size of the binary data in bytes
+          example: 11
+        accessToken:
+          type: string
+          description: Access token for downloading the binary data
+          example: /binary-access/1649cff06611a6025da3dd511a97fb4328ABC5BC362145C0A6F308F116C6A7A5
+
     cockpit-element:
       type: object
       allOf:
