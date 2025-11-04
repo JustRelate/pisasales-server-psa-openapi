@@ -3027,6 +3027,12 @@ paths:
           example: contact_name.asc
           schema:
             type: string
+        - name: father
+          in: query
+          description: The ID of the contact for which you want to find the contact-contact relations
+          example: 16F01392FDD44E0D9A5D06B48C78B0A7
+          schema:
+            type: string
         - $ref: '#/components/parameters/contact_name_query'
         - $ref: '#/components/parameters/contact_isExternal_query'
         - $ref: '#/components/parameters/contact_group_query'
@@ -6893,6 +6899,11 @@ components:
         - $ref: '#/components/schemas/system_fields'
         - $ref: '#/components/schemas/contact-contact_writable'
       properties:
+        fatherEntity:
+          type: string
+          description: Type of the father. Defines the endpoint to fetch for more information.
+          enum: [Contact, Person, Company]
+          example: Person
         contactEntity:
           type: string
           description: Type of the contact. Defines the endpoint to fetch for more information.

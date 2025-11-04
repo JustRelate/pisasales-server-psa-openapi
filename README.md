@@ -38,6 +38,12 @@
 [Stoplight](https://justrelate.github.io/pisasales-server-psa-openapi/81/openapi/api-stoplight.htm) |
 [Redoc](https://justrelate.github.io/pisasales-server-psa-openapi/81/openapi/api-redoc.htm)
 
+### Internal
+- Time tracking
+[Swagger](https://justrelate.github.io/pisasales-server-psa-openapi/internal/timetracking/api-swagger.htm) | 
+[Stoplight](https://justrelate.github.io/pisasales-server-psa-openapi/internal/timetracking/api-stoplight.htm) |
+[Redoc](https://justrelate.github.io/pisasales-server-psa-openapi/internal/timetracking/api-redoc.htm)
+
 ## Javadoc
 
 ### Development
