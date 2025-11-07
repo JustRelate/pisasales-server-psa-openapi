@@ -106,6 +106,47 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
+  /salesportal/timerecord-client:
+    get:
+      summary: Fetch all clients
+      description: Searches all clients the user can access. Additional queries can be set by simply adding the field name as query parameter.
+      tags:
+        - timerecord-client
+      parameters:
+        - $ref: '#/components/parameters/ids_query'
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/count_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/user_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/clients'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+        '403':
+          $ref: '#/components/responses/error_no_access'
+
+  /salesportal/timerecord-client/{id}:
+    get:
+      summary: Fetch a single client
+      description: Searches the _id of a client. The user needs access to this client in order to find it.
+      tags:
+        - timerecord-client
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/user_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/client'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+        '403':
+          $ref: '#/components/responses/error_no_access'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
 components:
   ########################################################################
   # parameters
@@ -164,6 +205,14 @@ components:
       example: 8065A97B2E1843E292CAAC1480EBAD84,F143C455A23E4A1B991D0DF2726755A6
       schema:
         type: string
+
+    user_query:
+      name: user
+      in: query
+      description: ID of the user to use for this request. Overrides the sessions user.
+      example: 5FBA96F3D4F24AEDA664F8090C0A80E7
+      schema:
+        type: string
           
   ########################################################################
   # responses
@@ -182,6 +231,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/timerecords'
+
+    client:
+      description: client data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/client'
+
+    clients:
+      description: a list of clients
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/clients'
 
     error_no_access:
       description: No access granted
@@ -259,11 +322,6 @@ components:
       allOf:
         - $ref: '#/components/schemas/object'
         - $ref: '#/components/schemas/timerecord_writable'
-      properties:
-        xxx:
-          type: string
-          description: For a person the name consisting of given and family name. For a company the name.
-          example: John Doe
 
     timerecords:
       type: object
@@ -283,10 +341,89 @@ components:
     timerecord_writable:
       type: object
       properties:
-        yyy:
+        recordedAt:
           type: string
-          description: Id of the account manager
-          example: 5150FF4BF8774C36A59D57FE47C38B58
+          description: The date at which the work was done
+          example: 2025-11-06T14:13:55Z
+        user:
+          type: string
+          description: ID of the user
+          example: 95528891FB8145CBB53E9D8DF8D4D4BC
+        client:
+          type: string
+          description: ID of the client (customer)
+          example: 55C8499AEC8D4C63B8D388F07227755B
+        order:
+          type: string
+          description: ID of the order
+          example: 7F1DE5E5680348029FC29444E8446284
+        position:
+          type: string
+          description: ID of the order position
+          example: 8F9B9383CACD485D9A83704E8D47CC03
+        budget:
+          type: string
+          description: ID of the budget used for this record
+          example: 89B0BE9E03B34C5BB2261F66062B36B7
+        duration:
+          type: number
+          description: Hours to be billed
+          example: 2.0
+        recordedDuration:
+          type: number
+          description: Hour worked
+          example: 3.0
+        location:
+          type: string
+          description: ''
+          example: JustRelate
+        description:
+          type: string
+          description: Description of the activity
+          example: Bug tracking XYZ
+        internalNote:
+          type: string
+          description: Internal note
+          example: Took a long time to setup the test system
+        billable:
+          type: boolean
+          description: Can this activity be billed?
+          example: true
+        billed:
+          type: boolean
+          description: Was this activity billed?
+          example: true
+        status:
+          type: string
+          description: Status of the recorded time
+          enum: [CSO_TIM_STA_OPN, CSO_TIM_STA_FRE, CSO_TIM_STA_CHK]
+          example: CSO_TIM_STA_OPN
+
+    client:
+      description: time record object
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        name:
+          type: string
+          description: The company name
+          example: ACME Ltd.
+
+    clients:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/client'
 
     ########################################################################
     # errors
