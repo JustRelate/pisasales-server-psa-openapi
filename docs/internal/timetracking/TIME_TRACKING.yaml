@@ -1,7 +1,7 @@
 openapi: 3.0.4
 
 info:
-  version: '8.3'
+  version: '8.4'
   title: Time tracking API
   description: All endpoints require an IAM authorization.  
 
@@ -9,15 +9,15 @@ paths:
   /salesportal/timerecord:
     get:
       summary: Fetch all recorded times
-      description: Searches all recorded times. Additional queries can be set by simply adding the field name as query parameter.
+      description: Searches all recorded times.
       tags:
         - timerecord
       parameters:
         - $ref: '#/components/parameters/ids_query'
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/count_query'
+        - $ref: '#/components/parameters/_continuation_query'
+        - $ref: '#/components/parameters/_order_query'
+        - $ref: '#/components/parameters/_limit_query'
+        - $ref: '#/components/parameters/_count_query'
       responses:
         '200':
           $ref: '#/components/responses/timerecords'
@@ -109,16 +109,16 @@ paths:
   /salesportal/timerecord-client:
     get:
       summary: Fetch all clients
-      description: Searches all clients the user can access. Additional queries can be set by simply adding the field name as query parameter.
+      description: Searches all clients the user can access.
       tags:
         - timerecord-client
       parameters:
         - $ref: '#/components/parameters/ids_query'
-        - $ref: '#/components/parameters/continuation_query'
-        - $ref: '#/components/parameters/order_query'
-        - $ref: '#/components/parameters/limit_query'
-        - $ref: '#/components/parameters/count_query'
-        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/_continuation_query'
+        - $ref: '#/components/parameters/_order_query'
+        - $ref: '#/components/parameters/_limit_query'
+        - $ref: '#/components/parameters/_count_query'
+        - $ref: '#/components/parameters/_search_query'
         - $ref: '#/components/parameters/user_query'
       responses:
         '200':
@@ -147,6 +147,124 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
+  /salesportal/timerecord-description:
+    get:
+      summary: Fetch standard descriptions for an order
+      description: Descriptions of standard tasks.
+      tags:
+        - timerecord-description
+      parameters:
+        - $ref: '#/components/parameters/_order_query'
+        - $ref: '#/components/parameters/order_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/descriptions'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+        '403':
+          $ref: '#/components/responses/error_no_access'
+
+  /salesportal/timerecord-order:
+    get:
+      summary: Fetch all orders
+      description: Searches all orders for a client. If no client is specied only internal orders are fetched.
+      tags:
+        - timerecord-order
+      parameters:
+        - $ref: '#/components/parameters/ids_query'
+        - $ref: '#/components/parameters/_continuation_query'
+        - $ref: '#/components/parameters/_order_query'
+        - $ref: '#/components/parameters/_limit_query'
+        - $ref: '#/components/parameters/_count_query'
+        - $ref: '#/components/parameters/_search_query'
+        - $ref: '#/components/parameters/client_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/orders'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+        '403':
+          $ref: '#/components/responses/error_no_access'
+
+  /salesportal/timerecord-order/{id}:
+    get:
+      summary: Fetch a single order
+      description: Searches the _id of an order. The orders are limited to the client specified by the query parameter.
+      tags:
+        - timerecord-order
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/client_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/order'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+        '403':
+          $ref: '#/components/responses/error_no_access'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
+  /salesportal/timerecord-position:
+    get:
+      summary: Fetch all order positions
+      description: Searches all position.
+      tags:
+        - timerecord-position
+      parameters:
+        - $ref: '#/components/parameters/_order_query'
+        - $ref: '#/components/parameters/_limit_query'
+        - $ref: '#/components/parameters/_count_query'
+        - $ref: '#/components/parameters/_search_query'
+        - $ref: '#/components/parameters/_order_query'
+        - $ref: '#/components/parameters/order_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/positions'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+        '403':
+          $ref: '#/components/responses/error_no_access'
+
+  /salesportal/timerecord-user:
+    get:
+      summary: Fetch all active users
+      description: Searches all users.
+      tags:
+        - timerecord-user
+      parameters:
+        - $ref: '#/components/parameters/ids_query'
+        - $ref: '#/components/parameters/_continuation_query'
+        - $ref: '#/components/parameters/_order_query'
+        - $ref: '#/components/parameters/_limit_query'
+        - $ref: '#/components/parameters/_count_query'
+        - $ref: '#/components/parameters/_search_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/users'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+        '403':
+          $ref: '#/components/responses/error_no_access'
+
+  /salesportal/timerecord-user/{id}:
+    get:
+      summary: Fetch a single user
+      description: Searches the _id of a user.
+      tags:
+        - timerecord-user
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/user'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+        '403':
+          $ref: '#/components/responses/error_no_access'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
 components:
   ########################################################################
   # parameters
@@ -160,21 +278,21 @@ components:
       schema:
         type: string
 
-    continuation_query:
+    _continuation_query:
       name: _continuation
       in: query
       description: Continuation key that was returned with the last result list
       schema:
         type: string
 
-    search_query:
+    _search_query:
       name: _search
       in: query
       description: Full text (EUREKA) search term
       schema:
         type: string
         
-    order_query:
+    _order_query:
       name: _order
       in: query
       description: List of fields that should be used for ordering
@@ -182,7 +300,7 @@ components:
       schema:
         type: string
         
-    limit_query:
+    _limit_query:
       name: _limit
       in: query
       description: Maximum number of records to return. If the maximum is reached a continuation key will be in the response. The default value is 100.
@@ -190,7 +308,7 @@ components:
       schema:
         type: number
 
-    count_query:
+    _count_query:
       name: _count
       in: query
       description: Count the total number of results available
@@ -213,7 +331,24 @@ components:
       example: 5FBA96F3D4F24AEDA664F8090C0A80E7
       schema:
         type: string
-          
+
+    client_query:
+      name: user
+      in: query
+      description: ID of a client to search in this request.
+      example: F9BB0AAA22C947BAE030A8C00C015B91
+      schema:
+        type: string
+
+    order_query:
+      name: order
+      in: query
+      required: true
+      description: ID of an order to search in this request.
+      example: 1150B8BAFC884A54935E3AF0F80DB9F1
+      schema:
+        type: string
+
   ########################################################################
   # responses
   ########################################################################
@@ -245,6 +380,62 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/clients'
+
+    description:
+      description: description data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/description'
+
+    descriptions:
+      description: a list of descriptions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/descriptions'
+
+    order:
+      description: order data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/order'
+
+    orders:
+      description: a list of orders
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/orders'
+
+    position:
+      description: order position data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/position'
+
+    positions:
+      description: a list of order positions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/positions'
+
+    user:
+      description: user data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/user'
+
+    users:
+      description: a list of users
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/users'
 
     error_no_access:
       description: No access granted
@@ -400,7 +591,7 @@ components:
           example: CSO_TIM_STA_OPN
 
     client:
-      description: time record object
+      description: Client object
       type: object
       allOf:
         - $ref: '#/components/schemas/object'
@@ -424,6 +615,128 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/client'
+
+    description:
+      description: Description object
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        name:
+          type: string
+          description: The company name
+          example: Jour fixe
+        order: 
+          type: string
+          description: ID of the order
+          example: 1150B8BAFC884A54935E3AF0F80DB9F1
+
+    descriptions:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/description'
+
+    order:
+      description: Order object
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        name:
+          type: string
+          description: The order keyword
+          example: Version upgrade
+        client: 
+          type: string
+          description: ID of the client of the order
+          example: DF270DD715A74D8FB268FB4295101F05
+
+    orders:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/order'
+
+    position:
+      description: Order position object
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        name:
+          type: string
+          description: The position name
+          example: Kick off meeting
+        order: 
+          type: string
+          description: ID of the order
+          example: 1150B8BAFC884A54935E3AF0F80DB9F1
+        position:
+          type: string
+          description: Name of the original position if this is a budget
+          example: Project manager
+        budget:
+          type: string
+          description: ID of the associated budget
+          example: AC11E349A7C34DE4B0961DF4929EB72B
+        open:
+          type: number
+          description: number of open hours available on this position
+          example: 12.0
+
+    positions:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/position'
+
+    user:
+      description: User object
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        name:
+          type: string
+          description: The user name (geiven name and family name)
+          example: John Doe
+        email:
+          type: string
+          description: The email address of the user
+          example: john.doe@tynacoon.com
+
+    users:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/user'
 
     ########################################################################
     # errors
@@ -515,27 +828,6 @@ components:
               type: string
               example: ACME Ltd.
             
-    error_user_locked:
-      description: The authenticated IAM user is not allowed to login because the contact is locked
-      type: object
-      properties:
-        code:
-          type: string
-          example: 'user.locked'
-        error:
-          type: string
-          example: 'The user is locked'
-        details:
-          type: object
-          properties:
-            email:
-              type: string
-              example: 'john.doe@acme.org'
-            status:
-              type: string
-              description: identifier of the current status
-              example: PSA_PRS_LEA_BLC
-
     error_unauthorized:
       description: The authenticated IAM user was not found
       type: object
@@ -659,55 +951,3 @@ components:
             cause:
               type: string
               example: data size too long for field!
-
-    error_filter_missing_entity:
-      description: The entity was not specified
-      type: object
-      properties:
-        code:
-          type: string
-          example: 'validation.invalid_values'
-        error:
-          type: string
-          example: 'A validation has failed'
-        details:
-          type: object
-          properties:
-            validation_errors:
-              type: object
-              properties:
-                field:
-                  type: string
-                  example: entity
-                reason:
-                  type: string
-                  example: missing
-                message:
-                  type: string
-                  example: "The field 'entity' is missing or empty"
-
-    error_filter_invalid_entity:
-      description: The entity provided entity is not supported
-      type: object
-      properties:
-        code:
-          type: string
-          example: 'validation.invalid_values'
-        error:
-          type: string
-          example: 'A validation has failed'
-        details:
-          type: object
-          properties:
-            validation_errors:
-              type: object
-              properties:
-                field:
-                  type: string
-                  example: entity
-                reason:
-                  type: string
-                  example: invalid_value
-                message:
-                  type: string
-                  example: "The field 'entity' contains the invalid value 'xxx'"
