@@ -556,11 +556,11 @@ components:
           type: string
           description: ID of the budget used for this record
           example: 89B0BE9E03B34C5BB2261F66062B36B7
-        duration:
+        billedDuration:
           type: number
           description: Hours to be billed
           example: 2.0
-        recordedDuration:
+        totalDuration:
           type: number
           description: Hour worked
           example: 3.0
