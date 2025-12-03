@@ -5,13 +5,13 @@ info:
   title: Portal API
   description: |
     Endpoints to be used by the Scrivito portal.  
-    Example: `Authorization`: `JWT {token}`  
-
-    The header `Accept-Language` defines the language that is used for the request. 
-    The value of the header is a language identifier like `en` or `en-US`.
 
 servers: 
   - url: '###server###'
+
+security:
+  - IAMToken: []
+  - JWTToken: []
 
 paths:
   /portal/binary-access-token/{id}:
@@ -20,6 +20,8 @@ paths:
       description: Returns an URL containing a token that is valid for a limited time and grants access to a single record
       tags:
         - binary-access
+      security:
+        - IAMToken: []
       parameters:
         - name: id
           in: path
@@ -78,6 +80,8 @@ paths:
       description: Returns the most recent open request.
       tags:
         - callback-request
+      security:
+        - IAMToken: []
       parameters:
         - name: projectId
           in: query
@@ -104,6 +108,8 @@ paths:
       description: This will create a new task with your message. All existing open requests will be canceled.
       tags:
         - callback-request
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/language_query'
       requestBody:
@@ -127,6 +133,8 @@ paths:
       description: Changes the status of the task if it is still open
       tags:
         - callback-request
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
@@ -144,6 +152,8 @@ paths:
       description: Searches all contracts that are related to the logged in user. Additional queries can be set by simply adding the field name as query parameter.
       tags:
         - contract
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
@@ -163,6 +173,8 @@ paths:
       description: Searches the _id of a contract
       tags:
         - contract
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
@@ -178,6 +190,8 @@ paths:
       description: Searches all products that are assigned to a contract. Additional queries can be set by simply adding the field name as query parameter.
       tags:
         - contract
+      security:
+        - IAMToken: []
       parameters:
         - name: contractId
           in: query
@@ -201,6 +215,8 @@ paths:
       description: Searches the _id of a product from the scope of delivery
       tags:
         - contract
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
@@ -216,6 +232,8 @@ paths:
       description: Searches all documents that are related to a contract
       tags:
         - contract
+      security:
+        - IAMToken: []
       parameters:
         - name: contractId
           in: query
@@ -238,6 +256,8 @@ paths:
       description: Searches all available countries
       tags:
         - country
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/order_query'
@@ -256,6 +276,8 @@ paths:
       description: Returns country data
       tags:
         - country
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
@@ -275,6 +297,8 @@ paths:
       description: Searches all documents that are related to the logged in user
       tags:
         - document
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
@@ -294,6 +318,8 @@ paths:
       description: Searches the document with the given id
       tags:
         - document
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
@@ -309,6 +335,8 @@ paths:
       description: Searches all events which are open for registration
       tags:
         - event
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
@@ -328,6 +356,8 @@ paths:
       description: Searches the _id of an event which is open for registration
       tags:
         - event
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
@@ -343,6 +373,8 @@ paths:
       description: Searches all relations of the user to events
       tags:
         - event
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/order_query'
@@ -359,6 +391,8 @@ paths:
       description: adds a relation to an event for the user and sets the status to registered
       tags:
         - event
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/language_query'
       requestBody:
@@ -384,6 +418,8 @@ paths:
       description: Searches the _id of an event registration
       tags:
         - event
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
@@ -397,6 +433,8 @@ paths:
       description: Sets the status to unregistered
       tags:
         - event
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
@@ -412,6 +450,8 @@ paths:
       description: Searches all documents that are related to an event
       tags:
         - event
+      security:
+        - IAMToken: []
       parameters:
         - name: eventId
           in: query
@@ -432,15 +472,15 @@ paths:
   /portal/gdpr:
     get:
       summary: Fetch all GDPR purpose of uses
-      description: |
-        Searches all purpose of use of the authenticated user.  
-        This endpoint support an authorization by a JWT.
+      description: Searches all purpose of use of the authenticated user.
       tags:
         - gdpr
+      security:
+        - IAMToken: []
+        - JWTToken: []
       parameters:
         - $ref: '#/components/parameters/language_query'
         - $ref: '#/components/parameters/count_query'
-        - $ref: '#/components/parameters/authorization_jwt_header'
       responses:
         '200':
           $ref: '#/components/responses/gdprs'
@@ -450,15 +490,15 @@ paths:
   /portal/gdpr/{id}:
     patch:
       summary: Update a GDPR purpose of use
-      description: |
-        Updates the active flag  
-        This endpoint support an authorization by a JWT.
+      description: Updates the active flag
       tags:
         - gdpr
+      security:
+        - IAMToken: []
+        - JWTToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/authorization_jwt_header'
       requestBody:
         description: The new data
         required: true
@@ -480,6 +520,8 @@ paths:
       description: Searches all documents with a "web flag"
       tags:
         - document
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
@@ -499,6 +541,8 @@ paths:
       description: Searches all entites
       tags:
         - global-result
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/search_query'
         - $ref: '#/components/parameters/continuation_query'
@@ -530,6 +574,8 @@ paths:
       description: The messages are ordered from oldest to newest
       tags:
         - message
+      security:
+        - IAMToken: []
       parameters:
         - name: subjectId
           in: query
@@ -549,6 +595,8 @@ paths:
       description: Post a new message to a project
       tags:
         - message
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/language_query'
       requestBody:
@@ -572,6 +620,8 @@ paths:
       description: Returns a single project message
       tags:
         - message
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
@@ -587,6 +637,8 @@ paths:
       description: Searches all opportunities that are related to the logged in user. Additional queries can be set by simply adding the field name as query parameter.
       tags:
         - opportunity
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
@@ -604,6 +656,8 @@ paths:
       description: This will create a new opportunity with the scope of delivery in the description
       tags:
         - opportunity
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/language_query'
       requestBody:
@@ -627,6 +681,8 @@ paths:
       description: Searches the _id of an opportunity
       tags:
         - opportunity
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
@@ -642,6 +698,8 @@ paths:
       description: Searches all orders that are related to the logged in user. Additional queries can be set by simply adding the field name as query parameter.
       tags:
         - order
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
@@ -661,6 +719,8 @@ paths:
       description: Searches the _id of an order
       tags:
         - order
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
@@ -676,6 +736,8 @@ paths:
       description: Searches all products that are assigned to an order. Additional queries can be set by simply adding the field name as query parameter.
       tags:
         - order
+      security:
+        - IAMToken: []
       parameters:
         - name: orderId
           in: query
@@ -699,6 +761,8 @@ paths:
       description: Searches the _id of a product from the scope of delivery
       tags:
         - order
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
@@ -714,6 +778,8 @@ paths:
       description: Searches all documents that are related to a order
       tags:
         - order
+      security:
+        - IAMToken: []
       parameters:
         - name: orderId
           in: query
@@ -736,6 +802,8 @@ paths:
       description: This will create a new task which instructs the commercial agent to convert a quote into an order.
       tags:
         - order
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/language_query'
       requestBody:
@@ -754,12 +822,13 @@ paths:
           $ref: '#/components/responses/error_403'
         '404':
           $ref: '#/components/responses/error_record_not_found'
-
     get:
       summary: Fetch all order requests
       description: Searches order requests that were created by the logged in user. Additional queries can be set by simply adding the field name as query parameter.
       tags:
         - order
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
@@ -779,6 +848,8 @@ paths:
       description: Searches the _id of an order request
       tags:
         - order
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
@@ -794,6 +865,8 @@ paths:
       description: Searches all quotes that are related to the logged in user. Additional queries can be set by simply adding the field name as query parameter.
       tags:
         - quote
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
@@ -813,6 +886,8 @@ paths:
       description: Searches the _id of a quote
       tags:
         - quote
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
@@ -828,6 +903,8 @@ paths:
       description: Searches all products that are assigned to a quote. Additional queries can be set by simply adding the field name as query parameter.
       tags:
         - quote
+      security:
+        - IAMToken: []
       parameters:
         - name: quoteId
           in: query
@@ -851,6 +928,8 @@ paths:
       description: Searches the _id of a product from the scope of delivery
       tags:
         - quote
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
@@ -866,6 +945,8 @@ paths:
       description: Searches all documents that are related to a quote
       tags:
         - quote
+      security:
+        - IAMToken: []
       parameters:
         - name: quoteId
           in: query
@@ -888,6 +969,8 @@ paths:
       description: This will create a new task with your message. And also a quote is created.
       tags:
         - quote
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/language_query'
       requestBody:
@@ -917,6 +1000,8 @@ paths:
       description: Searches all service objects where the logged in user is customer, carrier or supplier
       tags:
         - service-object
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
@@ -936,6 +1021,8 @@ paths:
       description: Searches the service object with the given id
       tags:
         - service-object
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
@@ -951,6 +1038,8 @@ paths:
       description: Searches all documents that are related to a service object
       tags:
         - service-object
+      security:
+        - IAMToken: []
       parameters:
         - name: serviceObjectId
           in: query
@@ -974,6 +1063,8 @@ paths:
       description: Searches all tickets that are related to the logged in user and were created in the portal. Additional queries can be set by simply adding the field name as query parameter.
       tags:
         - ticket
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/continuation_query'
         - $ref: '#/components/parameters/search_query'
@@ -991,6 +1082,8 @@ paths:
       description: Creates new ticket
       tags:
         - ticket
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/language_query'
       requestBody:
@@ -1014,6 +1107,8 @@ paths:
       description: Searches the _id of a ticket
       tags:
         - ticket
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
@@ -1029,6 +1124,8 @@ paths:
       description: Searches all documents that are related to a ticket
       tags:
         - ticket
+      security:
+        - IAMToken: []
       parameters:
         - name: ticketId
           in: query
@@ -1052,6 +1149,8 @@ paths:
       description: Returns contact data. Only the data of internal contacts and the contacts that belong to the users organization are returned.
       tags:
         - user
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/language_query'
@@ -1068,14 +1167,14 @@ paths:
   /portal/whoami:
     get:
       summary: Get information about the authenticated user
-      description: |
-        Returns contact data of the user  
-        This endpoint support an authorization by a JWT.
+      description: Returns contact data of the user
       tags:
         - user
+      security:
+        - IAMToken: []
+        - JWTToken: []
       parameters:
         - $ref: '#/components/parameters/language_query'
-        - $ref: '#/components/parameters/authorization_jwt_header'
       responses:
         '200':
           $ref: '#/components/responses/whoami'
@@ -1140,13 +1239,6 @@ components:
       example: false
       schema:
         type: boolean
-
-    authorization_jwt_header:
-      in: header
-      name: Authorization
-      description: Header can contain the IAM token or a generated JWT. The JWT needs a prefix JWT
-      schema:
-        type: string
 
   ########################################################################
   # responses
@@ -2947,3 +3039,16 @@ components:
               type: string
               description: name of the missing field
               example: 'title'
+  securitySchemes:
+    IAMToken:
+      type: http
+      scheme: bearer
+      description: |
+        Access is granted by an IAM access token. The access token is created by the token endpoint when used with valid API key credentials.  
+        Example: `Authorization`: `Bearer {token}`
+    JWTToken:
+      type: http
+      scheme: bearer
+      description: |
+        Access is granted by an JWT. The token is generated by the PisaSales server.  The prefix needs to be `JWT`.  
+        Example: `Authorization`: `JWT {token}`

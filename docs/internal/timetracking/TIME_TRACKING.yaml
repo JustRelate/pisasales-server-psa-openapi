@@ -5,13 +5,17 @@ info:
   title: Time tracking API
   description: All endpoints require an IAM authorization.  
 
+security:
+  - IAMToken: []
+
 paths:
   /salesportal/timerecord:
     get:
       summary: Fetch all recorded times
       description: Searches all recorded times.
-      tags:
-        - timerecord
+      tags: [timerecord]
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/ids_query'
         - $ref: '#/components/parameters/_continuation_query'
@@ -28,8 +32,9 @@ paths:
     post:
       summary: Record a new time
       description: This will create a new time record
-      tags:
-        - timerecord
+      tags: [timerecord]
+      security:
+        - IAMToken: []
       requestBody:
         description: The time record data
         required: true
@@ -51,8 +56,9 @@ paths:
     get:
       summary: Fetch a single recorded time
       description: Searches the _id of a recorded time
-      tags:
-        - timerecord
+      tags: [timerecord]
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
       responses:
@@ -67,8 +73,9 @@ paths:
     patch:
       summary: Update a recorded time
       description: This will update an existing recorded time
-      tags:
-        - timerecord
+      tags: [timerecord]
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
       requestBody:
@@ -92,8 +99,9 @@ paths:
     delete:
       summary: Delete a recorded time
       description: Searches the _id of a time record and deletes the record
-      tags:
-        - timerecord
+      tags: [timerecord]
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
       responses:
@@ -110,8 +118,9 @@ paths:
     get:
       summary: Fetch all clients
       description: Searches all clients the user can access.
-      tags:
-        - timerecord-client
+      tags: [timerecord-client]
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/ids_query'
         - $ref: '#/components/parameters/_continuation_query'
@@ -132,8 +141,9 @@ paths:
     get:
       summary: Fetch a single client
       description: Searches the _id of a client. The user needs access to this client in order to find it.
-      tags:
-        - timerecord-client
+      tags: [timerecord-client]
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/user_query'
@@ -151,8 +161,9 @@ paths:
     get:
       summary: Fetch standard descriptions for an order
       description: Descriptions of standard tasks.
-      tags:
-        - timerecord-description
+      tags: [timerecord-description]
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/_order_query'
         - $ref: '#/components/parameters/order_query'
@@ -168,8 +179,9 @@ paths:
     get:
       summary: Fetch all orders
       description: Searches all orders for a client. If no client is specied only internal orders are fetched.
-      tags:
-        - timerecord-order
+      tags: [timerecord-order]
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/ids_query'
         - $ref: '#/components/parameters/_continuation_query'
@@ -190,8 +202,9 @@ paths:
     get:
       summary: Fetch a single order
       description: Searches the _id of an order. The orders are limited to the client specified by the query parameter.
-      tags:
-        - timerecord-order
+      tags: [timerecord-order]
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
         - $ref: '#/components/parameters/client_query'
@@ -209,8 +222,9 @@ paths:
     get:
       summary: Fetch all order positions
       description: Searches all position.
-      tags:
-        - timerecord-position
+      tags: [timerecord-position]
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/_order_query'
         - $ref: '#/components/parameters/_limit_query'
@@ -230,8 +244,9 @@ paths:
     get:
       summary: Fetch all active users
       description: Searches all users.
-      tags:
-        - timerecord-user
+      tags: [timerecord-user]
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/ids_query'
         - $ref: '#/components/parameters/_continuation_query'
@@ -251,8 +266,9 @@ paths:
     get:
       summary: Fetch a single user
       description: Searches the _id of a user.
-      tags:
-        - timerecord-user
+      tags: [timerecord-user]
+      security:
+        - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
       responses:
@@ -951,3 +967,10 @@ components:
             cause:
               type: string
               example: data size too long for field!
+  securitySchemes:
+    IAMToken:
+      type: http
+      scheme: bearer
+      description: |
+        Access is granted by an IAM access token. The access token is created by the token endpoint when used with valid API key credentials.  
+        Example: `Authorization`: `Bearer {token}`
