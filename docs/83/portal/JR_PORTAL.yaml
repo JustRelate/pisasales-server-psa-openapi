@@ -568,6 +568,19 @@ paths:
         '403':
           $ref: '#/components/responses/error_403'
 
+  /portal/_manifest:
+    get:
+      summary: List the available resources
+      description: Returns a list with the resource names
+      tags: [manifest]
+      security:
+        - IAMToken: []
+      responses:
+        '200':
+          $ref: '#/components/responses/manifest'
+        '403':
+          $ref: '#/components/responses/error_403'
+
   /portal/message:
     get:
       summary: Fetch the messages of a project
@@ -1426,6 +1439,13 @@ components:
           schema:
             $ref: '#/components/schemas/contract-documents'
 
+    manifest:
+      description: manifest
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/manifest'
+
     message:
       description: message
       content:
@@ -2280,6 +2300,16 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/contract-document'
+
+    manifest:
+      type: object
+      properties:
+        resources:
+          type: array
+          description: names
+          example: [contract, order, quote, ticket]
+          items:
+            type: string
 
     message_base:
       type: object

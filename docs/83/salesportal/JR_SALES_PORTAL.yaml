@@ -2932,6 +2932,7 @@ paths:
         - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/soft_delete_document_query'
       responses:
         '204':
           description: The relation was deleted
@@ -3450,6 +3451,7 @@ paths:
         - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/soft_delete_document_query'
       responses:
         '204':
           description: The relation was deleted
@@ -3773,6 +3775,7 @@ paths:
         - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/soft_delete_document_query'
       responses:
         '204':
           description: The relation was deleted
@@ -3893,6 +3896,7 @@ paths:
         - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/soft_delete_document_query'
       responses:
         '204':
           description: The relation was deleted
@@ -4414,6 +4418,14 @@ components:
       example: PSA_ORG_CST_WRK
       schema:
         type: string
+
+    soft_delete_document_query:
+      name: softDelete
+      in: query
+      description: Automatically delete unreferenced documents. Default is true.
+      example: true
+      schema:
+        type: boolean
           
   ########################################################################
   # responses
@@ -5770,6 +5782,9 @@ components:
         bodyThumbnail:
           description: Small image of the content
           $ref: '#/components/schemas/binary'
+        contentType:
+          description: The content/MIME type
+          example: image/jpg
 
     document_upload:
       type: object
