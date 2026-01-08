@@ -529,6 +529,11 @@ components:
       allOf:
         - $ref: '#/components/schemas/object'
         - $ref: '#/components/schemas/timerecord_writable'
+      properties:
+        accountDirector:
+          type: boolean
+          description: The account director (team lead) of the client
+          example: 95528891FB8145CBB53E9D8DF8D4D4BC
 
     timerecords:
       type: object
@@ -738,6 +743,10 @@ components:
           type: string
           description: The email address of the user
           example: john.doe@tynacoon.com
+        accountDirector:
+          type: boolean
+          description: Is the user an account director (team lead)?
+          example: false
 
     users:
       type: object
