@@ -621,6 +621,10 @@ components:
           type: string
           description: The company name
           example: ACME Ltd.
+        accountDirector:
+          type: boolean
+          description: The account director (team lead) of the client
+          example: 95528891FB8145CBB53E9D8DF8D4D4BC
 
     clients:
       type: object
