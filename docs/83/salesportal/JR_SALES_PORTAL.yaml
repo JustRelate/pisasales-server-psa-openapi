@@ -2932,7 +2932,6 @@ paths:
         - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
-        - $ref: '#/components/parameters/soft_delete_document_query'
       responses:
         '204':
           description: The relation was deleted
@@ -3451,7 +3450,6 @@ paths:
         - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
-        - $ref: '#/components/parameters/soft_delete_document_query'
       responses:
         '204':
           description: The relation was deleted
@@ -3775,7 +3773,6 @@ paths:
         - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
-        - $ref: '#/components/parameters/soft_delete_document_query'
       responses:
         '204':
           description: The relation was deleted
@@ -3896,7 +3893,6 @@ paths:
         - IAMToken: []
       parameters:
         - $ref: '#/components/parameters/id_path'
-        - $ref: '#/components/parameters/soft_delete_document_query'
       responses:
         '204':
           description: The relation was deleted
@@ -4419,14 +4415,14 @@ components:
       schema:
         type: string
 
-    soft_delete_document_query:
-      name: softDelete
+    deep_delete_document_query:
+      name: deepDelete
       in: query
-      description: Automatically delete unreferenced documents. Default is true.
-      example: true
+      description: Automatically delete unreferenced documents. Default is false.
+      example: false
       schema:
         type: boolean
-          
+
   ########################################################################
   # responses
   ########################################################################

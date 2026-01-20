@@ -240,6 +240,47 @@ paths:
         '403':
           $ref: '#/components/responses/error_no_access'
 
+  /salesportal/timerecord-team:
+    get:
+      summary: Fetch all team relations
+      description: Searches the team relations of the users
+      tags: [timerecord-team]
+      security:
+        - IAMToken: []
+      parameters:
+        - $ref: '#/components/parameters/ids_query'
+        - $ref: '#/components/parameters/_continuation_query'
+        - $ref: '#/components/parameters/_order_query'
+        - $ref: '#/components/parameters/_limit_query'
+        - $ref: '#/components/parameters/_count_query'
+        - $ref: '#/components/parameters/_search_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/teams'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+        '403':
+          $ref: '#/components/responses/error_no_access'
+
+  /salesportal/timerecord-team/{id}:
+    get:
+      summary: Fetch a single team relation
+      description: Searches the _id of a user.
+      tags: [timerecord-team]
+      security:
+        - IAMToken: []
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/team'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+        '403':
+          $ref: '#/components/responses/error_no_access'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
   /salesportal/timerecord-user:
     get:
       summary: Fetch all active users
@@ -438,6 +479,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/positions'
+
+    team:
+      description: team relation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/team'
+
+    teams:
+      description: a list of team relations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/teams'
 
     user:
       description: user data
@@ -732,6 +787,36 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/position'
+
+    team:
+      description: Team relation object
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        leader:
+          type: string
+          description: ID of the user who is the team leader
+          example: 219E1773E5A74085901C284C7382680E
+        member:
+          type: string
+          description: ID of the user who is a member
+          example: 066D4C5BEF9C4ADD86C85AADD5A6EEBA
+
+    teams:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/team'
 
     user:
       description: User object
