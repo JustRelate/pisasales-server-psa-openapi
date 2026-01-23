@@ -2759,6 +2759,7 @@ paths:
         - $ref: '#/components/parameters/contact_name_query'
         - $ref: '#/components/parameters/contact_email_query'
         - $ref: '#/components/parameters/contact_group_query'
+        - $ref: '#/components/parameters/contact_status_query'
       responses:
         '200':
           $ref: '#/components/responses/activity-contacts'
@@ -3273,6 +3274,7 @@ paths:
         - $ref: '#/components/parameters/contact_name_query'
         - $ref: '#/components/parameters/contact_isExternal_query'
         - $ref: '#/components/parameters/contact_group_query'
+        - $ref: '#/components/parameters/contact_status_query'
       responses:
         '200':
           $ref: '#/components/responses/contact-contacts'
@@ -3594,8 +3596,8 @@ paths:
         - $ref: '#/components/parameters/contact_search_query'
         - $ref: '#/components/parameters/contact_name_query'
         - $ref: '#/components/parameters/contact_email_query'
-        - $ref: '#/components/parameters/contact_status_query'
         - $ref: '#/components/parameters/contact_group_query'
+        - $ref: '#/components/parameters/contact_status_query'
       responses:
         '200':
           $ref: '#/components/responses/contact-projects'
@@ -4403,7 +4405,7 @@ components:
       name: contact_group
       in: query
       description: Search for the group of the contact
-      example: PSA_ORG_LEA
+      example: PSA_ORG_CST
       schema: 
         type: string
 
@@ -5934,12 +5936,6 @@ components:
           type: string
           description: Country identifier
           example: DEU
-        poBox:
-          type: string
-          description: P.O. box
-        poBoxPostalCode:
-          type: string
-          description: P.O. box postal code
         postOffice:
           type: string
           description: Post office

@@ -469,6 +469,42 @@ paths:
         '403':
           $ref: '#/components/responses/error_403'
 
+  /portal/faq:
+    get:
+      summary: Fetch all FAQs
+      description: Searches all FAQs that are released for the web
+      tags: [faq]
+      security:
+        - IAMToken: []
+      parameters:
+        - $ref: '#/components/parameters/continuation_query'
+        - $ref: '#/components/parameters/search_query'
+        - $ref: '#/components/parameters/order_query'
+        - $ref: '#/components/parameters/limit_query'
+        - $ref: '#/components/parameters/language_query'
+        - $ref: '#/components/parameters/count_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/faqs'
+        '403':
+          $ref: '#/components/responses/error_403'
+
+  /portal/faq/{id}:
+    get:
+      summary: Fetch a FAQ
+      description: Searches the _id of a FAQ that is released for the web
+      tags: [faq]
+      security:
+        - IAMToken: []
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+        - $ref: '#/components/parameters/language_query'
+      responses:
+        '200':
+          $ref: '#/components/responses/faq'
+        '403':
+          $ref: '#/components/responses/error_403'
+
   /portal/gdpr:
     get:
       summary: Fetch all GDPR purpose of uses
@@ -553,7 +589,7 @@ paths:
           example: Ticket,ServiceObject
           schema:
             type: string
-            enum: ['Ticket', 'Opportunity', 'Quote', 'Order', 'Event', 'Contract', 'ServiceObject', 'Document']
+            enum: ['Ticket', 'Opportunity', 'Quote', 'Order', 'Event', 'Contract', 'ServiceObject', 'Document', 'Faq']
       responses:
         '200':
           $ref: '#/components/responses/global-results'
@@ -1516,6 +1552,20 @@ components:
           schema:
             $ref: '#/components/schemas/documents'
 
+    faq:
+      description: FAQ data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/faq'
+
+    faqs:
+      description: a list of FAQs
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/faqs'
+
     service-object:
       description: service object data
       content:
@@ -2467,6 +2517,59 @@ components:
           items:
             $ref: '#/components/schemas/event-registration'
   
+    faq:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        keyword:
+          type: string
+          description: Title of the FAQ
+          example: Solution for all problems
+        number:
+          type: string
+          description: Unique number of the FAQ
+          example: FAQ-26-12345
+        question:
+          type: string
+          description: The question
+          example: It is not working
+        answer:
+          type: string
+          description: The answer
+          example: Turn it off an on again
+        type1:
+          type: string
+          description: First type
+          example: PSA_FAQ_TYP_001
+        type2:
+          type: string
+          description: Second type
+          example: PSA_FAQ_TY2_001
+        language:
+          type: string
+          description: Identifier of the language this FAQ is written in
+          example: ENG
+        createdAt:
+          type: string
+          description: Date when the FAQ was created
+          example: 2026-01-23T09:26:23Z
+
+    faqs:
+      type: object
+      properties:
+        continuation:
+          type: string
+          description: key that is used to fetch the next result page
+        count:
+          type: integer
+          description: the total number of results
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/faq'
+
     user:
       description: user object
       type: object
