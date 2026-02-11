@@ -1,7 +1,7 @@
 openapi: 3.0.4
 
 info:
-  version: '8.3'
+  version: '8.4'
   title: PisaSales NeoDXP API
   description: |
     Endpoints to be used by NeoDXP.  

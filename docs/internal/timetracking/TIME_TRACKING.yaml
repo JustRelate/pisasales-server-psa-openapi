@@ -114,6 +114,53 @@ paths:
         '404':
           $ref: '#/components/responses/error_record_not_found'
 
+  /salesportal/timerecord-budget:
+    get:
+      summary: Fetch budget, revenue and days
+      description: The data is aggregated for an order
+      tags: [timerecord-budget]
+      security:
+        - IAMToken: []
+      parameters:
+        - name: order
+          in: query
+          description: ID of the order to get the data for
+          example: 5B7BEE1FBCEB4495BB81CE7BF5330CBE
+          schema:
+            type: string
+        - name: recordedAt
+          in: query
+          description: Date query on the time when the it was logged. Date ranges can be defined by using a operator suffix (.gt, .gte, .lt, .lte).
+          example: 2026-02-10T00:00:00Z
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/budgets'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+        '403':
+          $ref: '#/components/responses/error_no_access'
+
+  /salesportal/timerecord-budget/{id}:
+    get:
+      summary: Fetch budget, revenue and days
+      description: Searches the _id of a budget record.
+      tags: [timerecord-budget]
+      security:
+        - IAMToken: []
+      parameters:
+        - $ref: '#/components/parameters/id_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/budget'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+        '403':
+          $ref: '#/components/responses/error_no_access'
+        '404':
+          $ref: '#/components/responses/error_record_not_found'
+
   /salesportal/timerecord-client:
     get:
       summary: Fetch all clients
@@ -424,6 +471,20 @@ components:
           schema:
             $ref: '#/components/schemas/timerecords'
 
+    budget:
+      description: budget data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/budget'
+
+    budgets:
+      description: a list of budgets
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/budgets'
+
     client:
       description: client data
       content:
@@ -665,6 +726,53 @@ components:
           description: Status of the recorded time
           enum: [CSO_TIM_STA_OPN, CSO_TIM_STA_FRE, CSO_TIM_STA_CHK]
           example: CSO_TIM_STA_OPN
+
+    budget:
+      description: Client object
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/object'
+      properties:
+        order:
+          type: string
+          description: ID of the order
+          example: 5B7BEE1FBCEB4495BB81CE7BF5330CBE
+        revenue:
+          type: number
+          description: use generated revenue in the selected time
+          example: 3000
+        totalBudget:
+          type: number
+          description: the total available budget of the order
+          example: 10000
+        usedBudget:
+          type: number
+          description: the currently used budget
+          example: 6000
+        remainingBudget:
+          type: number
+          description: the remaining budget
+          example: 4000
+        totalDays:
+          type: number
+          description: the total number of available days in the order
+          example: 10
+        usedDays:
+          type: number
+          description: the currently used days
+          example: 6.5
+        remainingDays:
+          type: number
+          description: the remaining days
+          example: 3.5
+        
+    budgets:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/budget'
 
     client:
       description: Client object
